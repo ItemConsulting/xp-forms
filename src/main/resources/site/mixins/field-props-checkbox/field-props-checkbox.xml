@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mixin xmlns="urn:enonic:xp:model:1.0">
+  <!-- See https://json-schema.org/draft/2020-12/json-schema-validation.html -->
+  <display-name i18n="mixin.fieldPropsCheckbox.displayName">Properties for checkbox lists</display-name>
+  <description i18n="mixin.fieldPropsCheckbox.description">Validation configuration for checkbox lists</description>
+
+  <form>
+    <option-set name="properties">
+      <label i18n="mixin.fieldPropsCheckbox.properties">Properties</label>
+      <occurrences minimum="1" maximum="1"/>
+
+      <options minimum="0" maximum="0">
+        <option name="validationRequired">
+          <label i18n="mixin.fieldPropsCheckbox.required">Validation: Required</label>
+          <help-text i18n="mixin.fieldPropsCheckbox.requiredHelpText">This field must always have a value</help-text>
+          <items>
+            <input name="errorMessage" type="TextLine">
+              <label i18n="mixin.fieldPropsCheckbox.errorMessage">Error message</label>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+          </items>
+        </option>
+
+        <option name="validationMinItems">
+          <label i18n="mixin.fieldPropsCheckbox.validationMinItems">Validation: min items</label>
+          <help-text i18n="mixin.fieldPropsCheckbox.validationMinItemsHelpText">Specify min required items</help-text>
+          <items>
+            <input name="minItems" type="Long">
+              <label i18n="mixin.fieldPropsCheckbox.minItems">Min required</label>
+              <default>0</default>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+
+            <input name="errorMessage" type="TextLine">
+              <label i18n="mixin.fieldPropsCheckbox.errorMessage">Error message</label>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+          </items>
+        </option>
+
+        <option name="validationMaxItems">
+          <label i18n="mixin.fieldPropsCheckbox.validationMaxItems">Validation: max items</label>
+          <help-text i18n="mixin.fieldPropsCheckbox.validationMaxItemsHelpText">Specify max required items</help-text>
+          <items>
+            <input name="maxItems" type="Long">
+              <label i18n="mixin.fieldPropsCheckbox.maxItems">Max required</label>
+              <default>1</default>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+            <input name="errorMessage" type="TextLine">
+              <label i18n="mixin.fieldPropsCheckbox.errorMessage">Error message</label>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+          </items>
+        </option>
+      </options>
+    </option-set>
+  </form>
+</mixin>

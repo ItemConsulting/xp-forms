@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type xmlns="urn:enonic:xp:model:1.0">
+  <display-name i18n="contentType.form.displayName">Form</display-name>
+  <description i18n="contentType.form.description">Tool to build</description>
+  <super-type>base:structured</super-type>
+
+  <form>
+    <item-set name="pages">
+      <label i18n="contentType.form.page">Page</label>
+      <occurrences minimum="1" maximum="0"/>
+
+      <items>
+        <input name="title" type="TextLine">
+          <label i18n="contentType.form.title">Title</label>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+
+        <input name="text" type="HtmlArea">
+          <label i18n="contentType.form.pageDescription">Page description</label>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+
+        <mixin name="fields" />
+
+        <input name="submitButtonText" type="TextLine">
+          <label i18n="contentType.form.submitButtonText">Submit button text</label>
+          <occurrences minimum="1" maximum="1"/>
+          <default>Neste</default>
+        </input>
+      </items>
+    </item-set>
+
+    <item-set name="successPages">
+      <label i18n="contentType.form.successPages">Success page</label>
+      <occurrences minimum="1" maximum="1"/>
+
+      <items>
+        <input name="text" type="HtmlArea">
+          <label i18n="contentType.form.successPages.text">Text</label>
+          <default>Tusen takk. Ditt svar har blitt registrert.</default>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+      </items>
+    </item-set>
+  </form>
+</content-type>

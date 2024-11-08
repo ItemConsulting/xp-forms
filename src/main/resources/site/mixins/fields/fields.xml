@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mixin xmlns="urn:enonic:xp:model:1.0">
+  <display-name i18n="mixin.fields.displayName">Form fields</display-name>
+
+  <form>
+    <option-set name="fields">
+      <label i18n="mixin.fields.field">Field</label>
+      <occurrences minimum="1" maximum="0"/>
+      <help-text i18n="mixin.fields.fieldHelpText">Input fields in your form</help-text>
+
+      <options minimum="1" maximum="1">
+        <option name="input">
+          <label i18n="mixin.fields.input">Input field</label>
+          <items>
+            <mixin name="field-props-common"/>
+            <mixin name="field-props-input"/>
+          </items>
+        </option>
+
+        <option name="textarea">
+          <label i18n="mixin.fields.textarea">TextArea field</label>
+          <items>
+            <mixin name="field-props-common"/>
+
+            <input name="rows" type="Long">
+              <label i18n="mixin.fields.rows">Rows</label>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+
+            <input name="cols" type="Long">
+              <label i18n="mixin.fields.cols">Columns</label>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+
+            <mixin name="field-props-input"/>
+          </items>
+        </option>
+
+        <option name="radiobuttons">
+          <label i18n="mixin.fields.radioButtons">Radio buttons field</label>
+          <items>
+            <mixin name="field-props-common"/>
+            <mixin name="options"/>
+            <mixin name="field-props-select"/>
+          </items>
+        </option>
+
+        <option name="select">
+          <label i18n="mixin.fields.select">Select field</label>
+          <items>
+            <mixin name="field-props-common"/>
+            <mixin name="options"/>
+            <mixin name="field-props-select"/>
+          </items>
+        </option>
+
+        <option name="checkboxes">
+          <label i18n="mixin.fields.checkboxes">Checkboxes</label>
+          <items>
+            <mixin name="field-props-common"/>
+            <mixin name="options"/>
+            <mixin name="field-props-checkbox"/>
+          </items>
+        </option>
+
+        <option name="hidden">
+          <label i18n="mixin.fields.hidden">Hidden field</label>
+          <items>
+            <input name="name" type="TextLine">
+              <label i18n="mixin.fields.hidden.name">name</label>
+              <help-text i18n="mixin.fields.hidden.nameHelpText">Programmatic name for the field</help-text>
+              <occurrences minimum="1" maximum="1"/>
+              <config>
+                <regexp>^\S+$</regexp>
+              </config>
+            </input>
+
+            <input name="value" type="TextLine">
+              <label i18n="mixin.fields.hidden.value">Initialize field with this value</label>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+          </items>
+        </option>
+      </options>
+    </option-set>
+  </form>
+</mixin>
