@@ -1,5 +1,7 @@
 [#macro render field errors={}]
-  <div class="forms--input">
+  [#assign errorList=errors[field.name]![] /]
+
+  <div class="forms--input ${errorList?has_content?string("forms--input-with-error","")}">
     <label for="${field.id}">
       ${field.label}
     </label>
@@ -10,8 +12,8 @@
       </div>
     [/#if]
 
-    [#list errors[field.name]![] as error]
-      <div class="forms--error">
+    [#list errorList as error]
+      <div class="forms--error-text">
         ${error}
       </div>
     [/#list]

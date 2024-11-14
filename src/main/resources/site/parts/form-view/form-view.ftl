@@ -11,7 +11,12 @@
 
 <div class="form-view">
   [#list pages as page]
+
     [@form page=page /]
+
+    [#if page_has_next]
+      <hr>
+    [/#if]
   [/#list]
 </div>
 
@@ -23,15 +28,13 @@
       </a>
     [/#if]
 
-    [#if page.title?has_content]
-      <h2 class="form-view--title">${page.title}</h2>
-    [/#if]
+    <div class="html-area">
+      [#if page.title?has_content]
+        <h2 class="form-view--title">${page.title}</h2>
+      [/#if]
 
-    [#if page.text?has_content]
-      <div class="form-view--text">
-        ${page.text}
-      </div>
-    [/#if]
+      ${page.text!""}
+    </div>
 
     [#list page.fields![] as field]
       [#switch field.type]

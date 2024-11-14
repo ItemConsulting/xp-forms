@@ -6,6 +6,7 @@ import type { RadioButtonsField } from "/site/partials/radiobuttons/radiobuttons
 import type { Errors } from "/lib/forms/validation";
 
 export type FreemarkerParams = {
+  mode: string;
   locale: string;
   pages: Page[];
   errors: Errors;

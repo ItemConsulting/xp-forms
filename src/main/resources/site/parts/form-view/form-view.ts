@@ -37,6 +37,8 @@ export function all(req: XP.Request): XP.Response {
   const content = getContent<ContentForm>();
   const part = getComponent<FormViewPart>();
 
+  log.info(JSON.stringify(req, null, 2));
+
   assertIsDefined(content);
   assertIsDefined(part);
 
@@ -116,8 +118,9 @@ export function all(req: XP.Request): XP.Response {
     body: render<FreemarkerParams>(view, {
       locale,
       errors,
-      pages: [pages[pageIndex]],
+      pages: req.mode === "edit" ? pages : [pages[pageIndex]],
       values,
+      mode: req.mode,
     }),
   };
 }
