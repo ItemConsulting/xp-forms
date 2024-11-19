@@ -14,7 +14,7 @@ export type FieldPropsCheckbox = {
      */
     validationRequired: {
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };
@@ -29,7 +29,7 @@ export type FieldPropsCheckbox = {
       minItems: number;
 
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };
@@ -44,7 +44,7 @@ export type FieldPropsCheckbox = {
       maxItems: number;
 
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };

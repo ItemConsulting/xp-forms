@@ -11,8 +11,14 @@
 
 <div class="form-view">
   [#list pages as page]
-
-    [@form page=page /]
+    [#switch page.type]
+      [#case "form-page"]
+        [@form page=page /]
+        [#break]
+      [#case "success-page"]
+        [@success page=page /]
+        [#break]
+    [/#switch]
 
     [#if page_has_next]
       <hr>
@@ -60,4 +66,14 @@
       ${page.submitButtonText}
     </button>
   </form>
+[/#macro]
+
+[#macro success page]
+  <div class="form-view--success">
+    [#list page.sections as section]
+      <div class="html-area flow">
+        ${section.text!""}
+      </div>
+    [/#list]
+  </div>
 [/#macro]

@@ -92,13 +92,13 @@ export type Form = {
                */
               validationRequired: {
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
               
               /**
-               * Validation: Maximum length
+               * Validation: Minimum length
                */
               validationMinLength: {
                 /**
@@ -107,7 +107,7 @@ export type Form = {
                 minLength: number;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -122,7 +122,7 @@ export type Form = {
                 maxLength: number;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -137,7 +137,7 @@ export type Form = {
                 regexString: string;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -228,13 +228,13 @@ export type Form = {
                */
               validationRequired: {
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
               
               /**
-               * Validation: Maximum length
+               * Validation: Minimum length
                */
               validationMinLength: {
                 /**
@@ -243,7 +243,7 @@ export type Form = {
                 minLength: number;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -258,7 +258,7 @@ export type Form = {
                 maxLength: number;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -273,7 +273,7 @@ export type Form = {
                 regexString: string;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -339,7 +339,7 @@ export type Form = {
                */
               validationRequired: {
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -405,7 +405,7 @@ export type Form = {
                */
               validationRequired: {
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -471,7 +471,7 @@ export type Form = {
                */
               validationRequired: {
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -486,7 +486,7 @@ export type Form = {
                 minItems: number;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -501,7 +501,7 @@ export type Form = {
                 maxItems: number;
 
                 /**
-                 * Error Message
+                 * Error message
                  */
                 errorMessage?: string;
               };
@@ -540,7 +540,7 @@ export type Form = {
   /**
    * Success page
    */
-  successPages: {
+  successPageSections: {
     /**
      * Text
      */

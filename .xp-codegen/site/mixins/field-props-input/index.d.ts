@@ -44,13 +44,13 @@ export type FieldPropsInput = {
      */
     validationRequired: {
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };
     
     /**
-     * Validation: Maximum length
+     * Validation: Minimum length
      */
     validationMinLength: {
       /**
@@ -59,7 +59,7 @@ export type FieldPropsInput = {
       minLength: number;
 
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };
@@ -74,7 +74,7 @@ export type FieldPropsInput = {
       maxLength: number;
 
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };
@@ -89,7 +89,7 @@ export type FieldPropsInput = {
       regexString: string;
 
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };

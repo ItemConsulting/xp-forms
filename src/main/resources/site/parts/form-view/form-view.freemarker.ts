@@ -13,12 +13,22 @@ export type FreemarkerParams = {
   values: Record<string, string[] | string | undefined>;
 };
 
-export type Page = {
+export type Page = FormPage | SuccessPage;
+
+export type FormPage = {
+  type: "form-page";
   title: string;
   text?: string;
   fields: Field[];
   submitButtonText: string;
   backUrl?: string;
+};
+
+export type SuccessPage = {
+  type: "success-page";
+  sections: {
+    text: string;
+  }[];
 };
 
 export type HiddenField = {

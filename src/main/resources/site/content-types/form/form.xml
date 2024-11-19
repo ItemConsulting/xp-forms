@@ -30,13 +30,13 @@
       </items>
     </item-set>
 
-    <item-set name="successPages">
-      <label i18n="contentType.form.successPages">Success page</label>
+    <item-set name="successPageSections">
+      <label i18n="contentType.form.successPageSections">Success page</label>
       <occurrences minimum="1" maximum="1"/>
 
       <items>
         <input name="text" type="HtmlArea">
-          <label i18n="contentType.form.successPages.text">Text</label>
+          <label i18n="contentType.form.successPageSections.text">Text</label>
           <default>Tusen takk. Ditt svar har blitt registrert.</default>
           <occurrences minimum="0" maximum="1"/>
         </input>

@@ -78,13 +78,13 @@ export type Fields = {
              */
             validationRequired: {
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
             
             /**
-             * Validation: Maximum length
+             * Validation: Minimum length
              */
             validationMinLength: {
               /**
@@ -93,7 +93,7 @@ export type Fields = {
               minLength: number;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -108,7 +108,7 @@ export type Fields = {
               maxLength: number;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -123,7 +123,7 @@ export type Fields = {
               regexString: string;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -214,13 +214,13 @@ export type Fields = {
              */
             validationRequired: {
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
             
             /**
-             * Validation: Maximum length
+             * Validation: Minimum length
              */
             validationMinLength: {
               /**
@@ -229,7 +229,7 @@ export type Fields = {
               minLength: number;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -244,7 +244,7 @@ export type Fields = {
               maxLength: number;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -259,7 +259,7 @@ export type Fields = {
               regexString: string;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -325,7 +325,7 @@ export type Fields = {
              */
             validationRequired: {
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -391,7 +391,7 @@ export type Fields = {
              */
             validationRequired: {
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -457,7 +457,7 @@ export type Fields = {
              */
             validationRequired: {
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -472,7 +472,7 @@ export type Fields = {
               minItems: number;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };
@@ -487,7 +487,7 @@ export type Fields = {
               maxItems: number;
 
               /**
-               * Error Message
+               * Error message
                */
               errorMessage?: string;
             };

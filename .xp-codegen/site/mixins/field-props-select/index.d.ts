@@ -14,7 +14,7 @@ export type FieldPropsSelect = {
      */
     validationRequired: {
       /**
-       * Error Message
+       * Error message
        */
       errorMessage?: string;
     };

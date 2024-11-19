@@ -1,4 +1,4 @@
-import { getContent, getComponent, type Content, pageUrl } from "/lib/xp/portal";
+import { getContent, getComponent, pageUrl, processHtml, type Content } from "/lib/xp/portal";
 import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
@@ -7,9 +7,10 @@ import { localize } from "/lib/xp/i18n";
 import { getLocale } from "/lib/forms/locale";
 import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
+import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
 import type { Unarray } from "/lib/forms/types";
 import type { Form as FormRaw } from "/site/content-types";
-import type { FreemarkerParams, Page, Field, Values, Option } from "/site/parts/form-view/form-view.freemarker";
+import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
 import type { PartComponent } from "@enonic-types/core";
 import {
   maxItemsValidator,
@@ -22,7 +23,6 @@ import {
   type Errors,
   type ValidatorConfig,
 } from "/lib/forms/validation";
-import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
 
 type PageRaw = NonNullable<Unarray<FormRaw["pages"]>>;
 type FieldRaw = Unarray<PageRaw["fields"]>;
@@ -30,22 +30,20 @@ type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;
 
 const view = resolve("./form-view.ftl");
-const successView = resolve("./form-view-success.ftl");
 const store = getMap<Record<string, string>>("no.item.forms");
+const SUCCESS_PAGE_COUNT = 1;
 
 export function all(req: XP.Request): XP.Response {
   const content = getContent<ContentForm>();
   const part = getComponent<FormViewPart>();
 
-  log.info(JSON.stringify(req, null, 2));
-
   assertIsDefined(content);
   assertIsDefined(part);
 
   const { page, ...formValues } = req.params ?? {};
+  const pagesRaw = forceArray(content.data.pages);
   const pageNumber = parseInt(page ?? "1");
-  const pageIndex = pageNumber - 1; // zero indexed
-
+  const pageIndex = Math.min(pageNumber - 1, pagesRaw.length - 1 + SUCCESS_PAGE_COUNT); // zero indexed
   const locale = getLocale({ content });
   const partId = partPathToId(part.path);
   const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
@@ -56,7 +54,6 @@ export function all(req: XP.Request): XP.Response {
   };
 
   const errors = getErrors(values, content, locale);
-  const pagesRaw = forceArray(content.data.pages);
 
   // If after last page
   if (pageNumber > pagesRaw.length) {
@@ -72,20 +69,7 @@ export function all(req: XP.Request): XP.Response {
     });
 
     store.delete(usersFormKey);
-
-    return {
-      status: 200,
-      body: render(successView, {
-        text:
-          content.data.successPages.text ??
-          localize({
-            key: "part.formView.success",
-            locale,
-          }),
-      }),
-    };
-  }
-  if (req.method === "POST" && !hasErrors(errors)) {
+  } else if (req.method === "POST" && !hasErrors(errors)) {
     saveToStore(usersFormKey, values);
 
     return {
@@ -101,8 +85,8 @@ export function all(req: XP.Request): XP.Response {
     };
   }
 
-  const pages = pagesRaw.map((page, index) =>
-    getPage({
+  const formPages = pagesRaw.map((page, index) =>
+    getFormPage({
       id: `${partId}-page${index}`,
       page,
       locale,
@@ -112,13 +96,17 @@ export function all(req: XP.Request): XP.Response {
     }),
   );
 
+  const successPage: Page = getSuccessPage(forceArray(content.data.successPageSections), locale);
+
+  const pages = formPages.concat(successPage);
+
   log.info("Render page with index =" + pageIndex);
 
   return {
     body: render<FreemarkerParams>(view, {
       locale,
       errors,
-      pages: req.mode === "edit" ? pages : [pages[pageIndex]],
+      pages: req.mode === "edit" ? pages : [pages[Math.min(pageIndex, pages.length)]],
       values,
       mode: req.mode,
     }),
@@ -157,8 +145,9 @@ type GetPageParams = {
   pageNumber: number;
 };
 
-function getPage({ page, id, locale, values, content, pageNumber }: GetPageParams): Page {
+function getFormPage({ page, id, locale, values, content, pageNumber }: GetPageParams): Page {
   return {
+    type: "form-page",
     title: page.title,
     text: page.text,
     submitButtonText:
@@ -179,6 +168,22 @@ function getPage({ page, id, locale, values, content, pageNumber }: GetPageParam
             },
           })
         : undefined,
+  };
+}
+
+function getSuccessPage(sections: { text?: string }[], locale: string): Page {
+  return {
+    type: "success-page",
+    sections: sections.map((section) => ({
+      text: processHtml({
+        value:
+          section.text ??
+          localize({
+            key: "part.formView.success",
+            locale,
+          }),
+      }),
+    })),
   };
 }
 
