@@ -19,7 +19,7 @@ const meta: Meta<InputField> = {
             "helpText": helpText,
             "inputmode": inputmode,
             "placeholder": placeholder
-          } /]
+          } locale=locale /]
         `,
       },
     },

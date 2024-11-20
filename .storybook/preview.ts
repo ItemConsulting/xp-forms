@@ -5,6 +5,9 @@ if (!process.env.STORYBOOK_SERVER_URL) {
 }
 
 const preview: Preview = {
+  args: {
+    locale: "no",
+  },
   parameters: {
     server: {
       url: process.env.STORYBOOK_SERVER_URL,

@@ -1,4 +1,4 @@
-import { notEmptyOrUndefined, notNullOrUndefined, objectKeys, stringToRegex } from "/lib/forms/utils";
+import { notEmptyOrUndefined, notNullOrUndefined, stringToRegex } from "/lib/forms/utils";
 import { localize } from "/lib/xp/i18n";
 import { forceArray } from "/lib/forms/arrays";
 
@@ -11,14 +11,12 @@ export type ValidatorConfig = {
 };
 
 export function validate(obj: Record<string, string[] | string | undefined>, validators: ValidatorConfig[]): Errors {
-  return objectKeys(obj).reduce<Errors>((errors, key) => {
-    const errorMessages = validators
-      .filter((validator) => validator.name === key)
-      .filter((validator) => !validator.validate(obj[key]))
-      .map(({ errorMessage }) => errorMessage);
+  return validators.reduce<Errors>((errors, validator) => {
+    const value = obj[validator.name];
 
-    if (errorMessages.length > 0) {
-      errors[key] = errorMessages;
+    if (!validator.validate(value)) {
+      errors[validator.name] = errors[validator.name] ?? [];
+      errors[validator.name].push(validator.errorMessage);
     }
 
     return errors;

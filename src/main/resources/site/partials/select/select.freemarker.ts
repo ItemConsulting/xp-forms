@@ -5,6 +5,7 @@ export type SelectField = {
   name: string;
   helpText?: string;
   value?: string;
+  required: boolean;
   options: SelectFieldOption[];
 };
 

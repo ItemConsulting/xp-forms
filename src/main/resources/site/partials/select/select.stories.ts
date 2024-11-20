@@ -17,7 +17,7 @@ const meta: Meta<SelectField> = {
             "name": name,
             "helpText": helpText,
             "options": options
-          } /]
+          } locale=locale /]
         `,
       },
     },

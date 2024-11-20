@@ -5,7 +5,7 @@ export type CheckboxesField = {
   name: string;
   helpText?: string;
   value: string[];
-
+  required: boolean;
   options: CheckboxOption[];
 };
 

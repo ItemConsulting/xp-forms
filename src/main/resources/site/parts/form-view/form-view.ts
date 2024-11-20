@@ -53,7 +53,7 @@ export function all(req: XP.Request): XP.Response {
     ...formValues,
   };
 
-  const errors = getErrors(values, content, locale);
+  const errors = req.method === "POST" ? getErrors(values, content, locale) : {};
 
   // If after last page
   if (pageNumber > pagesRaw.length) {
@@ -85,22 +85,18 @@ export function all(req: XP.Request): XP.Response {
     };
   }
 
-  const formPages = pagesRaw.map((page, index) =>
-    getFormPage({
-      id: `${partId}-page${index}`,
-      page,
-      locale,
-      values,
-      content,
-      pageNumber: index + 1,
-    }),
-  );
-
-  const successPage: Page = getSuccessPage(forceArray(content.data.successPageSections), locale);
-
-  const pages = formPages.concat(successPage);
-
-  log.info("Render page with index =" + pageIndex);
+  const pages = pagesRaw
+    .map((page, index) =>
+      getFormPage({
+        id: `${partId}-page${index}`,
+        page,
+        locale,
+        values,
+        content,
+        pageNumber: index + 1,
+      }),
+    )
+    .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
 
   return {
     body: render<FreemarkerParams>(view, {
@@ -200,7 +196,9 @@ function getField(field: FieldRaw, fieldId: string, values: Values): Field | und
         placeholder: field.input.properties?.placeholder?.placeholder,
         autocomplete: field.input.properties?.autocomplete?.autocomplete,
         inputmode: field.input.properties?.inputMode?.inputmode,
+        required: hasSelectedValue(field.input.properties, "validationRequired"),
       };
+
     case "textarea":
       return {
         type: "textarea",
@@ -214,7 +212,9 @@ function getField(field: FieldRaw, fieldId: string, values: Values): Field | und
         placeholder: field.textarea.properties?.placeholder?.placeholder,
         autocomplete: field.textarea.properties?.autocomplete?.autocomplete,
         inputmode: field.textarea.properties?.inputMode?.inputmode,
+        required: hasSelectedValue(field.textarea.properties, "validationRequired"),
       };
+
     case "select":
       const selectValue = getFirstValue(values, field.select) ?? field.select.value;
       return {
@@ -225,9 +225,10 @@ function getField(field: FieldRaw, fieldId: string, values: Values): Field | und
         helpText: field.select.helpText,
         value: selectValue,
         options: forceArray(field.select.options).map(setChecked(selectValue)),
+        required: hasSelectedValue(field.select.properties, "validationRequired"),
       };
+
     case "checkboxes":
-      log.info(JSON.stringify(forceArray(values[getName(field.checkboxes)] ?? field.checkboxes.value), null, 2));
       const checkboxesValue = forceArray(values[getName(field.checkboxes)] ?? field.checkboxes.value);
 
       return {
@@ -238,7 +239,9 @@ function getField(field: FieldRaw, fieldId: string, values: Values): Field | und
         helpText: field.checkboxes.helpText,
         value: checkboxesValue,
         options: forceArray(field.checkboxes.options).map(setChecked(checkboxesValue)),
+        required: hasSelectedValue(field.checkboxes.properties, "validationRequired"),
       };
+
     case "radiobuttons":
       const radioButtonsValue = getFirstValue(values, field.radiobuttons) ?? field.radiobuttons.value;
       return {
@@ -249,7 +252,9 @@ function getField(field: FieldRaw, fieldId: string, values: Values): Field | und
         helpText: field.radiobuttons.helpText,
         value: radioButtonsValue,
         options: forceArray(field.radiobuttons.options).map(setChecked(radioButtonsValue)),
+        required: hasSelectedValue(field.radiobuttons.properties, "validationRequired"),
       };
+
     case "hidden":
       return {
         type: "hidden",

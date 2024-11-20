@@ -15,11 +15,13 @@ export default meta;
 
 export const formView: StoryObj<FreemarkerParams> = {
   args: {
+    locale: "no",
     errors: {
       name: ["Missing required field"],
     },
     pages: [
       {
+        type: "form-page",
         title: "Innmeldingsskjema",
         text: "This is some intro text",
         submitButtonText: "Send inn",
@@ -33,13 +35,15 @@ export const formView: StoryObj<FreemarkerParams> = {
             helpText: "Fullt navn",
             inputmode: "text",
             placeholder: "Skriv inn navnet ditt",
+            required: true,
           },
           {
             type: "textarea",
-            id: "input-1",
+            id: "input-2",
             label: "Kommentar",
             name: "comment",
             placeholder: "Skriv en kommentar",
+            required: false,
           },
         ],
       },

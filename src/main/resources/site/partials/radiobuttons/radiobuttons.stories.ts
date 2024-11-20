@@ -17,7 +17,7 @@ const meta: Meta<RadioButtonsField> = {
             "name": name,
             "helpText": helpText,
             "options": options
-          } /]
+          } locale=locale /]
         `,
       },
     },

@@ -8,4 +8,5 @@ export type InputField = {
   placeholder?: string;
   inputmode?: string;
   autocomplete?: string;
+  required: boolean;
 };

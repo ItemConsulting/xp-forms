@@ -10,4 +10,5 @@ export type TextAreaField = {
   placeholder?: string;
   inputmode?: string;
   autocomplete?: string;
+  required: boolean;
 };

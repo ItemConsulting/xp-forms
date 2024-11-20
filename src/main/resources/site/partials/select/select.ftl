@@ -1,15 +1,9 @@
-[#macro render field errors={}]
-  <div class="forms--select">
-    <label for="${field.id}">
-      ${field.label}
-    </label>
+[#import "../form-control/form-control.ftl" as FormControl]
 
-    [#if field.helpText?has_content]
-      <div id="${field.id}-help-text">
-        ${field.helpText}
-      </div>
-    [/#if]
+[#macro render field locale errors={}]
+  [#assign ariaDescribedBy=FormControl.ariaDescribedBy(field, errors)]
 
+  [@FormControl.render field locale errors]
     <select
       id="${field.id}"
       name="${field.name}">
@@ -23,5 +17,5 @@
         </option>
       [/#list]
     </select>
-  </div>
+  [/@FormControl.render]
 [/#macro]

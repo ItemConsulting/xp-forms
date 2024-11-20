@@ -21,7 +21,7 @@ const meta: Meta<TextAreaField> = {
             "helpText": helpText,
             "inputmode": inputmode,
             "placeholder": placeholder
-          } /]
+          } locale=locale /]
         `,
       },
     },

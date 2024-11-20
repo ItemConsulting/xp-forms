@@ -5,6 +5,7 @@ export type RadioButtonsField = {
   name: string;
   helpText?: string;
   value?: string;
+  required: boolean;
   options: RadioButtonsFieldOption[];
 };
 
