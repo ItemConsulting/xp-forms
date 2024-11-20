@@ -11,6 +11,8 @@
       <options minimum="1" maximum="1">
         <option name="input">
           <label i18n="mixin.fields.input">Input field</label>
+          <help-text i18n="mixin.fields.inputHelpText">Single line text field</help-text>
+
           <items>
             <mixin name="field-props-common"/>
             <mixin name="field-props-input"/>
@@ -19,6 +21,8 @@
 
         <option name="textarea">
           <label i18n="mixin.fields.textarea">TextArea field</label>
+          <help-text i18n="mixin.fields.textareaHelpText">Multiple line text field</help-text>
+
           <items>
             <mixin name="field-props-common"/>
 
@@ -38,6 +42,8 @@
 
         <option name="radiobuttons">
           <label i18n="mixin.fields.radioButtons">Radio buttons field</label>
+          <help-text i18n="mixin.fields.radioButtonsHelpText">Users choose single answer from list of options</help-text>
+
           <items>
             <mixin name="field-props-common"/>
             <mixin name="options"/>
@@ -47,6 +53,8 @@
 
         <option name="select">
           <label i18n="mixin.fields.select">Select field</label>
+          <help-text i18n="mixin.fields.selectHelpText">Users select single answer from list of options</help-text>
+
           <items>
             <mixin name="field-props-common"/>
             <mixin name="options"/>
@@ -56,6 +64,8 @@
 
         <option name="checkboxes">
           <label i18n="mixin.fields.checkboxes">Checkboxes</label>
+          <help-text i18n="mixin.fields.checkboxesHelpText">Users choose multiple answers from list of options</help-text>
+
           <items>
             <mixin name="field-props-common"/>
             <mixin name="options"/>
@@ -65,6 +75,8 @@
 
         <option name="hidden">
           <label i18n="mixin.fields.hidden">Hidden field</label>
+          <help-text i18n="mixin.fields.hiddenHelpText">Field that is hidden from users</help-text>
+
           <items>
             <input name="name" type="TextLine">
               <label i18n="mixin.fields.hidden.name">name</label>
