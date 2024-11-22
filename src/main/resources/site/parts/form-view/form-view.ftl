@@ -46,7 +46,7 @@
           [@Input.render field locale errors /]
           [#break]
         [#case "textarea"]
-          [@TextArea.render field errors /]
+          [@TextArea.render field locale errors /]
           [#break]
         [#case "select"]
           [@Select.render field locale errors /]
