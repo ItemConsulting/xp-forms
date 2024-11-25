@@ -1,4 +1,4 @@
-import { notEmptyOrUndefined, notNullOrUndefined, stringToRegex } from "/lib/forms/utils";
+import { isEmptyOrUndefined, notEmptyOrUndefined, notNullOrUndefined, stringToRegex } from "/lib/forms/utils";
 import { localize } from "/lib/xp/i18n";
 import { forceArray } from "/lib/forms/arrays";
 
@@ -74,7 +74,7 @@ export function maxLengthValidator(
 
 export function patternValidator(
   name: string,
-  props: { regexString: string; errorMessage?: string },
+  props: { regexString: string | RegExp; errorMessage?: string },
   locale: string,
 ): ValidatorConfig {
   return {
@@ -83,11 +83,16 @@ export function patternValidator(
       props.errorMessage ??
       localize({
         key: "validation.pattern",
-        values: [props.regexString],
+        values: [props.regexString.toString()],
         locale,
       }),
     validate: (value) => {
-      const regex = stringToRegex(props.regexString);
+      // "requiredValidator" is responsible for handling missing values with the correct error message
+      if (!Array.isArray(value) && isEmptyOrUndefined(value)) {
+        return true;
+      }
+
+      const regex = typeof props.regexString === "string" ? stringToRegex(props.regexString) : props.regexString;
       return notNullOrUndefined(value) && notNullOrUndefined(regex) && !Array.isArray(value) && regex.test(value);
     },
   };
