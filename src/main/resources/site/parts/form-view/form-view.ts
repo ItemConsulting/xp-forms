@@ -1,4 +1,4 @@
-import { getContent, getComponent, pageUrl, processHtml, type Content } from "/lib/xp/portal";
+import { getContent, getComponent, getSite, pageUrl, processHtml, type Content } from "/lib/xp/portal";
 import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
@@ -57,11 +57,14 @@ export function all(req: XP.Request): XP.Response {
 
   // If after last page
   if (pageNumber > pagesRaw.length) {
-    // TODO Validate everything?
+    const site = getSite();
+
+    assertIsDefined(site);
 
     sendEvent({
       type: "form.submit",
       data: {
+        siteId: site._id,
         formId: content._id,
         values,
       },
