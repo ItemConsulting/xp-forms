@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site xmlns="urn:enonic:xp:model:1.0">
+  <processors>
+    <response-processor name="redirect" order="10"/>
+  </processors>
+</site>
