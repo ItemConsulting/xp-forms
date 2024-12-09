@@ -1,4 +1,3 @@
-import "@types/node/globals";
 import { createPreviewServerParams, type Preview } from "@itemconsulting/xp-storybook-utils";
 
 if (!process.env.STORYBOOK_SERVER_URL) {

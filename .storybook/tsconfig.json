@@ -11,7 +11,7 @@
       "dom",
       "ES2020"
     ],
-    "types": ["@itemconsulting/xp-storybook-utils/global"]
+    "types": ["@itemconsulting/xp-storybook-utils/global", "@types/node"]
   },
   "exclude": ["build/*"]
 }

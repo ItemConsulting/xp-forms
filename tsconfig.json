@@ -56,7 +56,6 @@
 		"node_modules/typescript/lib/lib.es5.d.ts",
 
 		"src/main/resources/**/*.ts",
-    ".xp-codegen/**/*.d.ts",
-    ".storybook/**/*"
+    ".xp-codegen/**/*.d.ts"
   ]
 }
