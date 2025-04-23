@@ -11,7 +11,7 @@ import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
 import type { Unarray } from "/lib/forms/types";
 import type { Form as FormRaw } from "/site/content-types";
 import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
-import type { PartComponent } from "@enonic-types/core";
+import type { Request, Response, PartComponent } from "@enonic-types/core";
 import {
   maxItemsValidator,
   maxLengthValidator,
@@ -33,14 +33,18 @@ const view = resolve("./form-view.ftl");
 const store = getMap<Record<string, string>>("no.item.forms");
 const SUCCESS_PAGE_COUNT = 1;
 
-export function all(req: XP.Request): XP.Response {
+type QueryParams = {
+  page: string;
+};
+
+export function all(req: Request<{ params: QueryParams }>): Response {
   const content = getContent<ContentForm>();
   const part = getComponent<FormViewPart>();
 
   assertIsDefined(content);
   assertIsDefined(part);
 
-  const { page, ...formValues } = req.params ?? {};
+  const { page, ...formValues } = req.params;
   const pagesRaw = forceArray(content.data.pages);
   const pageNumber = parseInt(page ?? "1");
   const pageIndex = Math.min(pageNumber - 1, pagesRaw.length - 1 + SUCCESS_PAGE_COUNT); // zero indexed
