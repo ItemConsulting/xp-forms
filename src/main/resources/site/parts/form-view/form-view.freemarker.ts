@@ -11,6 +11,7 @@ export type FreemarkerParams = {
   pages: Page[];
   errors: Errors;
   values: Record<string, string[] | string | undefined>;
+  adminErrors?: Errors;
 };
 
 export type Page = FormPage | SuccessPage;

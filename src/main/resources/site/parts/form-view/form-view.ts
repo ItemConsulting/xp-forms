@@ -2,13 +2,11 @@ import { getContent, getComponent, getSite, pageUrl, processHtml, type Content }
 import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
-import { sanitize } from "/lib/xp/common";
 import { localize } from "/lib/xp/i18n";
 import { getLocale } from "/lib/forms/locale";
 import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
-import type { Unarray } from "/lib/forms/types";
 import type { Form as FormRaw } from "/site/content-types";
 import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
@@ -23,9 +21,10 @@ import {
   type Errors,
   type ValidatorConfig,
 } from "/lib/forms/validation";
+import { FormFieldRaw, FormPageRaw, getName, hasSelectedValue } from "/lib/forms/form-utils";
+import { getJsonSchema, JSONSchema } from "/lib/forms/json-schema";
+import { compareSchemas } from "/lib/forms/admin-schema-validation";
 
-type PageRaw = NonNullable<Unarray<FormRaw["pages"]>>;
-type FieldRaw = Unarray<PageRaw["fields"]>;
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;
 
@@ -105,6 +104,44 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     )
     .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
 
+  const referenceSchema = {
+    $schema: "https://json-schema.org/draft/2020-12/schema",
+    $id: "/admin/site/preview/digernes/draft/digernes/mitt-skjema/_/service/no.item.forms/json-schema?id=37c29c23-07de-4007-8302-f929df581686",
+    title: "Mitt skjema",
+    type: "object",
+    properties: {
+      email: {
+        type: "string",
+        description: "E-postadresse",
+      },
+      bedrifter: {
+        type: "string",
+        description: "Har du handlet hos noen av våre bedrifter før?",
+      },
+      bokstav: {
+        type: "array",
+        items: {
+          type: "string",
+        },
+        description: "Favoritt bokstav",
+        minItems: 2,
+        maxItems: 3,
+      },
+      comment: {
+        type: "string",
+        description: "Kommentar",
+      },
+    },
+    required: ["email", "title", "test"],
+  } satisfies JSONSchema;
+
+  const adminErrors = compareSchemas(referenceSchema, getJsonSchema(content), locale);
+
+  // Form-content with errors in them will probably fail on submission, so it's better to fail early in live mode.
+  if (req.mode === "live" && adminErrors.errors.length > 0) {
+    throw new Error(adminErrors.errors[0]);
+  }
+
   return {
     body: render<FreemarkerParams>(view, {
       locale,
@@ -112,6 +149,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       pages: req.mode === "edit" ? pages : [pages[Math.min(pageIndex, pages.length)]],
       values,
       mode: req.mode,
+      adminErrors: req.mode !== "live" ? adminErrors : undefined,
     }),
   };
 }
@@ -141,7 +179,7 @@ function hasErrors(errors: Errors): boolean {
 
 type GetPageParams = {
   id: string;
-  page: PageRaw;
+  page: FormPageRaw;
   locale: string;
   values: Values;
   content: Content;
@@ -190,7 +228,7 @@ function getSuccessPage(sections: { text?: string }[], locale: string): Page {
   };
 }
 
-function getField(field: FieldRaw, fieldId: string, values: Values): Field | undefined {
+function getField(field: FormFieldRaw, fieldId: string, values: Values): Field | undefined {
   switch (field._selected) {
     case "input":
       return {
@@ -287,11 +325,7 @@ function getFirstValue(values: Values, field: { label: string; name?: string }):
   return value && Array.isArray(value) ? value[0] : value;
 }
 
-function getName(field: { label: string; name?: string }): string {
-  return field.name ?? sanitize(field.label);
-}
-
-function getValidator(field: FieldRaw, locale: string): ValidatorConfig[] {
+function getValidator(field: FormFieldRaw, locale: string): ValidatorConfig[] {
   const validators: ValidatorConfig[] = [];
   switch (field._selected) {
     case "input":
@@ -344,8 +378,4 @@ function getValidator(field: FieldRaw, locale: string): ValidatorConfig[] {
   }
 
   return validators;
-}
-
-function hasSelectedValue<T extends string>(properties: { _selected: T[] }, value: NoInfer<T>): boolean {
-  return forceArray(properties._selected).indexOf(value) !== -1;
 }

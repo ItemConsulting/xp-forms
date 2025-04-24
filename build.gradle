@@ -32,6 +32,7 @@ dependencies {
 	include "com.enonic.xp:lib-task:${xpVersion}"
 	include "com.enonic.xp:lib-vhost:${xpVersion}"
   include "com.github.tineikt:xp-lib-freemarker:2.0.3"
+  include "com.github.erosb:json-sKema:0.20.0"
   include "no.item:lib-xp-time:1.2.1"
 }
 

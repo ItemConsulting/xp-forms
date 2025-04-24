@@ -9,6 +9,12 @@ export function flatMap<A, B>(arr: Array<A>, f: (a: A) => Array<B>): Array<B> {
   return arr.reduce<B[]>((acc, val) => acc.concat(f(val)), []);
 }
 
+export function difference<A>(xs: A[], ys: A[]): A[];
+export function difference<A, B>(xs: A[], ys: B[], predicate: (x: A, y: B) => boolean): A[];
+export function difference<A, B>(xs: A[], ys: B[], predicate?: (x: A, y: B) => boolean): A[] {
+  return xs.filter((x) => !ys.some((y) => (predicate ? predicate(x, y) : (x as unknown) === (y as unknown))));
+}
+
 /**
  * Returns the first value from an Array that matches a predicate
  */

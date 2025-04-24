@@ -37,6 +37,7 @@
     "@enonic-types/lib-portal": "^7",
     "@enonic/esbuild-plugin-copy-with-hash": "^0.2.0",
     "@enonic/tsup-plugin-manifest": "^0.0.1",
+    "@item-enonic-types/global": "^7.15.0",
     "@item-enonic-types/lib-freemarker": "^2.0.2",
     "@item-enonic-types/lib-time": "^1.2.1",
     "@itemconsulting/preset-enonic-xp": "^0.1.0",
