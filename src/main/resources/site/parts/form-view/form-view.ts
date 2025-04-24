@@ -21,8 +21,8 @@ import {
   type Errors,
   type ValidatorConfig,
 } from "/lib/forms/validation";
-import { FormFieldRaw, FormPageRaw, getName, hasSelectedValue } from "/lib/forms/form-utils";
-import { getJsonSchema, JSONSchema } from "/lib/forms/json-schema";
+import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
+import { getJsonSchema, type JSONSchema } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
@@ -113,8 +113,10 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       email: {
         type: "string",
         description: "E-postadresse",
+        minLength: 5,
+        maxLength: 100,
       },
-      bedrifter: {
+      flupp: {
         type: "string",
         description: "Har du handlet hos noen av våre bedrifter før?",
       },

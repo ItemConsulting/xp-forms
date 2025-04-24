@@ -15,6 +15,10 @@ export function difference<A, B>(xs: A[], ys: B[], predicate?: (x: A, y: B) => b
   return xs.filter((x) => !ys.some((y) => (predicate ? predicate(x, y) : (x as unknown) === (y as unknown))));
 }
 
+export function intersection<A>(xs: readonly A[], ys: readonly A[]): A[] {
+  return xs.filter((x) => ys.indexOf(x) !== -1);
+}
+
 /**
  * Returns the first value from an Array that matches a predicate
  */

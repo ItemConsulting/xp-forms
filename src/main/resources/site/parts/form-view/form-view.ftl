@@ -17,7 +17,7 @@
     [/#list]
 
     [#list adminErrors.warnings![] as error]
-      <div class="form-view--admin-error">${error}</div>
+      <div class="form-view--admin-warning">${error}</div>
     [/#list]
   [/#if]
 

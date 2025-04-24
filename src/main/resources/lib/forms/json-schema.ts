@@ -7,6 +7,9 @@ type SchemaProperty =
   | {
       type: "string";
       description?: string;
+      minLength?: number;
+      maxLength?: number;
+      pattern?: string;
     }
   | {
       type: "array";
