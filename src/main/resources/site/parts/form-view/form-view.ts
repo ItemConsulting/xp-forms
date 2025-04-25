@@ -70,6 +70,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       data: {
         siteId: site._id,
         formId: content._id,
+        integrationId: content.data.integrationId,
         values,
       },
       distributed: false,

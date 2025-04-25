@@ -1,5 +1,12 @@
-import { LanguageRange, Locale } from "/lib/time";
-import { getSupportedLocales, localize } from "/lib/xp/i18n";
+import { runOnDraftAsAdmin } from "/lib/forms/contexts";
+import { localize } from "/lib/xp/i18n";
+import { get as getOne, type Content } from "/lib/xp/content";
+import { send as sendEmail } from "/lib/xp/mail";
+import { assertIsDefined, objectKeys } from "/lib/forms/utils";
+import { getJsonSchema } from "/lib/forms/json-schema";
+import { forceArray } from "/lib/forms/arrays";
+import { getLocaleFromRequest } from "/lib/forms/locale";
+import type { Form } from "/site/content-types";
 import type { Request } from "@enonic-types/core";
 
 export type JSONSchema = {
@@ -9,6 +16,13 @@ export type JSONSchema = {
   type: string;
   properties: Record<string, SchemaProperty>;
   required: string[];
+};
+
+export type FormEvent<Values extends Record<string, string[] | string>> = {
+  siteId: string;
+  formId: string;
+  integrationId?: string;
+  values: Values;
 };
 
 type SchemaProperty =
@@ -37,8 +51,15 @@ type FormExtensions = {
   populateFields?: () => Record<string, unknown> | undefined;
 };
 
+export type EmailFormData = FormEvent<{
+  email: string;
+  name: string;
+  subject: string;
+  [key: string]: string[] | string;
+}>;
+
 export function extensions(req: Request): FormExtensions | FormExtensions[] {
-  const locale = getLocale(req);
+  const locale = getLocaleFromRequest(req);
 
   return {
     id: "email",
@@ -61,21 +82,49 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
         },
         email: {
           type: "string",
-          description: "Your email address",
+          description: "Email",
+        },
+        subject: {
+          type: "string",
+          description: "Subject",
         },
       },
-      required: ["name", "email"],
+      required: ["name", "email", "subject"],
     },
   };
 }
 
-function getLocale(req: Request): string {
-  const acceptLanguage = req.headers["Accept-Language"];
+export function handleEmailForm(data: EmailFormData): void {
+  runOnDraftAsAdmin(() => {
+    if (!app.config.emailReceiver) {
+      throw new Error(`No "emailReceiver" has been configured for "${app.name}"}`);
+    }
 
-  if (acceptLanguage) {
-    const languageRange = LanguageRange.parse(acceptLanguage);
-    return Locale.filterTags(languageRange, getSupportedLocales(["i18n/phrases"]))[0] ?? Locale.ENGLISH.toLanguageTag();
-  }
+    const content = getOne<Content<Form>>({
+      key: data.formId,
+    });
 
-  return Locale.ENGLISH.toLanguageTag();
+    assertIsDefined(content);
+
+    sendEmail({
+      subject: data.values.subject,
+      from: `${data.values.name} <${data.values.email}>`,
+      to: app.config.emailReceiver,
+      body: createEmailByFormSubmission(data, content),
+    });
+
+    log.info("E-mail with content-form info sent.");
+  });
+}
+
+export function createEmailByFormSubmission(data: EmailFormData, content: Content<Form>): string {
+  const schema = getJsonSchema(content);
+
+  return objectKeys(schema.properties)
+    .map((name) => {
+      const label = schema.properties[name].description ?? name;
+
+      return `${label}: ${forceArray(data.values[name]).join(", ")}`;
+    })
+    .join("\n");
 }

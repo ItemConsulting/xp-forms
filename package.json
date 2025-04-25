@@ -34,6 +34,7 @@
     "@enonic-types/lib-event": "^7",
     "@enonic-types/lib-grid": "^7",
     "@enonic-types/lib-i18n": "^7",
+    "@enonic-types/lib-mail": "^7",
     "@enonic-types/lib-portal": "^7",
     "@enonic/esbuild-plugin-copy-with-hash": "^0.2.0",
     "@enonic/tsup-plugin-manifest": "^0.0.1",

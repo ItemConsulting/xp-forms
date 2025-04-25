@@ -12,6 +12,7 @@ type MissingValidation = [key: string, validationType: string];
 const VALIDATION_TYPES = ["minLength", "maxLength", "minItems", "maxItems", "pattern"] as const;
 
 export function compareSchemas(referenceSchema: JSONSchema, contentSchema: JSONSchema, locale: string): SchemaError {
+  // TODO What if the field exists, but it is not put as required? We should give a message saying that the validation needs to be turned on.
   const errors = difference(referenceSchema.required, contentSchema.required).map((key) => {
     return localize({
       key: "adminValidation.requiredFieldMissing",

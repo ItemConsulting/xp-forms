@@ -22,3 +22,10 @@ listener<CustomFormSubmitEvent>({
   localOnly: true,
 });
 ```
+## Built in email form handler
+
+You need to configure _no.item.forms.cfg_ with the following config to indicate where emails should be sent.
+
+```ini
+emailReceiver=me@mycompany.com
+```
