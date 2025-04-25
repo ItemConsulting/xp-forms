@@ -1,5 +1,5 @@
 import tseslint from "typescript-eslint";
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default [
   {
@@ -11,5 +11,5 @@ export default [
     },
   },
   ...tseslint.configs.recommended,
-  eslintPluginPrettierRecommended
+  eslintPluginPrettierRecommended,
 ];

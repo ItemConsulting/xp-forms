@@ -3,6 +3,15 @@ import { serviceUrl, type Content } from "/lib/xp/portal";
 import { getName, hasSelectedValue, type FormFieldRaw, type Properties } from "/lib/forms/form-utils";
 import type { Form } from "/site/content-types";
 
+export type JSONSchema = {
+  $schema: "https://json-schema.org/draft/2020-12/schema";
+  $id: string;
+  title: string;
+  type: string;
+  properties: Record<string, SchemaProperty>;
+  required: string[];
+};
+
 type SchemaProperty =
   | {
       type: "string";
@@ -58,40 +67,6 @@ type FormFieldNormalized =
       description?: string;
       properties: Record<string, unknown>;
     };
-
-/*
-const EXAMPLE_SCHEMA = `
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "properties": {
-    "age": {
-      "type": "number",
-      "minimum": 0
-    },
-    "name": {
-      "type": "string"
-    },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
-    "required": ["name", "email"]
-  }
-}`;
-*/
-// TODO Warning when not required field are missing
-
-// Kan man generere er json schema fra content og sammenligne?
-
-export type JSONSchema = {
-  $schema: "https://json-schema.org/draft/2020-12/schema";
-  $id: string;
-  title: string;
-  type: string;
-  properties: Record<string, SchemaProperty>;
-  required: string[];
-};
 
 export function getJsonSchema(content: Content<Form>): JSONSchema {
   //const jsonSchema = JSON.parse(EXAMPLE_SCHEMA);

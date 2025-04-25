@@ -7,9 +7,6 @@ import { getLocale } from "/lib/forms/locale";
 import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
-import type { Form as FormRaw } from "/site/content-types";
-import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
-import type { Request, Response, PartComponent } from "@enonic-types/core";
 import {
   maxItemsValidator,
   maxLengthValidator,
@@ -22,8 +19,12 @@ import {
   type ValidatorConfig,
 } from "/lib/forms/validation";
 import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
-import { getJsonSchema, type JSONSchema } from "/lib/forms/json-schema";
+import { getJsonSchema } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
+import { getReferenceJsonSchema } from "/lib/forms/extensions";
+import type { Form as FormRaw } from "/site/content-types";
+import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
+import type { Request, Response, PartComponent } from "@enonic-types/core";
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;
@@ -104,43 +105,11 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     )
     .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
 
-  const referenceSchema = {
-    $schema: "https://json-schema.org/draft/2020-12/schema",
-    $id: "/admin/site/preview/digernes/draft/digernes/mitt-skjema/_/service/no.item.forms/json-schema?id=37c29c23-07de-4007-8302-f929df581686",
-    title: "Mitt skjema",
-    type: "object",
-    properties: {
-      email: {
-        type: "string",
-        description: "E-postadresse",
-        minLength: 5,
-        maxLength: 100,
-      },
-      flupp: {
-        type: "string",
-        description: "Har du handlet hos noen av våre bedrifter før?",
-      },
-      bokstav: {
-        type: "array",
-        items: {
-          type: "string",
-        },
-        description: "Favoritt bokstav",
-        minItems: 2,
-        maxItems: 3,
-      },
-      comment: {
-        type: "string",
-        description: "Kommentar",
-      },
-    },
-    required: ["email", "title", "test"],
-  } satisfies JSONSchema;
-
-  const adminErrors = compareSchemas(referenceSchema, getJsonSchema(content), locale);
+  const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
+  const adminErrors = referenceSchema ? compareSchemas(referenceSchema, getJsonSchema(content), locale) : undefined;
 
   // Form-content with errors in them will probably fail on submission, so it's better to fail early in live mode.
-  if (req.mode === "live" && adminErrors.errors.length > 0) {
+  if (req.mode === "live" && adminErrors && adminErrors.errors.length > 0) {
     throw new Error(adminErrors.errors[0]);
   }
 
