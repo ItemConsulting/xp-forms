@@ -1,13 +1,16 @@
-import { runOnDraftAsAdmin } from "/lib/forms/contexts";
+import { findRepoThatContainsContentWithId, runAsAdmin } from "/lib/forms/contexts";
 import { localize } from "/lib/xp/i18n";
-import { get as getOne, type Content } from "/lib/xp/content";
+import { get as getOne, getSite, getSiteConfig, type Content } from "/lib/xp/content";
 import { send as sendEmail } from "/lib/xp/mail";
 import { assertIsDefined, objectKeys } from "/lib/forms/utils";
 import { getJsonSchema } from "/lib/forms/json-schema";
 import { forceArray } from "/lib/forms/arrays";
 import { getLocaleFromRequest } from "/lib/forms/locale";
+import { list as listVhosts, VirtualHost } from "/lib/xp/vhost";
 import type { Form } from "/site/content-types";
 import type { Request } from "@enonic-types/core";
+import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import { getSubstringAfterLast } from "/lib/forms/strings";
 
 export type JSONSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema";
@@ -18,9 +21,10 @@ export type JSONSchema = {
   required: string[];
 };
 
-export type FormEvent<Values extends Record<string, string[] | string>> = {
+export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;
   formId: string;
+  branch: string | undefined;
   integrationId?: string;
   values: Values;
 };
@@ -95,30 +99,63 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
 }
 
 export function handleEmailForm(data: EmailFormData): void {
-  runOnDraftAsAdmin(() => {
-    if (!app.config.emailReceiver) {
-      throw new Error(`No "emailReceiver" has been configured for "${app.name}"}`);
-    }
+  const repository = findRepoThatContainsContentWithId(data.siteId);
 
-    const content = getOne<Content<Form>>({
-      key: data.formId,
-    });
+  log.info("Found repo: " + repository);
 
-    assertIsDefined(content);
+  runAsAdmin(
+    () => {
+      log.info("Handling email form submission...");
 
-    sendEmail({
-      subject: data.values.subject,
-      from: `${data.values.name} <${data.values.email}>`,
-      to: app.config.emailReceiver,
-      body: createEmailByFormSubmission(data, content),
-    });
+      // TODO We are in main.js mode, and can't access context here
+      const content = getOne<Content<Form>>({
+        key: data.formId,
+      });
 
-    log.info("E-mail with content-form info sent.");
-  });
+      const site = getSite<XP.SiteConfig>({
+        key: data.siteId,
+      });
+
+      const emailToReceive = getSiteConfig<XP.SiteConfig>({
+        applicationKey: app.name,
+        key: data.siteId,
+      })?.emailToReceive;
+
+      assertIsDefined(content);
+      assertIsDefined(site);
+      assertIsDefined(emailToReceive);
+
+      log.info("DATA: " + JSON.stringify(data));
+      log.info("Site path: " + site._path);
+
+      sendEmail({
+        subject: data.values.subject,
+        from: `${data.values.name} <${data.values.email}>`,
+        to: emailToReceive,
+        body: createEmailByFormSubmission(data, content, repository, site._path),
+      });
+
+      log.info("E-mail with content-form info sent.");
+    },
+    {
+      repository,
+      branch: data.branch ?? "master",
+    },
+  );
 }
 
-export function createEmailByFormSubmission(data: EmailFormData, content: Content<Form>): string {
-  const schema = getJsonSchema(content);
+export function createEmailByFormSubmission(
+  data: EmailFormData,
+  content: Content<Form>,
+  repository: string | undefined,
+  sitePath: string,
+): string {
+  const vhost: VirtualHost | undefined = listVhosts().vhosts.filter(
+    (vhost) => vhost.target === `/site/${getSubstringAfterLast(repository ?? "", ".")}/master/${sitePath}`,
+  )[0];
+
+  const host = vhost?.host === "localhost" ? `http://localhost:8080` : `https://${vhost?.host}`;
+  const schema = getJsonSchema(content, vhost ? `${host}{vhost.source}` : undefined);
 
   return objectKeys(schema.properties)
     .map((name) => {

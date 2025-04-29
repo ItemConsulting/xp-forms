@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site xmlns="urn:enonic:xp:model:1.0">
+  <form>
+    <input name="emailToReceive" type="TextLine">
+      <label i18n="mixin.siteSettings.contactFormEmail">Form submissions email</label>
+      <help-text i18n="mixin.siteSettings.contactFormEmailHelpText">Email address where contact forms are submitted to.</help-text>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <regexp>^\S+@\S+\.\S+$</regexp>
+      </config>
+    </input>
+  </form>
   <processors>
     <response-processor name="redirect" order="10"/>
   </processors>

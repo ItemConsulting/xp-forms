@@ -68,26 +68,31 @@ type FormFieldNormalized =
       properties: Record<string, unknown>;
     };
 
-export function getJsonSchema(content: Content<Form>): JSONSchema {
-  //const jsonSchema = JSON.parse(EXAMPLE_SCHEMA);
+export function getJsonSchema(content: Content<Form>, baseUrl?: string): JSONSchema {
   const pages = forceArray(content.data.pages);
 
   const fields = flatMap(pages, (page) => page.fields).map(normalizeField);
 
   return {
     $schema: "https://json-schema.org/draft/2020-12/schema",
-    $id: serviceUrl({
-      service: "json-schema",
-      params: {
-        id: content._id,
-      },
-      type: "absolute",
-    }),
+    $id: getSchemaId(content._id, baseUrl),
     title: content.displayName,
     type: "object",
     properties: fields.map(getProperty).reduce((acc, curr) => ({ ...acc, ...curr }), {}),
     required: flatMap(fields, getRequired),
   };
+}
+
+function getSchemaId(id: string, baseUrl?: string): string {
+  if (baseUrl) {
+    return `${baseUrl}/_/service/no.item.forms/json-schema?id=${id}`;
+  } else {
+    return serviceUrl({
+      service: "json-schema",
+      params: { id },
+      type: "absolute",
+    });
+  }
 }
 
 function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty> {

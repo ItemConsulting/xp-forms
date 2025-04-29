@@ -23,8 +23,15 @@ import { getJsonSchema } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
 import { getReferenceJsonSchema } from "/lib/forms/extensions";
 import type { Form as FormRaw } from "/site/content-types";
-import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
+import type {
+  FreemarkerParams,
+  Field,
+  SubmittedValues,
+  Option,
+  Page,
+} from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
+import { FormEvent } from "/forms/forms";
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;
@@ -52,7 +59,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const partId = partPathToId(part.path);
   const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
 
-  const values: Values = {
+  const values: SubmittedValues = {
     ...loadFromStore(usersFormKey),
     ...formValues,
   };
@@ -65,11 +72,12 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
     assertIsDefined(site);
 
-    sendEvent({
+    sendEvent<FormEvent<SubmittedValues>>({
       type: "form.submit",
       data: {
         siteId: site._id,
         formId: content._id,
+        branch: req.branch,
         integrationId: content.data.integrationId,
         values,
       },
@@ -126,11 +134,11 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   };
 }
 
-function loadFromStore(usersFormKey: string): Values {
+function loadFromStore(usersFormKey: string): SubmittedValues {
   return JSON.parse(store.get(usersFormKey) ?? "{}");
 }
 
-function saveToStore(usersFormKey: string, values: Values): void {
+function saveToStore(usersFormKey: string, values: SubmittedValues): void {
   store.set({
     key: usersFormKey,
     value: JSON.stringify(values),
@@ -138,7 +146,7 @@ function saveToStore(usersFormKey: string, values: Values): void {
   });
 }
 
-function getErrors(params: Values, content: ContentForm, locale: string): Errors {
+function getErrors(params: SubmittedValues, content: ContentForm, locale: string): Errors {
   const allFields = flatMap(forceArray(content.data.pages), (page) => page.fields);
   const validators = flatMap(allFields, (field) => getValidator(field, locale));
 
@@ -153,7 +161,7 @@ type GetPageParams = {
   id: string;
   page: FormPageRaw;
   locale: string;
-  values: Values;
+  values: SubmittedValues;
   content: Content;
   pageNumber: number;
 };
@@ -200,7 +208,7 @@ function getSuccessPage(sections: { text?: string }[], locale: string): Page {
   };
 }
 
-function getField(field: FormFieldRaw, fieldId: string, values: Values): Field | undefined {
+function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues): Field | undefined {
   switch (field._selected) {
     case "input":
       return {
@@ -292,7 +300,7 @@ function setChecked(
   });
 }
 
-function getFirstValue(values: Values, field: { label: string; name?: string }): string | undefined {
+function getFirstValue(values: SubmittedValues, field: { label: string; name?: string }): string | undefined {
   const value = values[getName(field)];
   return value && Array.isArray(value) ? value[0] : value;
 }
