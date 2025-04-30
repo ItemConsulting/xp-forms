@@ -1,5 +1,5 @@
 import { listener } from "/lib/xp/event";
-import { type EmailFormData, handleEmailForm } from "/forms/forms";
+import { handleEmailForm, type EmailFormData } from "/forms/forms";
 
 listener<EmailFormData>({
   type: "custom.form.submit",

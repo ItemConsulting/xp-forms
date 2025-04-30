@@ -4,7 +4,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 export default [
   {
     files: ["**/*.{ts}"],
-    ignores: ["build/**/*.*"],
+    ignores: ["build/**/*.*", ".xp-codegen/**/*"],
     rules: {
       "no-unused-vars": "off",
       "no-use-before-define": "off",

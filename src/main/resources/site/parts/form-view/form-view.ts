@@ -31,7 +31,7 @@ import type {
   Page,
 } from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
-import { FormEvent } from "/forms/forms";
+import type { FormEvent } from "/forms/forms";
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;

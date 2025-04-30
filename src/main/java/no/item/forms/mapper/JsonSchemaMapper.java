@@ -1,12 +1,8 @@
 package no.item.forms.mapper;
 
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.script.serializer.MapGeneratorBase;
 import com.enonic.xp.script.serializer.MapSerializable;
 import no.item.forms.record.ExtensionResult;
-
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 
 public final class JsonSchemaMapper implements MapSerializable {
