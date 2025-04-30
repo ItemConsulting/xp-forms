@@ -445,7 +445,7 @@ export type Form = {
             /**
              * Initialize field with this value
              */
-            value?: string;
+            value?: Array<string> | string;
 
             /**
              * Options

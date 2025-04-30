@@ -103,7 +103,6 @@ export function handleEmailForm(data: EmailFormData): void {
     () => {
       log.info("Handling email form submission...");
 
-      // TODO We are in main.js mode, and can't access context here
       const content = getOne<Content<Form>>({
         key: data.formId,
       });
@@ -112,19 +111,19 @@ export function handleEmailForm(data: EmailFormData): void {
         key: data.siteId,
       });
 
-      const emailToReceive = getSiteConfig<XP.SiteConfig>({
+      const formSubmissionReceiverEmail = getSiteConfig<XP.SiteConfig>({
         applicationKey: app.name,
         key: data.siteId,
-      })?.emailToReceive;
+      })?.formSubmissionReceiverEmail;
 
-      assertIsDefined(content);
-      assertIsDefined(site);
-      assertIsDefined(emailToReceive);
+      assertIsDefined(content, "content");
+      assertIsDefined(site, "site");
+      assertIsDefined(formSubmissionReceiverEmail, "formSubmissionReceiverEmail");
 
       sendEmail({
         subject: data.values.subject,
         from: `${data.values.name} <${data.values.email}>`,
-        to: emailToReceive,
+        to: formSubmissionReceiverEmail,
         body: createEmailByFormSubmission(data, content),
       });
 

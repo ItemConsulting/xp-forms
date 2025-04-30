@@ -97,8 +97,9 @@ function getSchemaId(id: string, baseUrl?: string): string {
 }
 
 function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty> {
-  return field.type === "checkboxes"
-    ? {
+  switch (field.type) {
+    case "checkboxes":
+      return {
         [field.name]: {
           type: "array",
           items: {
@@ -108,14 +109,26 @@ function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty>
           minItems: field.properties.validationMinItems?.minItems,
           maxItems: field.properties.validationMaxItems?.maxItems,
         },
-      }
-    : {
+      };
+    case "input":
+    case "textarea":
+      return {
         [field.name]: {
           type: "string",
           description: field.description,
-          // TODO minLength, maxLength, pattern
+          minLength: field.properties.validationMinLength?.minLength,
+          maxLength: field.properties.validationMaxLength?.maxLength,
+          pattern: field.properties.validationPattern?.regexString,
         },
       };
+    default:
+      return {
+        [field.name]: {
+          type: "string",
+          description: field.description,
+        },
+      };
+  }
 }
 
 function getRequired(field: FormFieldNormalized): string[] {
@@ -148,7 +161,7 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         name: getName(field.select),
         description: field.select.label,
         properties: field.select.properties,
-        options: forceArray(field.select.options).reduce(optionReducer, {}),
+        options: forceArray(field.select.options).reduce(getOptionsReducer, {}),
       };
     case "checkboxes":
       return {
@@ -156,7 +169,7 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         name: getName(field.checkboxes),
         description: field.checkboxes.label,
         properties: field.checkboxes.properties,
-        options: field.checkboxes.options.reduce(optionReducer, {}),
+        options: field.checkboxes.options.reduce(getOptionsReducer, {}),
       };
     case "radiobuttons":
       return {
@@ -164,7 +177,7 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         name: getName(field.radiobuttons),
         description: field.radiobuttons.label,
         properties: field.radiobuttons.properties,
-        options: field.radiobuttons.options.reduce(optionReducer, {}),
+        options: field.radiobuttons.options.reduce(getOptionsReducer, {}),
       };
     case "hidden":
       return {
@@ -175,6 +188,10 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
   }
 }
 
-function optionReducer(acc: Record<string, string>, curr: { value: string; text: string }): Record<string, string> {
-  return { ...acc, [curr.value]: curr.text };
+function getOptionsReducer(
+  result: Record<string, string>,
+  option: { text: string; value: string },
+): Record<string, string> {
+  result[option.value] = option.text;
+  return result;
 }

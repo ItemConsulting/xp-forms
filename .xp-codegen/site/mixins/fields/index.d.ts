@@ -426,7 +426,7 @@ export type Fields = {
           /**
            * Initialize field with this value
            */
-          value?: string;
+          value?: Array<string> | string;
 
           /**
            * Options
