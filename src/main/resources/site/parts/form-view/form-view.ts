@@ -21,7 +21,7 @@ import {
 import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
 import { getJsonSchema } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
-import { getReferenceJsonSchema } from "/lib/forms/extensions";
+import { getIntegration, getReferenceJsonSchema } from "/lib/forms/extensions";
 import type { Form as FormRaw } from "/site/content-types";
 import type {
   FreemarkerParams,
@@ -115,7 +115,11 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
 
   const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
-  const adminErrors = referenceSchema ? compareSchemas(referenceSchema, getJsonSchema(content), locale) : undefined;
+  const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
+  const adminErrors =
+    referenceSchema && integration
+      ? compareSchemas(referenceSchema, getJsonSchema(content), locale, integration)
+      : undefined;
 
   // Form-content with errors in them will probably fail on submission, so it's better to fail early in live mode.
   if (req.mode === "live" && adminErrors && adminErrors.errors.length > 0) {

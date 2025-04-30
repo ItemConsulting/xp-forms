@@ -12,23 +12,25 @@ export type JSONSchema = {
   required: string[];
 };
 
-type SchemaProperty =
-  | {
-      type: "string";
-      description?: string;
-      minLength?: number;
-      maxLength?: number;
-      pattern?: string;
-    }
-  | {
-      type: "array";
-      description?: string;
-      items: {
-        type: string;
-      };
-      minItems?: number;
-      maxItems?: number;
-    };
+type SchemaPropertyString = {
+  type: "string";
+  description?: string;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+};
+
+type SchemaPropertyArray = {
+  type: "array";
+  description?: string;
+  items: {
+    type: string;
+  };
+  minItems?: number;
+  maxItems?: number;
+};
+
+type SchemaProperty = SchemaPropertyString | SchemaPropertyArray;
 
 export type FormFieldNormalized =
   | {
@@ -99,27 +101,46 @@ function getSchemaId(id: string, baseUrl?: string): string {
 function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty> {
   switch (field.type) {
     case "checkboxes":
-      return {
-        [field.name]: {
-          type: "array",
-          items: {
-            type: "string",
-          },
-          description: field.description,
-          minItems: field.properties.validationMinItems?.minItems,
-          maxItems: field.properties.validationMaxItems?.maxItems,
+      const arrProperty: SchemaPropertyArray = {
+        type: "array",
+        items: {
+          type: "string",
         },
+        description: field.description,
+      };
+
+      if (field.properties.validationMinItems?.minItems) {
+        arrProperty.minItems = field.properties.validationMinItems.minItems;
+      }
+
+      if (field.properties.validationMaxItems?.maxItems) {
+        arrProperty.maxItems = field.properties.validationMaxItems.maxItems;
+      }
+
+      return {
+        [field.name]: arrProperty,
       };
     case "input":
     case "textarea":
+      const strProperty: SchemaPropertyString = {
+        type: "string",
+        description: field.description,
+      };
+
+      if (field.properties.validationMinLength?.minLength) {
+        strProperty.minLength = field.properties.validationMinLength.minLength;
+      }
+
+      if (field.properties.validationMaxLength?.maxLength) {
+        strProperty.maxLength = field.properties.validationMaxLength.maxLength;
+      }
+
+      if (field.properties.validationPattern?.regexString) {
+        strProperty.pattern = field.properties.validationPattern.regexString;
+      }
+
       return {
-        [field.name]: {
-          type: "string",
-          description: field.description,
-          minLength: field.properties.validationMinLength?.minLength,
-          maxLength: field.properties.validationMaxLength?.maxLength,
-          pattern: field.properties.validationPattern?.regexString,
-        },
+        [field.name]: strProperty,
       };
     default:
       return {

@@ -1,6 +1,7 @@
 import { difference, flatMap, intersection } from "/lib/forms/arrays";
 import { localize } from "/lib/xp/i18n";
 import type { JSONSchema } from "/lib/forms/json-schema";
+import type { Integration } from "/lib/forms/extensions";
 
 export type SchemaError = {
   errors: string[];
@@ -11,12 +12,21 @@ type MissingValidation = [key: string, validationType: string];
 
 const VALIDATION_TYPES = ["minLength", "maxLength", "minItems", "maxItems", "pattern"] as const;
 
-export function compareSchemas(referenceSchema: JSONSchema, contentSchema: JSONSchema, locale: string): SchemaError {
-  // TODO What if the field exists, but it is not put as required? We should give a message saying that the validation needs to be turned on.
+export function compareSchemas(
+  referenceSchema: JSONSchema,
+  contentSchema: JSONSchema,
+  locale: string,
+  integration: Integration,
+): SchemaError {
   const errors = difference(referenceSchema.required, contentSchema.required).map((key) => {
+    const validationName = localize({
+      key: "mixin.fieldPropsInput.validation.required",
+      locale,
+    });
+
     return localize({
-      key: "adminValidation.requiredFieldMissing",
-      values: [key],
+      key: "adminValidation.validationMissing",
+      values: [integration.displayName, key, validationName],
       locale,
     });
   });
@@ -24,15 +34,20 @@ export function compareSchemas(referenceSchema: JSONSchema, contentSchema: JSONS
   const missingFields = difference(getOptionalKeys(referenceSchema), getOptionalKeys(contentSchema)).map((key) => {
     return localize({
       key: "adminValidation.optionalFieldMissing",
-      values: [key],
+      values: [integration.displayName, key],
       locale,
     });
   });
 
-  const missingValidations = getValidation(referenceSchema, contentSchema).map((values) => {
+  const missingValidations = getValidation(referenceSchema, contentSchema).map(([key, validationType]) => {
+    const validationName = localize({
+      key: `mixin.fieldPropsInput.validation.${validationType}`,
+      locale,
+    });
+
     return localize({
-      key: "adminValidation.optionalValidation",
-      values,
+      key: "adminValidation.validationMissing",
+      values: [integration.displayName, key, validationName],
       locale,
     });
   });

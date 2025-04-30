@@ -81,6 +81,7 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
         name: {
           type: "string",
           description: "Name",
+          minLength: 3,
         },
         email: {
           type: "string",

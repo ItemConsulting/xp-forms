@@ -1,6 +1,7 @@
+import { find } from "/lib/forms/arrays";
 import type { JSONSchema } from "/lib/forms/json-schema";
 
-type Integration = {
+export type Integration = {
   id: string;
   displayName: string;
   description?: string;
@@ -13,6 +14,10 @@ const extensionsBean = __.newBean<{
 
 export function getIntegrations(): Integration[] {
   return __.toNativeObject(extensionsBean.getIntegrations());
+}
+
+export function getIntegration(id: string): Integration | undefined {
+  return find(getIntegrations(), (integration) => integration.id === id);
 }
 
 export function getReferenceJsonSchema(id: string): JSONSchema | undefined {
