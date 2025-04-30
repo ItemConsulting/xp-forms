@@ -30,7 +30,7 @@ type SchemaProperty =
       maxItems?: number;
     };
 
-type FormFieldNormalized =
+export type FormFieldNormalized =
   | {
       type: "input";
       name: string;
@@ -48,18 +48,21 @@ type FormFieldNormalized =
       name: string;
       description?: string;
       properties: Properties<"select">;
+      options: Record<string, string>;
     }
   | {
       type: "checkboxes";
       name: string;
       description?: string;
       properties: Properties<"checkboxes">;
+      options: Record<string, string>;
     }
   | {
       type: "radiobuttons";
       name: string;
       description?: string;
       properties: Properties<"radiobuttons">;
+      options: Record<string, string>;
     }
   | {
       type: "hidden";
@@ -69,9 +72,7 @@ type FormFieldNormalized =
     };
 
 export function getJsonSchema(content: Content<Form>, baseUrl?: string): JSONSchema {
-  const pages = forceArray(content.data.pages);
-
-  const fields = flatMap(pages, (page) => page.fields).map(normalizeField);
+  const fields = normalizeFields(content);
 
   return {
     $schema: "https://json-schema.org/draft/2020-12/schema",
@@ -121,6 +122,10 @@ function getRequired(field: FormFieldNormalized): string[] {
   return field.type !== "hidden" && hasSelectedValue(field.properties, "validationRequired") ? [field.name] : [];
 }
 
+export function normalizeFields(content: Content<Form>): FormFieldNormalized[] {
+  return flatMap(forceArray(content.data.pages), (page) => page.fields).map(normalizeField);
+}
+
 function normalizeField(field: FormFieldRaw): FormFieldNormalized {
   switch (field._selected) {
     case "input":
@@ -143,6 +148,7 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         name: getName(field.select),
         description: field.select.label,
         properties: field.select.properties,
+        options: forceArray(field.select.options).reduce(optionReducer, {}),
       };
     case "checkboxes":
       return {
@@ -150,6 +156,7 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         name: getName(field.checkboxes),
         description: field.checkboxes.label,
         properties: field.checkboxes.properties,
+        options: field.checkboxes.options.reduce(optionReducer, {}),
       };
     case "radiobuttons":
       return {
@@ -157,6 +164,7 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         name: getName(field.radiobuttons),
         description: field.radiobuttons.label,
         properties: field.radiobuttons.properties,
+        options: field.radiobuttons.options.reduce(optionReducer, {}),
       };
     case "hidden":
       return {
@@ -165,4 +173,8 @@ function normalizeField(field: FormFieldRaw): FormFieldNormalized {
         properties: {},
       };
   }
+}
+
+function optionReducer(acc: Record<string, string>, curr: { value: string; text: string }): Record<string, string> {
+  return { ...acc, [curr.value]: curr.text };
 }
