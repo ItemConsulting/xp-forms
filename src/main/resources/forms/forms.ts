@@ -1,5 +1,6 @@
 import { findRepoThatContainsContentWithId, runAsAdmin } from "/lib/forms/contexts";
 import { localize } from "/lib/xp/i18n";
+import { getUser } from "/lib/xp/auth";
 import { getSiteConfig } from "/lib/xp/content";
 import { send as sendEmail } from "/lib/xp/mail";
 import { assertIsDefined } from "/lib/forms/utils";
@@ -49,6 +50,14 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
         },
       },
       required: ["name", "email", "subject"],
+    },
+    values() {
+      const user = getUser();
+
+      return {
+        name: user?.displayName,
+        email: user?.email,
+      };
     },
   };
 }

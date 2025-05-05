@@ -25,9 +25,10 @@
     "versioning": "npx changeset version && npm i --package-lock-only && NEW_VERSION=$(node -p \"require('./package.json').version\") && sed -i \"s/version.*/version = ${NEW_VERSION}/\" gradle.properties"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.2",
+    "@changesets/cli": "^2.29.3",
     "@enonic-types/core": "^7",
     "@enonic-types/global": "^7",
+    "@enonic-types/lib-auth": "^7",
     "@enonic-types/lib-common": "^7",
     "@enonic-types/lib-content": "^7",
     "@enonic-types/lib-context": "^7",
@@ -60,9 +61,9 @@
     "concurrently": "^9",
     "cssnano": "^7.0.6",
     "esbuild-plugin-globals": "^0.2.0",
-    "eslint": "^9",
+    "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-prettier": "^5.4.0",
     "glob": "^11.0.2",
     "postcss": "^8.5.3",
     "postcss-cli": "^11.0.1",
