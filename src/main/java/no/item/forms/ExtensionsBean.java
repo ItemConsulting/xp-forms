@@ -68,6 +68,7 @@ public class ExtensionsBean implements ScriptBean {
 
   private Optional<ScriptValue> executeMemberFunction(ScriptValue obj, String functionName) {
     ScriptValue func = obj.getMember(functionName);
+
     if (func != null && func.isFunction()) {
       return Optional.of(func.call());
     } else {

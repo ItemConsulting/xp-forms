@@ -393,7 +393,7 @@ export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized
   }, {});
 }
 
-function resolveValue(field: FormFieldNormalized, value: string | string[]): string {
+function resolveValue(field: FormFieldNormalized, value: string | string[]): string | string[] {
   const singleValue = forceArray(value)[0];
 
   switch (field.type) {
@@ -404,9 +404,7 @@ function resolveValue(field: FormFieldNormalized, value: string | string[]): str
 
     // Look up labels for multiple values
     case "checkboxes":
-      return forceArray(value)
-        .map((value) => field.options[value])
-        .join(", ");
+      return forceArray(value).map((value) => field.options[value]);
 
     // Return single value
     case "input":
