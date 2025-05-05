@@ -122,5 +122,3 @@ public class ExtensionsBean implements ScriptBean {
     return portalRequest;
   }
 }
-
-
