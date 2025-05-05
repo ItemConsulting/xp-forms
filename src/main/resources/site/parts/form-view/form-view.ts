@@ -19,9 +19,14 @@ import {
   type ValidatorConfig,
 } from "/lib/forms/validation";
 import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
-import { getJsonSchema } from "/lib/forms/json-schema";
+import { getJsonSchema, normalizeFields, type FormFieldNormalized } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
-import { getIntegration, getReferenceJsonSchema } from "/lib/forms/extensions";
+import {
+  getIntegration,
+  getPrepopulationValues,
+  getReferenceJsonSchema,
+  type Integration,
+} from "/lib/forms/extensions";
 import type { Form as FormRaw } from "/site/content-types";
 import type {
   FreemarkerParams,
@@ -31,7 +36,15 @@ import type {
   Page,
 } from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
-import type { FormEvent } from "/forms/forms";
+
+export type FormEvent<Values extends SubmittedValues> = {
+  siteId: string;
+  formId: string;
+  branch: string | undefined;
+  integration?: Integration;
+  fields: FormFieldNormalized[];
+  values: Values;
+};
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;
@@ -60,9 +73,12 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
 
   const values: SubmittedValues = {
+    ...getPrepopulationValues(content.data.integrationId),
     ...loadFromStore(usersFormKey),
     ...formValues,
   };
+
+  const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
 
   const errors = req.method === "POST" ? getErrors(values, content, locale) : {};
 
@@ -72,14 +88,17 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
     assertIsDefined(site);
 
+    const fields = normalizeFields(content);
+
     sendEvent<FormEvent<SubmittedValues>>({
       type: "form.submit",
       data: {
         siteId: site._id,
         formId: content._id,
         branch: req.branch,
-        integrationId: content.data.integrationId,
-        values,
+        integration,
+        fields,
+        values: resolveValues(values, fields),
       },
       distributed: false,
     });
@@ -115,7 +134,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
 
   const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
-  const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
   const adminErrors =
     referenceSchema && integration
       ? compareSchemas(referenceSchema, getJsonSchema(content), locale, integration)
@@ -362,4 +380,37 @@ function getValidator(field: FormFieldRaw, locale: string): ValidatorConfig[] {
   }
 
   return validators;
+}
+
+export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {
+  return fields.reduce<SubmittedValues>((res, value) => {
+    const dataValue = data[value.name];
+
+    if (dataValue) {
+      res[value.name] = resolveValue(value, dataValue);
+    }
+    return res;
+  }, {});
+}
+
+function resolveValue(field: FormFieldNormalized, value: string | string[]): string | string[] {
+  const singleValue = forceArray(value)[0];
+
+  switch (field.type) {
+    // Look up label for single value
+    case "select":
+    case "radiobuttons":
+      return field.options[singleValue];
+
+    // Look up labels for multiple values
+    case "checkboxes":
+      return forceArray(value).map((value) => field.options[value]);
+
+    // Return single value
+    case "input":
+    case "textarea":
+    case "hidden":
+    default:
+      return singleValue ?? "";
+  }
 }

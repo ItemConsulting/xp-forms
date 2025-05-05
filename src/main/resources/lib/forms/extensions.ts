@@ -7,13 +7,26 @@ export type Integration = {
   description?: string;
 };
 
+export type FormExtensions = {
+  id: string;
+  displayName: string;
+  description?: string;
+  jsonSchema?: JSONSchema;
+  values?: () => Record<string, unknown> | undefined;
+};
+
 const extensionsBean = __.newBean<{
   getIntegrations(): Integration[];
+  getPrepopulationValues(id: string): Record<string, unknown> | undefined;
   getReferenceJsonSchema(id: string): JSONSchema | null;
 }>("no.item.forms.ExtensionsBean");
 
 export function getIntegrations(): Integration[] {
   return __.toNativeObject(extensionsBean.getIntegrations());
+}
+
+export function getPrepopulationValues(id?: string): Record<string, unknown> {
+  return id ? (__.toNativeObject(extensionsBean.getPrepopulationValues(id)) ?? {}) : {};
 }
 
 export function getIntegration(id: string): Integration | undefined {

@@ -18,7 +18,7 @@ export function compareSchemas(
   locale: string,
   integration: Integration,
 ): SchemaError {
-  const errors = difference(referenceSchema.required, contentSchema.required).map((key) => {
+  const errors = difference(referenceSchema.required ?? [], contentSchema.required ?? []).map((key) => {
     const validationName = localize({
       key: "mixin.fieldPropsInput.validation.required",
       locale,
@@ -59,7 +59,7 @@ export function compareSchemas(
 }
 
 function getOptionalKeys(schema: JSONSchema): string[] {
-  return difference(Object.keys(schema.properties), schema.required);
+  return difference(Object.keys(schema.properties), schema.required ?? []);
 }
 
 function getValidation(referenceSchema: JSONSchema, contentSchema: JSONSchema): MissingValidation[] {
