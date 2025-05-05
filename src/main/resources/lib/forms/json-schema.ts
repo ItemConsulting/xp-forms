@@ -5,7 +5,7 @@ import type { Form } from "/site/content-types";
 
 export type JSONSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema";
-  $id: string;
+  $id?: string;
   title: string;
   type: string;
   properties: Record<string, SchemaProperty>;

@@ -7,6 +7,14 @@ export type Integration = {
   description?: string;
 };
 
+export type FormExtensions = {
+  id: string;
+  displayName: string;
+  description?: string;
+  jsonSchema?: JSONSchema;
+  values?: () => Record<string, unknown> | undefined;
+};
+
 const extensionsBean = __.newBean<{
   getIntegrations(): Integration[];
   getPrepopulationValues(id: string): Record<string, unknown> | undefined;
