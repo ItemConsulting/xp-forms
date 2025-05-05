@@ -14,6 +14,7 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import no.item.forms.mapper.IntegrationsMapper;
 import no.item.forms.mapper.JsonSchemaMapper;
+import no.item.forms.mapper.MapMapper;
 import no.item.forms.mapper.PortalRequestMapper;
 import no.item.forms.record.ExtensionResult;
 import org.slf4j.Logger;
@@ -57,6 +58,23 @@ public class ExtensionsBean implements ScriptBean {
 
     if (result != null) {
       return new JsonSchemaMapper(result);
+    }
+
+    return null;
+  }
+
+  public Object getPrepopulationValues(String id) {
+    ApplicationKey key = ApplicationKey.from(id.split(":")[0]);
+
+    ExtensionResult res = executeMethod(key);
+
+    if (res != null && res.value().isObject()) {
+      ScriptValue func = res.value().getMember("values");
+
+      if (func != null && func.isFunction()) {
+        ScriptValue values = func.call();
+        return new MapMapper(values.getMap());
+      }
     }
 
     return null;

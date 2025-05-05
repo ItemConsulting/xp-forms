@@ -50,7 +50,7 @@ type FormExtensions = {
   displayName: string;
   description?: string;
   jsonSchema?: JSONSchema;
-  populateFields?: () => Record<string, unknown> | undefined;
+  values?: () => Record<string, unknown> | undefined;
 };
 
 export type EmailFormData = FormEvent<{

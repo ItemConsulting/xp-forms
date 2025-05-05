@@ -21,7 +21,7 @@ import {
 import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
 import { getJsonSchema } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
-import { getIntegration, getReferenceJsonSchema } from "/lib/forms/extensions";
+import { getIntegration, getPrepopulationValues, getReferenceJsonSchema } from "/lib/forms/extensions";
 import type { Form as FormRaw } from "/site/content-types";
 import type {
   FreemarkerParams,
@@ -60,6 +60,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
 
   const values: SubmittedValues = {
+    ...getPrepopulationValues(content.data.integrationId),
     ...loadFromStore(usersFormKey),
     ...formValues,
   };
