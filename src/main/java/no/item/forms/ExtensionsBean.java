@@ -20,7 +20,7 @@ import no.item.forms.record.ExtensionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,42 +52,40 @@ public class ExtensionsBean implements ScriptBean {
   }
 
   public Object getReferenceJsonSchema(String id) {
-    ApplicationKey key = ApplicationKey.from(id.split(":")[0]);
-
-    ExtensionResult result = executeMethod(key);
-
-    if (result != null) {
-      return new JsonSchemaMapper(result);
-    }
-
-    return null;
+    return executeMethod(id)
+            .map(JsonSchemaMapper::new)
+            .orElse(null);
   }
 
   public Object getPrepopulationValues(String id) {
-    ApplicationKey key = ApplicationKey.from(id.split(":")[0]);
+    return executeMethod(id)
+            .map(ExtensionResult::value)
+            .filter(ScriptValue::isObject)
+            .flatMap(obj -> executeMemberFunction(obj, "values"))
+            .map(res -> new MapMapper(res.getMap()))
+            .orElse(null);
+  }
 
-    ExtensionResult res = executeMethod(key);
-
-    if (res != null && res.value().isObject()) {
-      ScriptValue func = res.value().getMember("values");
-
-      if (func != null && func.isFunction()) {
-        ScriptValue values = func.call();
-        return new MapMapper(values.getMap());
-      }
+  private Optional<ScriptValue> executeMemberFunction(ScriptValue obj, String functionName) {
+    ScriptValue func = obj.getMember(functionName);
+    if (func != null && func.isFunction()) {
+      return Optional.of(func.call());
+    } else {
+      return Optional.empty();
     }
+  }
 
-    return null;
+  private String getIdFromScriptValue(ScriptValue value) {
+    return (String) value.getMap().get("id");
   }
 
   private Stream<ExtensionResult> getExtensionsStream() {
     return applicationService.get().getInstalledApplications().stream()
-      .map(Application::getKey)
-      .map(this::executeMethod)
-      .filter(Objects::nonNull);
+            .map(Application::getKey)
+            .flatMap(this::executeMethod);
   }
 
-  private ExtensionResult executeMethod(ApplicationKey applicationKey) {
+  private Stream<ExtensionResult> executeMethod(ApplicationKey applicationKey) {
     PortalRequest oldPortalRequest = PortalRequestAccessor.get();
 
     PortalRequest tmpPortalRequest = copyPortalRequest(oldPortalRequest);
@@ -104,7 +102,7 @@ public class ExtensionsBean implements ScriptBean {
               ScriptValue value = scriptExports.executeMethod(EXTENSIONS_METHOD_NAME, new PortalRequestMapper(tmpPortalRequest));
 
               if (value != null) {
-                return new ExtensionResult(applicationKey, value);
+                return Stream.of(new ExtensionResult(applicationKey, value)).flatMap(this::unwrapResultArrays);
               }
             } catch (Exception e) {
               LOG.warn("{} function can not be extracted from {}", EXTENSIONS_METHOD_NAME, SCRIPT_PATH, e);
@@ -116,7 +114,26 @@ public class ExtensionsBean implements ScriptBean {
       PortalRequestAccessor.set( oldPortalRequest );
     }
 
-    return null;
+    return Stream.empty();
+  }
+
+  private Optional<ExtensionResult> executeMethod(String id) {
+    String[] parts = id.split(":");
+    ApplicationKey key = ApplicationKey.from(parts[0]);
+
+    return executeMethod(key)
+            .filter(res -> getIdFromScriptValue(res.value()).equals(parts[1]))
+            .findFirst();
+  }
+
+  private Stream<ExtensionResult> unwrapResultArrays(ExtensionResult result) {
+    if (result == null) {
+      return Stream.empty();
+    } else if (result.value().isArray()) {
+      return result.value().getArray().stream().map(value -> new ExtensionResult(result.key(), value));
+    } else {
+      return Stream.of(result);
+    }
   }
 
   private PortalRequest copyPortalRequest(PortalRequest oldRequest) {

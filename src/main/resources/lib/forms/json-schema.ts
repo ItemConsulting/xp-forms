@@ -9,7 +9,7 @@ export type JSONSchema = {
   title: string;
   type: string;
   properties: Record<string, SchemaProperty>;
-  required: string[];
+  required?: string[];
 };
 
 type SchemaPropertyString = {
