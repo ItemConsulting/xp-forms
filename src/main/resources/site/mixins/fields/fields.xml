@@ -67,7 +67,32 @@
           <help-text i18n="mixin.fields.checkboxesHelpText">Users choose multiple answers from list of options</help-text>
 
           <items>
-            <mixin name="field-props-common"/>
+            <!-- Similar to field-props-common, but can have multiple values -->
+            <input name="label" type="TextLine">
+              <label i18n="mixin.fieldPropsCommon.label">Label</label>
+              <occurrences minimum="1" maximum="1"/>
+            </input>
+
+            <input name="name" type="TextLine">
+              <label i18n="mixin.fieldPropsCommon.name">name</label>
+              <help-text i18n="mixin.fieldPropsCommon.nameHelpText">Programmatic name for the field</help-text>
+              <occurrences minimum="0" maximum="1"/>
+              <config>
+                <regexp>^\S+$</regexp>
+              </config>
+            </input>
+
+            <input name="helpText" type="HtmlArea">
+              <label i18n="mixin.fieldPropsCommon.helpText">Help text</label>
+              <help-text i18n="mixin.fieldPropsCommon.helpTextHelpText">Text displayed beneath the "field name"</help-text>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+
+            <input name="value" type="TextLine">
+              <label i18n="mixin.fieldPropsCommon.value">Initialize field with this value</label>
+              <occurrences minimum="0" maximum="0"/>
+            </input>
+
             <mixin name="options"/>
             <mixin name="field-props-checkbox"/>
           </items>

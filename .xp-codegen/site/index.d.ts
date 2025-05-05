@@ -4,7 +4,10 @@ export type SiteConfig = XP.SiteConfig;
 declare global {
   namespace XP {
     interface SiteConfig {
-
+      /**
+       * Email address
+       */
+      formSubmissionReceiverEmail?: string;
     }
   }
 }

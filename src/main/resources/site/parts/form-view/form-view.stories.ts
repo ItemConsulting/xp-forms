@@ -19,6 +19,10 @@ export const formView: StoryObj<FreemarkerParams> = {
     errors: {
       name: ["Missing required field"],
     },
+    adminErrors: {
+      warnings: [],
+      errors: [],
+    },
     pages: [
       {
         type: "form-page",

@@ -87,8 +87,8 @@
         </option>
 
         <option name="validationRequired">
-          <label i18n="mixin.fieldPropsInput.validationRequired">Validation: Required</label>
-          <help-text i18n="mixin.fieldPropsInput.validationRequiredHelpText">This field must always have a value</help-text>
+          <label i18n="mixin.fieldPropsInput.validation.required">Validation: Required</label>
+          <help-text i18n="mixin.fieldPropsInput.validation.requiredHelpText">This field must always have a value</help-text>
           <items>
             <input name="errorMessage" type="TextLine">
               <label i18n="mixin.fieldPropsInput.errorMessage">Error message</label>
@@ -98,8 +98,8 @@
         </option>
 
         <option name="validationMinLength">
-          <label i18n="mixin.fieldPropsInput.validationMinLength">Validation: Minimum length</label>
-          <help-text i18n="mixin.fieldPropsInput.validationMinLengthHelpText">The input in this field must have a minimum length</help-text>
+          <label i18n="mixin.fieldPropsInput.validation.minLength">Validation: Minimum length</label>
+          <help-text i18n="mixin.fieldPropsInput.validation.minLengthHelpText">The input in this field must have a minimum length</help-text>
           <items>
             <input name="minLength" type="Long">
               <label i18n="mixin.fieldPropsInput.minLength">Minimum length</label>
@@ -114,8 +114,8 @@
         </option>
 
         <option name="validationMaxLength">
-          <label i18n="mixin.fieldPropsInput.validationMaxLength">Validation: Maximum length</label>
-          <help-text i18n="mixin.fieldPropsInput.validationMaxLengthHelpText">The input in this field can have a maximum length</help-text>
+          <label i18n="mixin.fieldPropsInput.validation.maxLength">Validation: Maximum length</label>
+          <help-text i18n="mixin.fieldPropsInput.validation.maxLengthHelpText">The input in this field can have a maximum length</help-text>
           <items>
             <input name="maxLength" type="Long">
               <label i18n="mixin.fieldPropsInput.maxLength">Maximum length</label>
@@ -130,8 +130,8 @@
         </option>
 
         <option name="validationPattern">
-          <label i18n="mixin.fieldPropsInput.validationPattern">Validation: Pattern</label>
-          <help-text i18n="mixin.fieldPropsInput.validationPatternHelpText">The input in this field must pass the specified regex</help-text>
+          <label i18n="mixin.fieldPropsInput.validation.pattern">Validation: Pattern</label>
+          <help-text i18n="mixin.fieldPropsInput.validation.patternHelpText">The input in this field must pass the specified regex</help-text>
           <items>
             <input name="regexString" type="TextLine">
               <label i18n="mixin.fieldPropsInput.regexString">Regex String</label>

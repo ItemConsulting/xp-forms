@@ -2,6 +2,7 @@
 [#-- @ftlvariable name="pages" type="java.util.ArrayList" --]
 [#-- @ftlvariable name="values" type="java.util.HashMap" --]
 [#-- @ftlvariable name="errors" type="java.util.HashMap" --]
+[#-- @ftlvariable name="adminErrors" type="java.util.List" --]
 [#-- @ftlvariable name="mode" type="String" --]
 [#import "../../partials/input/input.ftl" as Input]
 [#import "../../partials/text-area/text-area.ftl" as TextArea]
@@ -10,6 +11,16 @@
 [#import "../../partials/radiobuttons/radiobuttons.ftl" as RadioButtons]
 
 <div class="form-view">
+  [#if adminErrors?has_content]
+    [#list adminErrors.errors![] as error]
+      <div class="form-view--admin-error">${error}</div>
+    [/#list]
+
+    [#list adminErrors.warnings![] as error]
+      <div class="form-view--admin-warning">${error}</div>
+    [/#list]
+  [/#if]
+
   [#list pages as page]
     [#switch page.type]
       [#case "form-page"]

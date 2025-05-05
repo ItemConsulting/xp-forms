@@ -5,6 +5,19 @@
   <super-type>base:structured</super-type>
 
   <form>
+    <field-set>
+      <label i18n="contentType.form.submission">Submission</label>
+      <items>
+        <input name="integrationId" type="CustomSelector">
+          <label i18n="contentType.form.integrationId">Form type</label>
+          <occurrences minimum="0" maximum="1"/>
+          <config>
+            <service>form-integrations</service>
+          </config>
+        </input>
+      </items>
+    </field-set>
+
     <item-set name="pages">
       <label i18n="contentType.form.page">Page</label>
       <occurrences minimum="1" maximum="0"/>

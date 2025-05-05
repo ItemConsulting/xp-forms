@@ -2,16 +2,11 @@ import { getContent, getComponent, getSite, pageUrl, processHtml, type Content }
 import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
-import { sanitize } from "/lib/xp/common";
 import { localize } from "/lib/xp/i18n";
 import { getLocale } from "/lib/forms/locale";
 import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
-import type { Unarray } from "/lib/forms/types";
-import type { Form as FormRaw } from "/site/content-types";
-import type { FreemarkerParams, Field, Values, Option, Page } from "/site/parts/form-view/form-view.freemarker";
-import type { Request, Response, PartComponent } from "@enonic-types/core";
 import {
   maxItemsValidator,
   maxLengthValidator,
@@ -23,9 +18,21 @@ import {
   type Errors,
   type ValidatorConfig,
 } from "/lib/forms/validation";
+import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
+import { getJsonSchema } from "/lib/forms/json-schema";
+import { compareSchemas } from "/lib/forms/admin-schema-validation";
+import { getIntegration, getReferenceJsonSchema } from "/lib/forms/extensions";
+import type { Form as FormRaw } from "/site/content-types";
+import type {
+  FreemarkerParams,
+  Field,
+  SubmittedValues,
+  Option,
+  Page,
+} from "/site/parts/form-view/form-view.freemarker";
+import type { Request, Response, PartComponent } from "@enonic-types/core";
+import type { FormEvent } from "/forms/forms";
 
-type PageRaw = NonNullable<Unarray<FormRaw["pages"]>>;
-type FieldRaw = Unarray<PageRaw["fields"]>;
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 type ContentForm = Content<FormRaw, "no.item.forms:form">;
 
@@ -52,7 +59,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const partId = partPathToId(part.path);
   const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
 
-  const values: Values = {
+  const values: SubmittedValues = {
     ...loadFromStore(usersFormKey),
     ...formValues,
   };
@@ -65,11 +72,13 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
     assertIsDefined(site);
 
-    sendEvent({
+    sendEvent<FormEvent<SubmittedValues>>({
       type: "form.submit",
       data: {
         siteId: site._id,
         formId: content._id,
+        branch: req.branch,
+        integrationId: content.data.integrationId,
         values,
       },
       distributed: false,
@@ -105,6 +114,18 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     )
     .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
 
+  const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
+  const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
+  const adminErrors =
+    referenceSchema && integration
+      ? compareSchemas(referenceSchema, getJsonSchema(content), locale, integration)
+      : undefined;
+
+  // Form-content with errors in them will probably fail on submission, so it's better to fail early in live mode.
+  if (req.mode === "live" && adminErrors && adminErrors.errors.length > 0) {
+    throw new Error(adminErrors.errors[0]);
+  }
+
   return {
     body: render<FreemarkerParams>(view, {
       locale,
@@ -112,15 +133,16 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       pages: req.mode === "edit" ? pages : [pages[Math.min(pageIndex, pages.length)]],
       values,
       mode: req.mode,
+      adminErrors: req.mode !== "live" ? adminErrors : undefined,
     }),
   };
 }
 
-function loadFromStore(usersFormKey: string): Values {
+function loadFromStore(usersFormKey: string): SubmittedValues {
   return JSON.parse(store.get(usersFormKey) ?? "{}");
 }
 
-function saveToStore(usersFormKey: string, values: Values): void {
+function saveToStore(usersFormKey: string, values: SubmittedValues): void {
   store.set({
     key: usersFormKey,
     value: JSON.stringify(values),
@@ -128,7 +150,7 @@ function saveToStore(usersFormKey: string, values: Values): void {
   });
 }
 
-function getErrors(params: Values, content: ContentForm, locale: string): Errors {
+function getErrors(params: SubmittedValues, content: ContentForm, locale: string): Errors {
   const allFields = flatMap(forceArray(content.data.pages), (page) => page.fields);
   const validators = flatMap(allFields, (field) => getValidator(field, locale));
 
@@ -141,9 +163,9 @@ function hasErrors(errors: Errors): boolean {
 
 type GetPageParams = {
   id: string;
-  page: PageRaw;
+  page: FormPageRaw;
   locale: string;
-  values: Values;
+  values: SubmittedValues;
   content: Content;
   pageNumber: number;
 };
@@ -190,7 +212,7 @@ function getSuccessPage(sections: { text?: string }[], locale: string): Page {
   };
 }
 
-function getField(field: FieldRaw, fieldId: string, values: Values): Field | undefined {
+function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues): Field | undefined {
   switch (field._selected) {
     case "input":
       return {
@@ -282,16 +304,12 @@ function setChecked(
   });
 }
 
-function getFirstValue(values: Values, field: { label: string; name?: string }): string | undefined {
+function getFirstValue(values: SubmittedValues, field: { label: string; name?: string }): string | undefined {
   const value = values[getName(field)];
   return value && Array.isArray(value) ? value[0] : value;
 }
 
-function getName(field: { label: string; name?: string }): string {
-  return field.name ?? sanitize(field.label);
-}
-
-function getValidator(field: FieldRaw, locale: string): ValidatorConfig[] {
+function getValidator(field: FormFieldRaw, locale: string): ValidatorConfig[] {
   const validators: ValidatorConfig[] = [];
   switch (field._selected) {
     case "input":
@@ -344,8 +362,4 @@ function getValidator(field: FieldRaw, locale: string): ValidatorConfig[] {
   }
 
   return validators;
-}
-
-function hasSelectedValue<T extends string>(properties: { _selected: T[] }, value: NoInfer<T>): boolean {
-  return forceArray(properties._selected).indexOf(value) !== -1;
 }

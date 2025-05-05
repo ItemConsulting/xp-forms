@@ -11,6 +11,7 @@ export type FreemarkerParams = {
   pages: Page[];
   errors: Errors;
   values: Record<string, string[] | string | undefined>;
+  adminErrors?: Errors;
 };
 
 export type Page = FormPage | SuccessPage;
@@ -46,4 +47,4 @@ export type Option = {
 
 export type Field = InputField | TextAreaField | SelectField | CheckboxesField | RadioButtonsField | HiddenField;
 
-export type Values = Record<string, string[] | string | undefined>;
+export type SubmittedValues = Record<string, string[] | string | undefined>;
