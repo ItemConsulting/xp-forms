@@ -11,10 +11,10 @@ const meta: Meta<RadioButtonsField> = {
         template: `
           [#import "/site/partials/radiobuttons/radiobuttons.ftl" as RadioButtons]
           [@RadioButtons.render field={
-            "type": type,
-            "id": id,
+            "type": "radiobuttons",
+            "id": "input-1",
             "label": label,
-            "name": name,
+            "name": "fruit",
             "helpText": helpText,
             "options": options
           } locale=locale /]
@@ -28,12 +28,8 @@ export default meta;
 
 export const radiobuttons: StoryObj<RadioButtonsField> = {
   args: {
-    type: "radiobuttons",
-    id: "input-1",
     label: "Frukt",
-    name: "fruit",
     helpText: "Yndlingsfrukt",
-    value: "pear",
     options: [
       {
         text: "Pære",

@@ -8,6 +8,11 @@ declare global {
        * Email address
        */
       formSubmissionReceiverEmail?: string;
+
+      /**
+       * Include default styles
+       */
+      includeStyles: boolean;
     }
   }
 }

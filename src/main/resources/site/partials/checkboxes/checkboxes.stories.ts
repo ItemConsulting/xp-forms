@@ -11,10 +11,10 @@ const meta: Meta<CheckboxesField> = {
         template: `
           [#import "/site/partials/checkboxes/checkboxes.ftl" as Checkboxes]
           [@Checkboxes.render field={
-            "type": type,
-            "id": id,
+            "type": "checkboxes",
+            "id": "input-1",
             "label": label,
-            "name": name,
+            "name": "fruits",
             "helpText": helpText,
             "options": options
           } locale=locale /]
@@ -28,11 +28,8 @@ export default meta;
 
 export const checkboxes: StoryObj<CheckboxesField> = {
   args: {
-    type: "checkboxes",
-    id: "input-1",
     label: "Frukt",
-    name: "fruitlikes",
-    helpText: "Fullt navn",
+    helpText: "Velg frukten du vil ha til lunsj",
     options: [
       {
         text: "Pære",

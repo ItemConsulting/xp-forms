@@ -15,13 +15,14 @@ export default meta;
 
 export const formView: StoryObj<FreemarkerParams> = {
   args: {
-    locale: "no",
     errors: {
       name: ["Missing required field"],
     },
     adminErrors: {
-      warnings: [],
-      errors: [],
+      warnings: [`The form type "Email" requires an optional field with the name "subject"`],
+      errors: [
+        `The form type "Email" requires a field with the name "subject" that has "Validation: Maximum length" selected.`,
+      ],
     },
     pages: [
       {

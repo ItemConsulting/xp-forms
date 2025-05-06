@@ -9,6 +9,12 @@
         <regexp>^\S+@\S+\.\S+$</regexp>
       </config>
     </input>
+
+    <input name="includeStyles" type="CheckBox">
+      <label i18n="site.includeStyles">Include default styles</label>
+      <help-text i18n="site.includeStylesHelpText">It is recommended that each website provides its own styles for the forms. But you can include default styles by checking this box.</help-text>
+      <default>checked</default>
+    </input>
   </form>
 
   <processors>

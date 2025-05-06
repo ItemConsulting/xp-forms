@@ -1,4 +1,4 @@
-[#import "../form-control/form-control.ftl" as FormControl]
+[#import "../forms-control/forms-control.ftl" as FormControl]
 
 [#macro render field locale errors={}]
   [#assign ariaDescribedBy=FormControl.ariaDescribedBy(field, errors)]

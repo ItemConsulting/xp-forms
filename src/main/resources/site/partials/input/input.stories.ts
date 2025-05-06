@@ -1,9 +1,14 @@
 import id from "./input.ftl";
+import { controlAutocomplete, controlInputMode } from "../../../storybook-utils";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import type { InputField } from "./input.freemarker";
 
 const meta: Meta<InputField> = {
   title: "Field/Input",
+  argTypes: {
+    autocomplete: controlAutocomplete,
+    inputmode: controlInputMode,
+  },
   parameters: {
     server: {
       id,
@@ -11,10 +16,10 @@ const meta: Meta<InputField> = {
         template: `
           [#import "/site/partials/input/input.ftl" as Input]
           [@Input.render field={
-            "type": type,
-            "id": id,
+            "type": "input",
+            "id": "input-1",
             "label": label,
-            "name": name,
+            "name": "name",
             "autocomplete": autocomplete,
             "helpText": helpText,
             "inputmode": inputmode,
@@ -30,10 +35,7 @@ export default meta;
 
 export const input: StoryObj<InputField> = {
   args: {
-    type: "input",
-    id: "input-1",
     label: "Navn",
-    name: "name",
     autocomplete: "name",
     helpText: "Fullt navn",
     inputmode: "text",
