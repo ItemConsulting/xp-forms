@@ -1,3 +1,14 @@
+:root {
+  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+  --forms--color-border: #dee2e6;
+  --forms--color-error: #dc3545;
+  --forms--color-help-text: #333;
+  --forms--spacing-xs: 5px;
+  --forms--spacing-sm: 1lh;
+  --forms--input-padding: .5rem;
+}
+
 /*
   Josh's Custom CSS Reset
   https://www.joshwcomeau.com/css/custom-css-reset/

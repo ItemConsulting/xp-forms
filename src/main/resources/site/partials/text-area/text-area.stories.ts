@@ -1,9 +1,14 @@
 import id from "./text-area.ftl";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import type { TextAreaField } from "./text-area.freemarker";
+import { controlAutocomplete, controlInputMode } from "../../../storybook-utils";
 
 const meta: Meta<TextAreaField> = {
   title: "Field/TextArea",
+  argTypes: {
+    autocomplete: controlAutocomplete,
+    inputmode: controlInputMode,
+  },
   parameters: {
     server: {
       id,
@@ -11,10 +16,10 @@ const meta: Meta<TextAreaField> = {
         template: `
           [#import "/site/partials/text-area/text-area.ftl" as TextArea]
           [@TextArea.render field={
-            "type": type,
-            "id": id,
+            "type": "textarea",
+            "id": "input-1",
             "label": label,
-            "name": name,
+            "name": "name",
             "cols": cols,
             "rows": rows,
             "autocomplete": autocomplete,
@@ -32,15 +37,12 @@ export default meta;
 
 export const textArea: StoryObj<TextAreaField> = {
   args: {
-    type: "textarea",
-    id: "input-1",
-    label: "Navn",
-    name: "name",
+    label: "Adresse",
     cols: 60,
-    rows: 5,
-    autocomplete: "name",
-    helpText: "Fullt navn",
+    rows: 4,
+    autocomplete: "street-address",
+    helpText: "Leveringsadresse",
     inputmode: "text",
-    placeholder: "Skriv inn navnet ditt",
+    placeholder: "Stedveien 4\nPoststed 0000\nNorge",
   },
 };

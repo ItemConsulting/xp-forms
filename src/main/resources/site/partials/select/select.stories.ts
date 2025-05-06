@@ -11,10 +11,10 @@ const meta: Meta<SelectField> = {
         template: `
           [#import "/site/partials/select/select.ftl" as Select]
           [@Select.render field={
-            "type": type,
-            "id": id,
+            "type": "select",
+            "id": "input-1",
             "label": label,
-            "name": name,
+            "name": "fruit",
             "helpText": helpText,
             "options": options
           } locale=locale /]
@@ -28,12 +28,8 @@ export default meta;
 
 export const select: StoryObj<SelectField> = {
   args: {
-    type: "select",
-    id: "input-1",
     label: "Frukt",
-    name: "fruit",
     helpText: "Yndlingsfrukt",
-    value: "pear",
     options: [
       {
         text: "Pære",

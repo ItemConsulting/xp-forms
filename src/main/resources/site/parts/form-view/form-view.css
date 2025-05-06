@@ -1,0 +1,11 @@
+.forms {
+  form {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--forms--spacing-sm, 1lh);
+  }
+
+  button {
+    align-self: flex-start;
+  }
+}

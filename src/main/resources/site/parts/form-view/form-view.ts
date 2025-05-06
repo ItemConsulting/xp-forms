@@ -1,4 +1,13 @@
-import { getContent, getComponent, getSite, pageUrl, processHtml, type Content } from "/lib/xp/portal";
+import {
+  getContent,
+  getComponent,
+  getSite,
+  pageUrl,
+  processHtml,
+  getSiteConfig,
+  assetUrl,
+  type Content,
+} from "/lib/xp/portal";
 import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
@@ -60,9 +69,11 @@ type QueryParams = {
 export function all(req: Request<{ params: QueryParams }>): Response {
   const content = getContent<ContentForm>();
   const part = getComponent<FormViewPart>();
+  const siteConfig = getSiteConfig<XP.SiteConfig>();
 
   assertIsDefined(content);
   assertIsDefined(part);
+  assertIsDefined(siteConfig);
 
   const { page, ...formValues } = req.params;
   const pagesRaw = forceArray(content.data.pages);
@@ -153,7 +164,16 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       mode: req.mode,
       adminErrors: req.mode !== "live" ? adminErrors : undefined,
     }),
+    pageContributions: {
+      headEnd: ([] as string[])
+        .concat(createStyleTag("styles/content-studio.min.css", req.mode !== "live"))
+        .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true)),
+    },
   };
+}
+
+function createStyleTag(path: string, include: boolean): string[] {
+  return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
 }
 
 function loadFromStore(usersFormKey: string): SubmittedValues {

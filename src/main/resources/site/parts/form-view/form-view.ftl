@@ -10,7 +10,7 @@
 [#import "../../partials/checkboxes/checkboxes.ftl" as Checkboxes]
 [#import "../../partials/radiobuttons/radiobuttons.ftl" as RadioButtons]
 
-<div class="form-view">
+<div class="forms">
   [#if adminErrors?has_content]
     [#list adminErrors.errors![] as error]
       <div class="form-view--admin-error">${error}</div>
