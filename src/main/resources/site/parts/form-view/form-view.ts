@@ -1,17 +1,7 @@
-import {
-  getContent,
-  getComponent,
-  getSite,
-  pageUrl,
-  processHtml,
-  getSiteConfig,
-  assetUrl,
-  type Content,
-} from "/lib/xp/portal";
-import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
+import { getContent, getComponent, getSite, pageUrl, getSiteConfig, assetUrl, type Content } from "/lib/xp/portal";
+import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
-import { localize } from "/lib/xp/i18n";
 import { getLocale } from "/lib/forms/locale";
 import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
@@ -37,14 +27,12 @@ import {
   type Integration,
 } from "/lib/forms/extensions";
 import type { Form as FormRaw } from "/site/content-types";
-import type {
-  FreemarkerParams,
-  Field,
-  SubmittedValues,
-  Option,
-  Page,
-} from "/site/parts/form-view/form-view.freemarker";
+import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
+import { getFields, process as processFormPage } from "/site/partials/page-form/page-form";
+import { process as processReviewPage } from "/site/partials/page-review/page-review";
+import { process as processSuccessPage } from "/site/partials/page-success/page-success";
+import { localize } from "/lib/xp/i18n";
 
 export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;
@@ -77,8 +65,9 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
   const { page, ...formValues } = req.params;
   const pagesRaw = forceArray(content.data.pages);
+  const hasReviewPage = content.data.reviewPage._selected === "showReviewPage";
   const pageNumber = parseInt(page ?? "1");
-  const pageIndex = Math.min(pageNumber - 1, pagesRaw.length - 1 + SUCCESS_PAGE_COUNT); // zero indexed
+  const pageIndex = Math.min(pageNumber - 1, pagesRaw.length - 1 + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT); // zero indexed
   const locale = getLocale({ content });
   const partId = partPathToId(part.path);
   const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
@@ -131,18 +120,27 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     };
   }
 
-  const pages = pagesRaw
-    .map((page, index) =>
-      getFormPage({
-        id: `${partId}-page${index}`,
-        page,
-        locale,
-        values,
-        content,
-        pageNumber: index + 1,
-      }),
+  // TODO Look at performance. If we only are rendering one page, we should not always do the work for all
+
+  const formPages: string[] = pagesRaw.map((page, index) =>
+    processFormPage({
+      id: `${partId}-page${index}`,
+      page,
+      locale,
+      values,
+      content,
+      pageNumber: index + 1,
+    }),
+  );
+
+  const pages = ([] as string[])
+    .concat(formPages)
+    .concat(
+      hasReviewPage
+        ? getReviewPage(locale, partId, pagesRaw, resolveValues(values, normalizeFields(content)), content, pageIndex)
+        : [],
     )
-    .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
+    .concat(processSuccessPage(content, locale));
 
   const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
   const adminErrors =
@@ -161,7 +159,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       errors,
       pages: req.mode === "edit" ? pages : [pages[Math.min(pageIndex, pages.length)]],
       values,
-      mode: req.mode,
       adminErrors: req.mode !== "live" ? adminErrors : undefined,
     }),
     pageContributions: {
@@ -199,152 +196,42 @@ function hasErrors(errors: Errors): boolean {
   return Object.keys(errors).length > 0;
 }
 
-type GetPageParams = {
-  id: string;
-  page: FormPageRaw;
-  locale: string;
-  values: SubmittedValues;
-  content: Content;
-  pageNumber: number;
-};
-
-function getFormPage({ page, id, locale, values, content, pageNumber }: GetPageParams): Page {
-  return {
-    type: "form-page",
-    title: page.title,
-    text: page.text,
-    submitButtonText:
-      page.submitButtonText ??
+function getReviewPage(
+  locale: string,
+  partId: string,
+  pages: FormPageRaw[],
+  values: SubmittedValues,
+  content: ContentForm,
+  pageIndex: number,
+): string {
+  return processReviewPage({
+    locale,
+    title:
+      content.data.reviewPage.showReviewPage?.title ??
       localize({
-        key: "part.formView.submit",
+        key: "part.formView.reviewPageTitle",
         locale,
       }),
-    fields: forceArray(page.fields)
-      .map((field, index) => getField(field, `${id}-field${index}`, values))
-      .filter(notNullOrUndefined),
-    backUrl:
-      pageNumber > 1
-        ? pageUrl({
-            path: content._path,
-            params: {
-              page: (pageNumber - 1).toString(),
-            },
-          })
-        : undefined,
-  };
-}
-
-function getSuccessPage(sections: { text?: string }[], locale: string): Page {
-  return {
-    type: "success-page",
-    sections: sections.map((section) => ({
-      text: processHtml({
-        value:
-          section.text ??
-          localize({
-            key: "part.formView.success",
-            locale,
-          }),
+    sections: pages.map((page, index) => {
+      return {
+        title: page.title,
+        fields: getFields(page.fields, `${partId}-page${index}`, values),
+      };
+    }),
+    values,
+    backUrl: pageUrl({
+      path: content._path,
+      params: {
+        page: (pageIndex - 1).toString(),
+      },
+    }),
+    submitButtonText:
+      content.data.reviewPage.showReviewPage?.submitButtonText ??
+      localize({
+        key: "part.formView.reviewPageButtonText",
+        locale,
       }),
-    })),
-  };
-}
-
-function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues): Field | undefined {
-  switch (field._selected) {
-    case "input":
-      return {
-        type: "input",
-        id: fieldId,
-        label: field.input.label,
-        name: getName(field.input),
-        helpText: field.input.helpText,
-        value: getFirstValue(values, field.input) ?? field.input.value,
-        placeholder: field.input.properties?.placeholder?.placeholder,
-        autocomplete: field.input.properties?.autocomplete?.autocomplete,
-        inputmode: field.input.properties?.inputMode?.inputmode,
-        required: hasSelectedValue(field.input.properties, "validationRequired"),
-      };
-
-    case "textarea":
-      return {
-        type: "textarea",
-        id: fieldId,
-        label: field.textarea.label,
-        name: getName(field.textarea),
-        cols: field.textarea.cols,
-        rows: field.textarea.rows,
-        helpText: field.textarea.helpText,
-        value: getFirstValue(values, field.textarea) ?? field.textarea.value,
-        placeholder: field.textarea.properties?.placeholder?.placeholder,
-        autocomplete: field.textarea.properties?.autocomplete?.autocomplete,
-        inputmode: field.textarea.properties?.inputMode?.inputmode,
-        required: hasSelectedValue(field.textarea.properties, "validationRequired"),
-      };
-
-    case "select":
-      const selectValue = getFirstValue(values, field.select) ?? field.select.value;
-      return {
-        type: "select",
-        id: fieldId,
-        label: field.select.label,
-        name: getName(field.select),
-        helpText: field.select.helpText,
-        value: selectValue,
-        options: forceArray(field.select.options).map(setChecked(selectValue)),
-        required: hasSelectedValue(field.select.properties, "validationRequired"),
-      };
-
-    case "checkboxes":
-      const checkboxesValue = forceArray(values[getName(field.checkboxes)] ?? field.checkboxes.value);
-
-      return {
-        type: "checkboxes",
-        id: fieldId,
-        label: field.checkboxes.label,
-        name: getName(field.checkboxes),
-        helpText: field.checkboxes.helpText,
-        value: checkboxesValue,
-        options: forceArray(field.checkboxes.options).map(setChecked(checkboxesValue)),
-        required: hasSelectedValue(field.checkboxes.properties, "validationRequired"),
-      };
-
-    case "radiobuttons":
-      const radioButtonsValue = getFirstValue(values, field.radiobuttons) ?? field.radiobuttons.value;
-      return {
-        type: "radiobuttons",
-        id: fieldId,
-        label: field.radiobuttons.label,
-        name: getName(field.radiobuttons),
-        helpText: field.radiobuttons.helpText,
-        value: radioButtonsValue,
-        options: forceArray(field.radiobuttons.options).map(setChecked(radioButtonsValue)),
-        required: hasSelectedValue(field.radiobuttons.properties, "validationRequired"),
-      };
-
-    case "hidden":
-      return {
-        type: "hidden",
-        id: fieldId,
-        name: field.hidden.name,
-        value: field.hidden.value,
-      };
-  }
-}
-
-function setChecked(
-  currentValue: string[] | string | undefined,
-): ({ text, value }: { text: string; value: string }) => Option {
-  return ({ text, value }) => ({
-    text,
-    value,
-    checked: Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : currentValue === value,
   });
-}
-
-function getFirstValue(values: SubmittedValues, field: { label: string; name?: string }): string | undefined {
-  const value = values[getName(field)];
-  return value && Array.isArray(value) ? value[0] : value;
 }
 
 function getValidator(field: FormFieldRaw, locale: string): ValidatorConfig[] {

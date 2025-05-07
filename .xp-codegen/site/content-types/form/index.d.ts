@@ -543,6 +543,32 @@ export type Form = {
   }>;
 
   /**
+   * Review page
+   */
+  reviewPage:
+    | {
+        /**
+         * Selected
+         */
+        _selected: "showReviewPage";
+
+        /**
+         * Show review page
+         */
+        showReviewPage: {
+          /**
+           * Review page title
+           */
+          title: string;
+
+          /**
+           * Submit button text
+           */
+          submitButtonText: string;
+        };
+      };
+
+  /**
    * Success page
    */
   successPageSections: {
