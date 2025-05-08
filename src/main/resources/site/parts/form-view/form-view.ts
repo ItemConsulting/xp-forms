@@ -1,50 +1,25 @@
-import {
-  getContent,
-  getComponent,
-  getSite,
-  pageUrl,
-  processHtml,
-  getSiteConfig,
-  assetUrl,
-  type Content,
-} from "/lib/xp/portal";
-import { assertIsDefined, notNullOrUndefined, partPathToId } from "/lib/forms/utils";
+import { getContent, getComponent, getSite, pageUrl, getSiteConfig } from "/lib/xp/portal";
+import { assetUrl } from "/lib/enonic/asset";
+import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
-import { flatMap, forceArray } from "/lib/forms/arrays";
-import { localize } from "/lib/xp/i18n";
+import { forceArray } from "/lib/forms/arrays";
 import { getLocale } from "/lib/forms/locale";
-import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
-import {
-  maxItemsValidator,
-  maxLengthValidator,
-  minItemsValidator,
-  minLengthValidator,
-  patternValidator,
-  requiredValidator,
-  validate,
-  type Errors,
-  type ValidatorConfig,
-} from "/lib/forms/validation";
-import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
 import { getJsonSchema, normalizeFields, type FormFieldNormalized } from "/lib/forms/json-schema";
-import { compareSchemas } from "/lib/forms/admin-schema-validation";
+import { compareSchemas, type SchemaError } from "/lib/forms/admin-schema-validation";
 import {
   getIntegration,
   getPrepopulationValues,
   getReferenceJsonSchema,
   type Integration,
 } from "/lib/forms/extensions";
-import type { Form as FormRaw } from "/site/content-types";
-import type {
-  FreemarkerParams,
-  Field,
-  SubmittedValues,
-  Option,
-  Page,
-} from "/site/parts/form-view/form-view.freemarker";
+import { getErrors, type Errors } from "/lib/forms/form-utils";
+import { deleteFromStore, loadFromStore, saveToStore } from "/lib/forms/data-store";
+import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
+import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
+import type { ContentForm } from "/lib/forms/contents";
 
 export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;
@@ -56,11 +31,8 @@ export type FormEvent<Values extends SubmittedValues> = {
 };
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
-type ContentForm = Content<FormRaw, "no.item.forms:form">;
 
 const view = resolve("./form-view.ftl");
-const store = getMap<Record<string, string>>("no.item.forms");
-const SUCCESS_PAGE_COUNT = 1;
 
 type QueryParams = {
   page: string;
@@ -75,26 +47,31 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   assertIsDefined(part);
   assertIsDefined(siteConfig);
 
-  const { page, ...formValues } = req.params;
+  const { page, ...valuesFromUser } = req.params;
   const pagesRaw = forceArray(content.data.pages);
-  const pageNumber = parseInt(page ?? "1");
-  const pageIndex = Math.min(pageNumber - 1, pagesRaw.length - 1 + SUCCESS_PAGE_COUNT); // zero indexed
+  const hasReviewPage = content.data.reviewPage._selected === "showReviewPage";
+  const totalPages = pagesRaw.length + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT;
+  const currentPageNumber = Math.max(parseInt(page ?? "1"), RETURN_REVIEW_PAGE);
+  const currentPageIndex = Math.min(currentPageNumber, totalPages) - 1; // zero indexed
+  const currentPageRaw = pagesRaw[currentPageIndex];
   const locale = getLocale({ content });
-  const partId = partPathToId(part.path);
-  const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
 
   const values: SubmittedValues = {
     ...getPrepopulationValues(content.data.integrationId),
-    ...loadFromStore(usersFormKey),
-    ...formValues,
+    ...loadFromStore(req, content._id),
+    ...valuesFromUser,
   };
 
   const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
 
-  const errors = req.method === "POST" ? getErrors(values, content, locale) : {};
+  const errors = req.method === "POST" ? getErrors(values, currentPageRaw, locale) : {};
 
-  // If after last page
-  if (pageNumber > pagesRaw.length) {
+  // If after last page, send back to first page
+  if (currentPageNumber > totalPages) {
+    return redirectToPage(content, 1);
+  }
+  // If on the success page, send event
+  else if (currentPageNumber === totalPages) {
     const site = getSite();
 
     assertIsDefined(site);
@@ -114,36 +91,46 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       distributed: false,
     });
 
-    store.delete(usersFormKey);
-  } else if (req.method === "POST" && !hasErrors(errors)) {
-    saveToStore(usersFormKey, values);
-
-    return {
-      status: 303,
-      headers: {
-        [HEADER_KEY_REDIRECT]: pageUrl({
-          path: content._path,
-          params: {
-            page: (pageNumber + 1).toString(),
-          },
-        }),
-      },
-    };
+    deleteFromStore(req, content._id);
+  }
+  // If form submit, save values and redirect to next page
+  else if (req.method === "POST" && !hasErrors(errors)) {
+    saveToStore(req, content._id, values);
+    return redirectToPage(content, currentPageNumber + 1);
   }
 
-  const pages = pagesRaw
-    .map((page, index) =>
-      getFormPage({
-        id: `${partId}-page${index}`,
-        page,
-        locale,
-        values,
-        content,
-        pageNumber: index + 1,
-      }),
-    )
-    .concat(getSuccessPage(forceArray(content.data.successPageSections), locale));
+  const pages = getPages({
+    locale,
+    part,
+    content,
+    values,
+    errors,
+    pageIndex: req.mode === "edit" ? RETURN_ALL_PAGES : currentPageIndex,
+  });
 
+  return {
+    body: render<FreemarkerParams>(view, {
+      locale,
+      errors,
+      pages,
+      values,
+      frameId: `${partPathToId(part.path)}-frame`,
+      adminErrors: getAdminErrors(req, content, locale, integration),
+    }),
+    pageContributions: {
+      headEnd: ([] as string[])
+        .concat(createStyleTag("styles/content-studio.min.css", req.mode !== "live"))
+        .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true)),
+    },
+  };
+}
+
+function getAdminErrors(
+  req: Request,
+  content: ContentForm,
+  locale: string,
+  integration?: Integration,
+): SchemaError | undefined {
   const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
   const adminErrors =
     referenceSchema && integration
@@ -155,19 +142,19 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     throw new Error(adminErrors.errors[0]);
   }
 
+  return adminErrors;
+}
+
+function redirectToPage(content: ContentForm, pageNumber: number): Response {
   return {
-    body: render<FreemarkerParams>(view, {
-      locale,
-      errors,
-      pages: req.mode === "edit" ? pages : [pages[Math.min(pageIndex, pages.length)]],
-      values,
-      mode: req.mode,
-      adminErrors: req.mode !== "live" ? adminErrors : undefined,
-    }),
-    pageContributions: {
-      headEnd: ([] as string[])
-        .concat(createStyleTag("styles/content-studio.min.css", req.mode !== "live"))
-        .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true)),
+    status: 303,
+    headers: {
+      [HEADER_KEY_REDIRECT]: pageUrl({
+        path: content._path,
+        params: {
+          page: pageNumber.toString(),
+        },
+      }),
     },
   };
 }
@@ -176,230 +163,8 @@ function createStyleTag(path: string, include: boolean): string[] {
   return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
 }
 
-function loadFromStore(usersFormKey: string): SubmittedValues {
-  return JSON.parse(store.get(usersFormKey) ?? "{}");
-}
-
-function saveToStore(usersFormKey: string, values: SubmittedValues): void {
-  store.set({
-    key: usersFormKey,
-    value: JSON.stringify(values),
-    ttlSeconds: 3600,
-  });
-}
-
-function getErrors(params: SubmittedValues, content: ContentForm, locale: string): Errors {
-  const allFields = flatMap(forceArray(content.data.pages), (page) => page.fields);
-  const validators = flatMap(allFields, (field) => getValidator(field, locale));
-
-  return validate(params, validators);
-}
-
 function hasErrors(errors: Errors): boolean {
   return Object.keys(errors).length > 0;
-}
-
-type GetPageParams = {
-  id: string;
-  page: FormPageRaw;
-  locale: string;
-  values: SubmittedValues;
-  content: Content;
-  pageNumber: number;
-};
-
-function getFormPage({ page, id, locale, values, content, pageNumber }: GetPageParams): Page {
-  return {
-    type: "form-page",
-    title: page.title,
-    text: page.text,
-    submitButtonText:
-      page.submitButtonText ??
-      localize({
-        key: "part.formView.submit",
-        locale,
-      }),
-    fields: forceArray(page.fields)
-      .map((field, index) => getField(field, `${id}-field${index}`, values))
-      .filter(notNullOrUndefined),
-    backUrl:
-      pageNumber > 1
-        ? pageUrl({
-            path: content._path,
-            params: {
-              page: (pageNumber - 1).toString(),
-            },
-          })
-        : undefined,
-  };
-}
-
-function getSuccessPage(sections: { text?: string }[], locale: string): Page {
-  return {
-    type: "success-page",
-    sections: sections.map((section) => ({
-      text: processHtml({
-        value:
-          section.text ??
-          localize({
-            key: "part.formView.success",
-            locale,
-          }),
-      }),
-    })),
-  };
-}
-
-function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues): Field | undefined {
-  switch (field._selected) {
-    case "input":
-      return {
-        type: "input",
-        id: fieldId,
-        label: field.input.label,
-        name: getName(field.input),
-        helpText: field.input.helpText,
-        value: getFirstValue(values, field.input) ?? field.input.value,
-        placeholder: field.input.properties?.placeholder?.placeholder,
-        autocomplete: field.input.properties?.autocomplete?.autocomplete,
-        inputmode: field.input.properties?.inputMode?.inputmode,
-        required: hasSelectedValue(field.input.properties, "validationRequired"),
-      };
-
-    case "textarea":
-      return {
-        type: "textarea",
-        id: fieldId,
-        label: field.textarea.label,
-        name: getName(field.textarea),
-        cols: field.textarea.cols,
-        rows: field.textarea.rows,
-        helpText: field.textarea.helpText,
-        value: getFirstValue(values, field.textarea) ?? field.textarea.value,
-        placeholder: field.textarea.properties?.placeholder?.placeholder,
-        autocomplete: field.textarea.properties?.autocomplete?.autocomplete,
-        inputmode: field.textarea.properties?.inputMode?.inputmode,
-        required: hasSelectedValue(field.textarea.properties, "validationRequired"),
-      };
-
-    case "select":
-      const selectValue = getFirstValue(values, field.select) ?? field.select.value;
-      return {
-        type: "select",
-        id: fieldId,
-        label: field.select.label,
-        name: getName(field.select),
-        helpText: field.select.helpText,
-        value: selectValue,
-        options: forceArray(field.select.options).map(setChecked(selectValue)),
-        required: hasSelectedValue(field.select.properties, "validationRequired"),
-      };
-
-    case "checkboxes":
-      const checkboxesValue = forceArray(values[getName(field.checkboxes)] ?? field.checkboxes.value);
-
-      return {
-        type: "checkboxes",
-        id: fieldId,
-        label: field.checkboxes.label,
-        name: getName(field.checkboxes),
-        helpText: field.checkboxes.helpText,
-        value: checkboxesValue,
-        options: forceArray(field.checkboxes.options).map(setChecked(checkboxesValue)),
-        required: hasSelectedValue(field.checkboxes.properties, "validationRequired"),
-      };
-
-    case "radiobuttons":
-      const radioButtonsValue = getFirstValue(values, field.radiobuttons) ?? field.radiobuttons.value;
-      return {
-        type: "radiobuttons",
-        id: fieldId,
-        label: field.radiobuttons.label,
-        name: getName(field.radiobuttons),
-        helpText: field.radiobuttons.helpText,
-        value: radioButtonsValue,
-        options: forceArray(field.radiobuttons.options).map(setChecked(radioButtonsValue)),
-        required: hasSelectedValue(field.radiobuttons.properties, "validationRequired"),
-      };
-
-    case "hidden":
-      return {
-        type: "hidden",
-        id: fieldId,
-        name: field.hidden.name,
-        value: field.hidden.value,
-      };
-  }
-}
-
-function setChecked(
-  currentValue: string[] | string | undefined,
-): ({ text, value }: { text: string; value: string }) => Option {
-  return ({ text, value }) => ({
-    text,
-    value,
-    checked: Array.isArray(currentValue) ? currentValue.indexOf(value) !== -1 : currentValue === value,
-  });
-}
-
-function getFirstValue(values: SubmittedValues, field: { label: string; name?: string }): string | undefined {
-  const value = values[getName(field)];
-  return value && Array.isArray(value) ? value[0] : value;
-}
-
-function getValidator(field: FormFieldRaw, locale: string): ValidatorConfig[] {
-  const validators: ValidatorConfig[] = [];
-  switch (field._selected) {
-    case "input":
-    case "textarea":
-      const inputName = getName(field._selected === "input" ? field.input : field.textarea);
-      const inputProperties = field._selected === "input" ? field.input.properties : field.textarea.properties;
-
-      if (hasSelectedValue(inputProperties, "validationRequired")) {
-        validators.push(requiredValidator(inputName, inputProperties.validationRequired, locale));
-      }
-
-      if (hasSelectedValue(inputProperties, "validationMinLength")) {
-        validators.push(minLengthValidator(inputName, inputProperties.validationMinLength, locale));
-      }
-
-      if (hasSelectedValue(inputProperties, "validationMaxLength")) {
-        validators.push(maxLengthValidator(inputName, inputProperties.validationMaxLength, locale));
-      }
-
-      if (hasSelectedValue(inputProperties, "validationPattern")) {
-        validators.push(patternValidator(inputName, inputProperties.validationPattern, locale));
-      }
-
-      break;
-    case "select":
-    case "radiobuttons":
-      const selectName = getName(field._selected === "select" ? field.select : field.radiobuttons);
-      const properties = field._selected === "select" ? field.select.properties : field.radiobuttons.properties;
-
-      if (hasSelectedValue(properties, "validationRequired")) {
-        validators.push(requiredValidator(selectName, properties.validationRequired, locale));
-      }
-
-      break;
-    case "checkboxes":
-      const checkboxesName = getName(field.checkboxes);
-      if (hasSelectedValue(field.checkboxes.properties, "validationRequired")) {
-        validators.push(requiredValidator(checkboxesName, field.checkboxes.properties.validationRequired, locale));
-      }
-
-      if (hasSelectedValue(field.checkboxes.properties, "validationMinItems")) {
-        validators.push(minItemsValidator(checkboxesName, field.checkboxes.properties.validationMinItems, locale));
-      }
-
-      if (hasSelectedValue(field.checkboxes.properties, "validationMaxItems")) {
-        validators.push(maxItemsValidator(checkboxesName, field.checkboxes.properties.validationMaxItems, locale));
-      }
-
-      break;
-  }
-
-  return validators;
 }
 
 export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {

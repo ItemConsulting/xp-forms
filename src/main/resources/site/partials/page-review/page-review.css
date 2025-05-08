@@ -1,0 +1,28 @@
+.form-view--review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--forms--spacing-sm, 1lh);
+
+  .form-view--review-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--forms--spacing-sm, 1lh);
+  }
+
+  dl {
+    display: grid;
+    gap: var(--forms--spacing-xs, 5px);
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto;
+
+    dt {
+      grid-column-start: 1;
+      font-weight: bold;
+      padding-right: var(--forms--spacing-sm, 2rem);
+    }
+
+    dd {
+      grid-column-start: 2;
+    }
+  }
+}

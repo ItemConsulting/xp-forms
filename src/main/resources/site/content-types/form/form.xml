@@ -33,7 +33,7 @@
           <occurrences minimum="0" maximum="1"/>
         </input>
 
-        <mixin name="fields" />
+        <mixin name="fields"/>
 
         <input name="submitButtonText" type="TextLine">
           <label i18n="contentType.form.submitButtonText">Submit button text</label>
@@ -42,6 +42,30 @@
         </input>
       </items>
     </item-set>
+
+    <option-set name="reviewPage">
+      <label i18n="contentType.form.reviewPage">Review page</label>
+      <occurrences minimum="1" maximum="1"/>
+
+      <options minimum="0" maximum="1">
+        <option name="showReviewPage">
+          <label i18n="contentType.form.showReviewPage">Show review page</label>
+          <items>
+            <input name="title" type="TextLine">
+              <label i18n="contentType.form.showReviewPage.title">Review page title</label>
+              <occurrences minimum="1" maximum="1"/>
+              <default>Vurder svarene dine og send inn</default>
+            </input>
+
+            <input name="submitButtonText" type="TextLine">
+              <label i18n="contentType.form.submitButtonText">Submit button text</label>
+              <occurrences minimum="1" maximum="1"/>
+              <default>Aksepter og send inn</default>
+            </input>
+          </items>
+        </option>
+      </options>
+    </option-set>
 
     <item-set name="successPageSections">
       <label i18n="contentType.form.successPageSections">Success page</label>

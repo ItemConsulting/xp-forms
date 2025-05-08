@@ -5,7 +5,9 @@
     row-gap: var(--forms--spacing-sm, 1lh);
   }
 
+  .forms--back-link,
+  .forms--edit-link,
   button {
-    align-self: flex-start;
+    align-self: start;
   }
 }

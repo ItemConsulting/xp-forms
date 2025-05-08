@@ -39,6 +39,7 @@
     "paths": {
       "/lib/tineikt/freemarker": ["../../../node_modules/@item-enonic-types/lib-freemarker"],
       "/lib/xp/*": ["../../../node_modules/@enonic-types/lib-*"],
+      "/lib/enonic/*": ["../../../node_modules/@enonic-types/lib-*"],
       "/lib/*": ["../../../src/main/resources/lib/*", "../../../node_modules/@item-enonic-types/lib-*"],
       "/*": ["../../../src/main/resources/*","../../../.xp-codegen/*"]
     },
