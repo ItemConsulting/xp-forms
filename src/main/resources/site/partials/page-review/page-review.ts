@@ -25,6 +25,7 @@ export function process({ locale, partId, content, values, pageNumber, isPreview
 
   return render<PageReview>(view, {
     locale: locale,
+    frameId: `${partId}-frame`,
     isPreviewReviewPage,
     title:
       content.data.reviewPage.showReviewPage?.title ??

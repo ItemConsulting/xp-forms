@@ -1,5 +1,5 @@
 import { getContent, getComponent, getSite, pageUrl, getSiteConfig, assetUrl } from "/lib/xp/portal";
-import { assertIsDefined } from "/lib/forms/utils";
+import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { forceArray } from "/lib/forms/arrays";
 import { getLocale } from "/lib/forms/locale";
@@ -113,6 +113,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       errors,
       pages,
       values,
+      frameId: `${partPathToId(part.path)}-frame`,
       adminErrors: getAdminErrors(req, content, locale, integration),
     }),
     pageContributions: {

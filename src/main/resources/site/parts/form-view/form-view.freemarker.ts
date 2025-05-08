@@ -2,6 +2,7 @@ import type { Errors } from "/lib/forms/validation";
 
 export type FreemarkerParams = {
   locale: string;
+  frameId: string;
   pages: string[];
   errors: Errors;
   values: Record<string, string[] | string | undefined>;

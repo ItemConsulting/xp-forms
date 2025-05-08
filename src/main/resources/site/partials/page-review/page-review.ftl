@@ -1,4 +1,5 @@
 [#-- @ftlvariable name="locale" type="String" --]
+[#-- @ftlvariable name="frameId" type="String" --]
 [#-- @ftlvariable name="isPreviewReviewPage" type="Boolean" --]
 [#-- @ftlvariable name="editUrl" type="String" --]
 [#-- @ftlvariable name="backUrl" type="String" --]
@@ -14,20 +15,20 @@
 
 [#if isPreviewReviewPage]
   <div class="form-view--review">
-    <a href="${editUrl}" class="forms--edit-link">
+    <a href="${editUrl}" class="forms--edit-link" data-turbo-frame="_self">
       [@localize key="part.formView.edit" locale=locale /]
     </a>
 
     [@listSections /]
 
-    <a href="${editUrl}" class="forms--edit-link">
+    <a href="${editUrl}" class="forms--edit-link" data-turbo-frame="_self">
       [@localize key="part.formView.edit" locale=locale /]
     </a>
   </div>
 [#else]
   <div class="form-view--review">
-    <form method="post">
-      <a href="${backUrl}" class="forms--back-link">
+    <form method="post" data-turbo-frame="${frameId}">
+      <a href="${backUrl}" class="forms--back-link" data-turbo-frame="_self">
         [@localize key="part.formView.back" locale=locale /]
       </a>
 

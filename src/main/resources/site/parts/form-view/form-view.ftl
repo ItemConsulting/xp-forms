@@ -1,4 +1,5 @@
 [#-- @ftlvariable name="locale" type="String" --]
+[#-- @ftlvariable name="frameId" type="String" --]
 [#-- @ftlvariable name="pages" type="java.util.ArrayList<String>" --]
 [#-- @ftlvariable name="values" type="java.util.HashMap" --]
 [#-- @ftlvariable name="errors" type="java.util.HashMap" --]
@@ -9,7 +10,12 @@
 [#import "../../partials/checkboxes/checkboxes.ftl" as Checkboxes]
 [#import "../../partials/radiobuttons/radiobuttons.ftl" as RadioButtons]
 
-<div class="forms">
+<turbo-frame
+  id="${frameId}"
+  class="forms"
+  target="_top"
+  data-turbo-action="advance">
+
   [#if adminErrors?has_content]
     [#list adminErrors.errors![] as error]
       <div class="form-view--admin-error">${error}</div>
@@ -25,4 +31,4 @@
 
     [#sep]<hr>[/#sep]
   [/#list]
-</div>
+</turbo-frame>

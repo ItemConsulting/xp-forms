@@ -31,7 +31,7 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
   if (pageIndex === RETURN_ALL_PAGES) {
     const formPages = pagesRaw.map((page, index) =>
       processFormPage({
-        id: `${partId}-page${index}`,
+        partId,
         page,
         locale,
         values,
@@ -76,8 +76,8 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
     // Is form page
     return [
       processFormPage({
-        id: `${partId}-page${pageIndex}`,
         page: pagesRaw[pageIndex],
+        partId,
         locale,
         values,
         errors,

@@ -16,7 +16,10 @@ export default meta;
 export const reviewPage: StoryObj<PageReview> = {
   args: {
     backUrl: "#",
+    editUrl: "#",
     title: "Check your answers before sending your application",
+    frameId: "frame",
+    isPreviewReviewPage: false,
     sections: [
       {
         title: "Personal details",
@@ -26,24 +29,28 @@ export const reviewPage: StoryObj<PageReview> = {
             label: "Name",
             name: "name",
             values: ["Homer Simpson"],
+            valuesResolved: ["Homer Simpson"],
           },
           {
             id: "field-2",
             label: "Email address",
             name: "email",
             values: ["chunkylover53@aol.com"],
+            valuesResolved: ["chunkylover53@aol.com"],
           },
           {
             id: "field-3",
             label: "Phone number",
             name: "phone",
             values: ["555-3223"],
+            valuesResolved: ["555-3223"],
           },
           {
             id: "field-4",
             label: "Address",
             name: "address",
             values: ["742 Evergreen Terrace\nSpringfield"],
+            valuesResolved: ["742 Evergreen Terrace\nSpringfield"],
           },
         ],
       },
@@ -63,6 +70,15 @@ export const reviewPage: StoryObj<PageReview> = {
               'Mascot, known as "Dancing Homer"',
               "Union leader",
             ],
+            valuesResolved: [
+              "Nuclear Technician",
+              "Astronaut for NASA",
+              "Bartender",
+              "Car designer",
+              "Internet Service Provider",
+              'Mascot, known as "Dancing Homer"',
+              "Union leader",
+            ],
           },
         ],
       },
@@ -74,6 +90,7 @@ export const reviewPage: StoryObj<PageReview> = {
             label: "Institution",
             name: "institution",
             values: ["Graduated Springfield High"],
+            valuesResolved: ["Graduated Springfield High"],
           },
         ],
       },

@@ -15,7 +15,7 @@ export type Option = {
 
 export type ProcessParams = {
   locale: string;
-  id: string;
+  partId: string;
   page: FormPageRaw;
   values: SubmittedValues;
   errors: Errors;
@@ -28,6 +28,7 @@ const view = resolve("/site/partials/page-form/page-form.ftl");
 export function process(params: ProcessParams): string {
   return render<PageForm>(view, {
     locale: params.locale,
+    frameId: `${params.partId}-frame`,
     title: params.page.title,
     text: params.page.text,
     submitButtonText:
@@ -37,7 +38,7 @@ export function process(params: ProcessParams): string {
         locale: params.locale,
       }),
     errors: params.errors,
-    fields: getFields(params.page.fields, params.id, params.values),
+    fields: getFields(params.page.fields, `${params.partId}-page${params.pageNumber}`, params.values),
     backUrl:
       params.pageNumber > 1
         ? pageUrl({

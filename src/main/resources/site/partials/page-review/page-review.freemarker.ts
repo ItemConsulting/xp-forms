@@ -1,5 +1,6 @@
 export type PageReview = {
   locale: string;
+  frameId: string;
   isPreviewReviewPage: boolean;
   editUrl: string;
   backUrl: string;

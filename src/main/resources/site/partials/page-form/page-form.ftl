@@ -1,4 +1,5 @@
 [#-- @ftlvariable name="locale" type="String" --]
+[#-- @ftlvariable name="frameId" type="String" --]
 [#-- @ftlvariable name="errors" type="java.util.Map" --]
 [#-- @ftlvariable name="backUrl" type="String" --]
 [#-- @ftlvariable name="title" type="String" --]
@@ -12,9 +13,9 @@
 [#import "../checkboxes/checkboxes.ftl" as Checkboxes]
 [#import "../radiobuttons/radiobuttons.ftl" as RadioButtons]
 
-<form method="post" data-turbo="false">
+<form method="post" data-turbo-frame="${frameId}">
   [#if backUrl?has_content]
-    <a href="${backUrl}" class="form-view--back-button">
+    <a href="${backUrl}" class="form-view--back-button" data-turbo-frame="_self">
       [@localize key="part.formView.back" locale=locale /]
     </a>
   [/#if]

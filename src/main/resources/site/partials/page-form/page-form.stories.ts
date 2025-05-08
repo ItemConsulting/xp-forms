@@ -18,6 +18,7 @@ export const formPage: StoryObj<PageForm> = {
     title: "Innmeldingsskjema",
     text: "This is some intro text",
     submitButtonText: "Send inn",
+    frameId: "frame",
     fields: [
       {
         type: "input",
