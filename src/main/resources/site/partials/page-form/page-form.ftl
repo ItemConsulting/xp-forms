@@ -15,7 +15,7 @@
 
 <form method="post" data-turbo-frame="${frameId}">
   [#if backUrl?has_content]
-    <a href="${backUrl}" class="form-view--back-button" data-turbo-frame="_self">
+    <a href="${backUrl}" class="forms--back-link" data-turbo-frame="_self">
       [@localize key="part.formView.back" locale=locale /]
     </a>
   [/#if]

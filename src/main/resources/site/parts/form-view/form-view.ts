@@ -1,4 +1,5 @@
-import { getContent, getComponent, getSite, pageUrl, getSiteConfig, assetUrl } from "/lib/xp/portal";
+import { getContent, getComponent, getSite, pageUrl, getSiteConfig } from "/lib/xp/portal";
+import { assetUrl } from "/lib/enonic/asset";
 import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
 import { forceArray } from "/lib/forms/arrays";
