@@ -26,9 +26,12 @@ export type ProcessParams = {
 const view = resolve("/site/partials/page-form/page-form.ftl");
 
 export function process(params: ProcessParams): string {
+  const pageId = `${params.partId}-page-${params.pageNumber}`;
+
   return render<PageForm>(view, {
     locale: params.locale,
     frameId: `${params.partId}-frame`,
+    pageId,
     title: params.page.title,
     text: params.page.text,
     submitButtonText:
@@ -38,7 +41,7 @@ export function process(params: ProcessParams): string {
         locale: params.locale,
       }),
     errors: params.errors,
-    fields: getFields(params.page.fields, `${params.partId}-page${params.pageNumber}`, params.values),
+    fields: getFields(params.page.fields, pageId, params.values),
     backUrl:
       params.pageNumber > 1
         ? pageUrl({
@@ -51,18 +54,18 @@ export function process(params: ProcessParams): string {
   });
 }
 
-export function getFields(fields: FormPageRaw["fields"], id: string, values: SubmittedValues): Field[] {
+export function getFields(fields: FormPageRaw["fields"], pageId: string, values: SubmittedValues): Field[] {
   return forceArray(fields)
-    .map((field, index) => getField(field, `${id}-field${index}`, values))
+    .map((field) => getField(field, pageId, values))
     .filter(notNullOrUndefined);
 }
 
-function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues): Field | undefined {
+function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues): Field | undefined {
   switch (field._selected) {
     case "input":
       return {
         type: "input",
-        id: fieldId,
+        id: `${pageId}-${getName(field.input)}`,
         label: field.input.label,
         name: getName(field.input),
         helpText: field.input.helpText,
@@ -76,7 +79,7 @@ function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues)
     case "textarea":
       return {
         type: "textarea",
-        id: fieldId,
+        id: `${pageId}-${getName(field.textarea)}`,
         label: field.textarea.label,
         name: getName(field.textarea),
         cols: field.textarea.cols,
@@ -93,7 +96,7 @@ function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues)
       const selectValue = getFirstValue(values, field.select) ?? field.select.value;
       return {
         type: "select",
-        id: fieldId,
+        id: `${pageId}-${getName(field.select)}`,
         label: field.select.label,
         name: getName(field.select),
         helpText: field.select.helpText,
@@ -107,7 +110,7 @@ function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues)
 
       return {
         type: "checkboxes",
-        id: fieldId,
+        id: `${pageId}-${getName(field.checkboxes)}`,
         label: field.checkboxes.label,
         name: getName(field.checkboxes),
         helpText: field.checkboxes.helpText,
@@ -120,7 +123,7 @@ function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues)
       const radioButtonsValue = getFirstValue(values, field.radiobuttons) ?? field.radiobuttons.value;
       return {
         type: "radiobuttons",
-        id: fieldId,
+        id: `${pageId}-${getName(field.radiobuttons)}`,
         label: field.radiobuttons.label,
         name: getName(field.radiobuttons),
         helpText: field.radiobuttons.helpText,
@@ -132,7 +135,7 @@ function getField(field: FormFieldRaw, fieldId: string, values: SubmittedValues)
     case "hidden":
       return {
         type: "hidden",
-        id: fieldId,
+        id: `${pageId}-${field.hidden.name}`,
         name: field.hidden.name,
         value: field.hidden.value,
       };

@@ -1,5 +1,6 @@
 [#-- @ftlvariable name="locale" type="String" --]
 [#-- @ftlvariable name="frameId" type="String" --]
+[#-- @ftlvariable name="pageId" type="String" --]
 [#-- @ftlvariable name="errors" type="java.util.Map" --]
 [#-- @ftlvariable name="backUrl" type="String" --]
 [#-- @ftlvariable name="title" type="String" --]
@@ -19,6 +20,29 @@
       [@localize key="part.formView.back" locale=locale /]
     </a>
   [/#if]
+
+  [#list errors!{}]
+    <div
+      role="alert"
+      class="forms--error-list"
+      tabindex="-1"
+      autofocus>
+
+      <h2>
+        [@localize key="part.formView.thereIsAProblem" locale=locale /]
+      </h2>
+
+      <ul>
+        [#items as key, values]
+          [#list values![] as value]
+            <li>
+              <a href="#${pageId}-${key}" data-turbo="false">${value}</a>
+            </li>
+          [/#list]
+        [/#items]
+      </ul>
+    </div>
+  [/#list]
 
   <div class="html-area">
     [#if title?has_content]

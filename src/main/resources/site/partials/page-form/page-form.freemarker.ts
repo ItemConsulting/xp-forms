@@ -8,6 +8,7 @@ import type { Errors } from "/lib/forms/validation";
 export type PageForm = {
   locale: string;
   frameId: string;
+  pageId: string;
   title: string;
   text?: string;
   fields: Field[];

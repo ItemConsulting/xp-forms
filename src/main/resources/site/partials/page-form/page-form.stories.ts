@@ -43,3 +43,38 @@ export const formPage: StoryObj<PageForm> = {
     ],
   },
 };
+
+export const formPageWithError: StoryObj<PageForm> = {
+  args: {
+    title: "Newsletter",
+    text: "This is some intro text",
+    submitButtonText: "Continue",
+    frameId: "frame",
+    pageId: "page-1",
+    backUrl: "#",
+    errors: {
+      email: ["Please provide a valid email address", "Please fill in the email field"],
+    },
+    fields: [
+      {
+        type: "input",
+        id: "page-1-email",
+        label: "Email",
+        name: "email",
+        autocomplete: "email",
+        inputmode: "email",
+        placeholder: "Skriv inn navnet ditt",
+        required: true,
+        value: "test",
+      },
+      {
+        type: "textarea",
+        id: "page-1-comment",
+        label: "Kommentar",
+        name: "comment",
+        placeholder: "Skriv en kommentar",
+        required: false,
+      },
+    ],
+  },
+};
