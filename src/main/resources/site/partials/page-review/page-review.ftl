@@ -10,7 +10,7 @@
 [#-- @ftlvariable name="submitButtonText" type="String" --]
 
 <div class="form-view--review">
-  <form>
+  <form method="post">
     [#if backUrl?has_content]
       <a href="${backUrl}" class="forms--back-link">
         [@localize key="part.formView.back" locale=locale /]
@@ -34,7 +34,7 @@
               [#list field.values![] as value]
                 <dd>
                   ${(value!"")?replace("\n", "<br>")}
-                  <input type="hidden" name="${field.name}" value="${value}">
+                  <input type="text" name="${field.name}" value="${value}">
                 </dd>
               [#else]
                 <dd><i>[@localize key="part.formView.notProvided" locale=locale /]</i></dd>

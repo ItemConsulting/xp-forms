@@ -1,23 +1,10 @@
-import { getContent, getComponent, getSite, pageUrl, getSiteConfig, assetUrl, type Content } from "/lib/xp/portal";
+import { getContent, getComponent, getSite, pageUrl, getSiteConfig, assetUrl } from "/lib/xp/portal";
 import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/tineikt/freemarker";
-import { flatMap, forceArray } from "/lib/forms/arrays";
+import { forceArray } from "/lib/forms/arrays";
 import { getLocale } from "/lib/forms/locale";
-import { getMap } from "/lib/xp/grid";
 import { send as sendEvent } from "/lib/xp/event";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
-import {
-  maxItemsValidator,
-  maxLengthValidator,
-  minItemsValidator,
-  minLengthValidator,
-  patternValidator,
-  requiredValidator,
-  validate,
-  type Errors,
-  type ValidatorConfig,
-} from "/lib/forms/validation";
-import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
 import { getJsonSchema, normalizeFields, type FormFieldNormalized } from "/lib/forms/json-schema";
 import { compareSchemas } from "/lib/forms/admin-schema-validation";
 import {
@@ -26,13 +13,15 @@ import {
   getReferenceJsonSchema,
   type Integration,
 } from "/lib/forms/extensions";
-import type { Form as FormRaw } from "/site/content-types";
-import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
-import type { Request, Response, PartComponent } from "@enonic-types/core";
 import { getFields, process as processFormPage } from "/site/partials/page-form/page-form";
 import { process as processReviewPage } from "/site/partials/page-review/page-review";
 import { process as processSuccessPage } from "/site/partials/page-success/page-success";
 import { localize } from "/lib/xp/i18n";
+import { getErrors, type FormPageRaw, type Errors } from "/lib/forms/form-utils";
+import { deleteFromStore, loadFromStore, saveToStore } from "/lib/forms/data-store";
+import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import type { Request, Response, PartComponent } from "@enonic-types/core";
+import type { ContentForm } from "/lib/forms/contents";
 
 export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;
@@ -44,10 +33,8 @@ export type FormEvent<Values extends SubmittedValues> = {
 };
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
-type ContentForm = Content<FormRaw, "no.item.forms:form">;
 
 const view = resolve("./form-view.ftl");
-const store = getMap<Record<string, string>>("no.item.forms");
 const SUCCESS_PAGE_COUNT = 1;
 
 type QueryParams = {
@@ -63,27 +50,41 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   assertIsDefined(part);
   assertIsDefined(siteConfig);
 
-  const { page, ...formValues } = req.params;
+  const { page, ...valuesFromUser } = req.params;
   const pagesRaw = forceArray(content.data.pages);
   const hasReviewPage = content.data.reviewPage._selected === "showReviewPage";
-  const pageNumber = parseInt(page ?? "1");
-  const pageIndex = Math.min(pageNumber - 1, pagesRaw.length - 1 + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT); // zero indexed
+  const totalPages = pagesRaw.length + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT;
+  const currentPageNumber = parseInt(page ?? "1");
+  const currentPageIndex = Math.min(currentPageNumber, totalPages) - 1; // zero indexed
+  const currentPageRaw = forceArray(content.data.pages)[currentPageIndex];
   const locale = getLocale({ content });
   const partId = partPathToId(part.path);
-  const usersFormKey = `${req.cookies.JSESSIONID}-${content._id}`;
 
   const values: SubmittedValues = {
     ...getPrepopulationValues(content.data.integrationId),
-    ...loadFromStore(usersFormKey),
-    ...formValues,
+    ...loadFromStore(req, content._id),
+    ...valuesFromUser,
   };
 
   const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
 
-  const errors = req.method === "POST" ? getErrors(values, content, locale) : {};
+  const errors = req.method === "POST" ? getErrors(values, currentPageRaw, locale) : {};
 
-  // If after last page
-  if (pageNumber > pagesRaw.length) {
+  if (currentPageNumber > totalPages) {
+    // If after last page, send back to first page
+    return {
+      status: 303,
+      headers: {
+        [HEADER_KEY_REDIRECT]: pageUrl({
+          path: content._path,
+          params: {
+            page: "1",
+          },
+        }),
+      },
+    };
+  } else if (currentPageNumber === totalPages) {
+    // If on the success page
     const site = getSite();
 
     assertIsDefined(site);
@@ -103,9 +104,9 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       distributed: false,
     });
 
-    store.delete(usersFormKey);
+    deleteFromStore(req, content._id);
   } else if (req.method === "POST" && !hasErrors(errors)) {
-    saveToStore(usersFormKey, values);
+    saveToStore(req, content._id, values);
 
     return {
       status: 303,
@@ -113,7 +114,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
         [HEADER_KEY_REDIRECT]: pageUrl({
           path: content._path,
           params: {
-            page: (pageNumber + 1).toString(),
+            page: (currentPageNumber + 1).toString(),
           },
         }),
       },
@@ -137,7 +138,14 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     .concat(formPages)
     .concat(
       hasReviewPage
-        ? getReviewPage(locale, partId, pagesRaw, resolveValues(values, normalizeFields(content)), content, pageIndex)
+        ? getReviewPage(
+            locale,
+            partId,
+            pagesRaw,
+            resolveValues(values, normalizeFields(content)),
+            content,
+            currentPageIndex,
+          )
         : [],
     )
     .concat(processSuccessPage(content, locale));
@@ -157,7 +165,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     body: render<FreemarkerParams>(view, {
       locale,
       errors,
-      pages: req.mode === "edit" ? pages : [pages[Math.min(pageIndex, pages.length)]],
+      pages: req.mode === "edit" ? pages : [pages[Math.min(currentPageIndex, pages.length)]],
       values,
       adminErrors: req.mode !== "live" ? adminErrors : undefined,
     }),
@@ -171,25 +179,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
 function createStyleTag(path: string, include: boolean): string[] {
   return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
-}
-
-function loadFromStore(usersFormKey: string): SubmittedValues {
-  return JSON.parse(store.get(usersFormKey) ?? "{}");
-}
-
-function saveToStore(usersFormKey: string, values: SubmittedValues): void {
-  store.set({
-    key: usersFormKey,
-    value: JSON.stringify(values),
-    ttlSeconds: 3600,
-  });
-}
-
-function getErrors(params: SubmittedValues, content: ContentForm, locale: string): Errors {
-  const allFields = flatMap(forceArray(content.data.pages), (page) => page.fields);
-  const validators = flatMap(allFields, (field) => getValidator(field, locale));
-
-  return validate(params, validators);
 }
 
 function hasErrors(errors: Errors): boolean {
@@ -232,61 +221,6 @@ function getReviewPage(
         locale,
       }),
   });
-}
-
-function getValidator(field: FormFieldRaw, locale: string): ValidatorConfig[] {
-  const validators: ValidatorConfig[] = [];
-  switch (field._selected) {
-    case "input":
-    case "textarea":
-      const inputName = getName(field._selected === "input" ? field.input : field.textarea);
-      const inputProperties = field._selected === "input" ? field.input.properties : field.textarea.properties;
-
-      if (hasSelectedValue(inputProperties, "validationRequired")) {
-        validators.push(requiredValidator(inputName, inputProperties.validationRequired, locale));
-      }
-
-      if (hasSelectedValue(inputProperties, "validationMinLength")) {
-        validators.push(minLengthValidator(inputName, inputProperties.validationMinLength, locale));
-      }
-
-      if (hasSelectedValue(inputProperties, "validationMaxLength")) {
-        validators.push(maxLengthValidator(inputName, inputProperties.validationMaxLength, locale));
-      }
-
-      if (hasSelectedValue(inputProperties, "validationPattern")) {
-        validators.push(patternValidator(inputName, inputProperties.validationPattern, locale));
-      }
-
-      break;
-    case "select":
-    case "radiobuttons":
-      const selectName = getName(field._selected === "select" ? field.select : field.radiobuttons);
-      const properties = field._selected === "select" ? field.select.properties : field.radiobuttons.properties;
-
-      if (hasSelectedValue(properties, "validationRequired")) {
-        validators.push(requiredValidator(selectName, properties.validationRequired, locale));
-      }
-
-      break;
-    case "checkboxes":
-      const checkboxesName = getName(field.checkboxes);
-      if (hasSelectedValue(field.checkboxes.properties, "validationRequired")) {
-        validators.push(requiredValidator(checkboxesName, field.checkboxes.properties.validationRequired, locale));
-      }
-
-      if (hasSelectedValue(field.checkboxes.properties, "validationMinItems")) {
-        validators.push(minItemsValidator(checkboxesName, field.checkboxes.properties.validationMinItems, locale));
-      }
-
-      if (hasSelectedValue(field.checkboxes.properties, "validationMaxItems")) {
-        validators.push(maxItemsValidator(checkboxesName, field.checkboxes.properties.validationMaxItems, locale));
-      }
-
-      break;
-  }
-
-  return validators;
 }
 
 export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {
