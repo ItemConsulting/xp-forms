@@ -1,5 +1,7 @@
 export type PageReview = {
   locale: string;
+  isPreviewReviewPage: boolean;
+  editUrl: string;
   backUrl: string;
   title: string;
   text?: string;
@@ -17,4 +19,5 @@ export type Field = {
   name: string;
   label: string;
   values: string[];
+  valuesResolved: string[];
 };

@@ -2,6 +2,10 @@
 
 ## Usage
 
+### Preview page
+
+A version of the review page – called the "Preview page" – can be displayed by appending `?page=0` to the url. 
+
 ### Listening for form submissions
 
 You can add an event listener to your applications _main.ts_ file to handle form submissions. 

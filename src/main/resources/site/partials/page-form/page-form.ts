@@ -1,5 +1,5 @@
 import { render } from "/lib/tineikt/freemarker";
-import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw } from "/lib/forms/form-utils";
+import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw, type Errors } from "/lib/forms/form-utils";
 import { pageUrl, type Content } from "/lib/xp/portal";
 import { localize } from "/lib/xp/i18n";
 import { forceArray } from "/lib/forms/arrays";
@@ -18,6 +18,7 @@ export type ProcessParams = {
   id: string;
   page: FormPageRaw;
   values: SubmittedValues;
+  errors: Errors;
   content: Content;
   pageNumber: number;
 };
@@ -35,6 +36,7 @@ export function process(params: ProcessParams): string {
         key: "part.formView.submit",
         locale: params.locale,
       }),
+    errors: params.errors,
     fields: getFields(params.page.fields, params.id, params.values),
     backUrl:
       params.pageNumber > 1

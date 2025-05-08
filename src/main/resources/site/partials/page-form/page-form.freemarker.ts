@@ -3,12 +3,14 @@ import type { TextAreaField } from "/site/partials/text-area/text-area.freemarke
 import type { SelectField } from "/site/partials/select/select.freemarker";
 import type { CheckboxesField } from "/site/partials/checkboxes/checkboxes.freemarker";
 import type { RadioButtonsField } from "/site/partials/radiobuttons/radiobuttons.freemarker";
+import type { Errors } from "/lib/forms/validation";
 
 export type PageForm = {
   locale: string;
   title: string;
   text?: string;
   fields: Field[];
+  errors: Errors;
   submitButtonText: string;
   backUrl?: string;
 };
