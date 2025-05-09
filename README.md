@@ -2,9 +2,8 @@
 
 ## Usage
 
-### Preview page
-
-A version of the review page – called the "Preview page" – can be displayed by appending `?page=0` to the url. 
+> [!TIP]  
+> A version of the review page – called the "Preview page" – can be displayed by appending `?page=0` to the url. 
 
 ### Listening for form submissions
 

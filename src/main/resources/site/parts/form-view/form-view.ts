@@ -51,7 +51,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const pagesRaw = forceArray(content.data.pages);
   const hasReviewPage = content.data.reviewPage._selected === "showReviewPage";
   const totalPages = pagesRaw.length + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT;
-  const currentPageNumber = Math.max(parseInt(page ?? "1"), RETURN_REVIEW_PAGE);
+  const currentPageNumber = Math.max(parseInt(page ?? part.config.firstPageNumber ?? "1"), RETURN_REVIEW_PAGE);
   const currentPageIndex = Math.min(currentPageNumber, totalPages) - 1; // zero indexed
   const currentPageRaw = pagesRaw[currentPageIndex];
   const locale = getLocale({ content });
