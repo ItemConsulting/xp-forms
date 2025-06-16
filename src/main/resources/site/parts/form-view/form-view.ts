@@ -49,7 +49,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
   const { page, ...valuesFromUser } = req.params;
   const pagesRaw = forceArray(content.data.pages);
-  const hasReviewPage = content.data.reviewPage._selected === "showReviewPage";
+  const hasReviewPage = content.data.reviewPage?._selected === "showReviewPage";
   const totalPages = pagesRaw.length + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT;
   const currentPageNumber = Math.max(parseInt(page ?? part.config.firstPageNumber ?? "1"), RETURN_REVIEW_PAGE);
   const currentPageIndex = Math.min(currentPageNumber, totalPages) - 1; // zero indexed
@@ -109,6 +109,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   });
 
   return {
+    status: hasErrors(errors) ? 400 : 200,
     body: render<FreemarkerParams>(view, {
       locale,
       errors,

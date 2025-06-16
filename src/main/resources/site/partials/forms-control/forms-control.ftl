@@ -9,7 +9,7 @@
       </legend>
     [#elseif elementType!="fieldset"]
       <label for="${field.id}">
-        ${field.label}
+        ${field.label!}
         [#if !field.required!true]
           <span class="forms--optional">[@localize key="part.formView.optional" locale=locale!"no" /]</span>
         [/#if]

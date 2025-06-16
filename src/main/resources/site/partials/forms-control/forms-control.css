@@ -4,7 +4,7 @@
   gap: var(--forms--spacing-xs, 5px);
 
   textarea,
-  input,
+  input[type="text"],
   select {
     --forms--input-border-color: var(--forms--color-border, ButtonBorder);
     --forms--input-border-width: 1px;

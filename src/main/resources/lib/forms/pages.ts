@@ -24,7 +24,7 @@ type GetPagesParams = {
 export function getPages({ locale, part, content, values, errors, pageIndex }: GetPagesParams): string[] {
   const partId = partPathToId(part.path);
   const pagesRaw = forceArray(content.data.pages);
-  const hasReviewPage = content.data.reviewPage._selected === "showReviewPage";
+  const hasReviewPage = content.data.reviewPage?._selected === "showReviewPage";
   const totalPages = pagesRaw.length + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT;
   const isPreviewReviewPage = pageIndex === RETURN_REVIEW_PAGE;
 

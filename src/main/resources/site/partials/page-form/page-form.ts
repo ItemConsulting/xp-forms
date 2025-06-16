@@ -61,7 +61,7 @@ export function getFields(fields: FormPageRaw["fields"], pageId: string, values:
 }
 
 function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues): Field | undefined {
-  switch (field._selected) {
+  switch (field?._selected) {
     case "input":
       return {
         type: "input",
@@ -101,7 +101,9 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         name: getName(field.select),
         helpText: field.select.helpText,
         value: selectValue,
-        options: forceArray(field.select.options).map(setChecked(selectValue)),
+        options: forceArray(field.select.options)
+          .filter((option) => option.value && option.text)
+          .map(setChecked(selectValue)),
         required: hasSelectedValue(field.select.properties, "validationRequired"),
       };
 
@@ -115,7 +117,9 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         name: getName(field.checkboxes),
         helpText: field.checkboxes.helpText,
         value: checkboxesValue,
-        options: forceArray(field.checkboxes.options).map(setChecked(checkboxesValue)),
+        options: forceArray(field.checkboxes.options)
+          .filter((option) => option.value && option.text)
+          .map(setChecked(checkboxesValue)),
         required: hasSelectedValue(field.checkboxes.properties, "validationRequired"),
       };
 
@@ -128,7 +132,9 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         name: getName(field.radiobuttons),
         helpText: field.radiobuttons.helpText,
         value: radioButtonsValue,
-        options: forceArray(field.radiobuttons.options).map(setChecked(radioButtonsValue)),
+        options: forceArray(field.radiobuttons.options)
+          .filter((option) => option.value && option.text)
+          .map(setChecked(radioButtonsValue)),
         required: hasSelectedValue(field.radiobuttons.properties, "validationRequired"),
       };
 

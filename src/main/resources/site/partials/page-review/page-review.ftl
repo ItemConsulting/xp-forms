@@ -56,12 +56,12 @@
       class="form-view--review-section"
       aria-labelledby="form-review-section-${section_index}">
 
-      <h2 id="form-review-section-${section_index}">${section.title}</h2>
+      <h2 id="form-review-section-${section_index}">${section.title!}</h2>
 
       [#list section.fields![]]
         <dl>
           [#items as field]
-            <dt>${field.label}</dt>
+            <dt>${field.label!}</dt>
 
             [#list field.valuesResolved![] as valueResolved]
               <dd>
