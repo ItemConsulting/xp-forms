@@ -29,6 +29,6 @@ export function find<T>(arr: T[], predicate: (value: T) => boolean): T | undefin
 /**
  * Create an array of numbers based on start and stop
  */
-export function arrayRange(start: number, count: number, step = 1) {
-  return [...Array(count)].map((_, i) => start + i * step);
+export function arrayRange(start: number, count: number, step = 1): number[] {
+  return [...Array<number>(count)].map((_, i) => start + i * step);
 }

@@ -1,4 +1,4 @@
-import id from "./page-review.ftl";
+import id from "./page-review.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import { PageReview } from "./page-review.freemarker";
 

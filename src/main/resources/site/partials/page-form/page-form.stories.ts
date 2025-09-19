@@ -1,4 +1,4 @@
-import id from "./page-form.ftl";
+import id from "./page-form.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import type { PageForm } from "./page-form.freemarker";
 

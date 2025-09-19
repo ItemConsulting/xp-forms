@@ -1,14 +1,13 @@
-[#-- @ftlvariable name="locale" type="String" --]
 [#-- @ftlvariable name="frameId" type="String" --]
 [#-- @ftlvariable name="pages" type="java.util.ArrayList<String>" --]
 [#-- @ftlvariable name="values" type="java.util.HashMap" --]
 [#-- @ftlvariable name="errors" type="java.util.HashMap" --]
 [#-- @ftlvariable name="adminErrors" type="java.util.List" --]
-[#import "../../partials/input/input.ftl" as Input]
-[#import "../../partials/text-area/text-area.ftl" as TextArea]
-[#import "../../partials/select/select.ftl" as Select]
-[#import "../../partials/checkboxes/checkboxes.ftl" as Checkboxes]
-[#import "../../partials/radiobuttons/radiobuttons.ftl" as RadioButtons]
+[#import "../../partials/input/input.ftlh" as Input]
+[#import "../../partials/text-area/text-area.ftlh" as TextArea]
+[#import "../../partials/select/select.ftlh" as Select]
+[#import "../../partials/checkboxes/checkboxes.ftlh" as Checkboxes]
+[#import "../../partials/radiobuttons/radiobuttons.ftlh" as RadioButtons]
 
 <turbo-frame
   id="${frameId}"
@@ -27,7 +26,7 @@
   [/#if]
 
   [#list pages as page]
-    ${page!""}
+    ${page?no_esc!}
 
     [#sep]<hr>[/#sep]
   [/#list]

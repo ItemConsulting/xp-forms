@@ -1,7 +1,7 @@
-[#import "../forms-control/forms-control.ftl" as FormControl]
+[#import "../forms-control/forms-control.ftlh" as FormControl]
 
-[#macro render field locale errors={}]
-  [@FormControl.render field locale errors "fieldset"]
+[#macro render field errors={}]
+  [@FormControl.render field errors "fieldset"]
     <div class="forms--checkbox-options">
       [#list field.options![] as option]
         [#assign id=field.id + "-" + option_index]

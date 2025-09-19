@@ -1,6 +1,6 @@
-import { render } from "/lib/tineikt/freemarker";
+import { render } from "/lib/freemarker";
 import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw, type Errors } from "/lib/forms/form-utils";
-import { pageUrl, type Content } from "/lib/xp/portal";
+import { pageUrl, processHtml, type Content } from "/lib/xp/portal";
 import { localize } from "/lib/xp/i18n";
 import { forceArray } from "/lib/forms/arrays";
 import { notNullOrUndefined } from "/lib/forms/utils";
@@ -23,17 +23,18 @@ export type ProcessParams = {
   pageNumber: number;
 };
 
-const view = resolve("/site/partials/page-form/page-form.ftl");
+const view = resolve("/site/partials/page-form/page-form.ftlh");
 
 export function process(params: ProcessParams): string {
   const pageId = `${params.partId}-page-${params.pageNumber}`;
 
   return render<PageForm>(view, {
-    locale: params.locale,
     frameId: `${params.partId}-frame`,
     pageId,
     title: params.page.title,
-    text: params.page.text,
+    text: processHtml({
+      value: params.page.text ?? "",
+    }),
     submitButtonText:
       params.page.submitButtonText ??
       localize({
@@ -68,7 +69,9 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         id: `${pageId}-${getName(field.input)}`,
         label: field.input.label,
         name: getName(field.input),
-        helpText: field.input.helpText,
+        helpText: processHtml({
+          value: field.input.helpText ?? "",
+        }),
         value: getFirstValue(values, field.input) ?? field.input.value,
         placeholder: field.input.properties?.placeholder?.placeholder,
         autocomplete: field.input.properties?.autocomplete?.autocomplete,

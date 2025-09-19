@@ -54,11 +54,11 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
         ]
       : [];
 
-    return ([] as string[]).concat(formPages).concat(reviewPage).concat(processSuccessPage(content, locale));
+    return ([] as string[]).concat(formPages).concat(reviewPage).concat(processSuccessPage(content));
   }
   // Is success page
   else if (pageIndex === totalPages - 1) {
-    return [processSuccessPage(content, locale)];
+    return [processSuccessPage(content)];
   }
   // Is review page
   else if ((hasReviewPage && pageIndex === totalPages - 2) || isPreviewReviewPage) {

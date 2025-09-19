@@ -24,8 +24,6 @@ export type Properties<Type extends Exclude<FormFieldTypes, "hidden">> = PickSel
   Type
 >["properties"];
 
-export function getName(field: { name: string; label?: string }): string;
-export function getName(field: { label: string; name?: string }): string;
 export function getName(field: { label?: string; name?: string }): string {
   return field.name ?? sanitize(field.label ?? "");
 }

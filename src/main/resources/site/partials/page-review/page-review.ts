@@ -1,4 +1,4 @@
-import { render } from "/lib/tineikt/freemarker";
+import { render } from "/lib/freemarker";
 import { forceArray } from "/lib/forms/arrays";
 import { localize } from "/lib/xp/i18n";
 import { pageUrl } from "/lib/xp/portal";
@@ -18,13 +18,12 @@ export type ProcessParams = {
   pageNumber: number;
 };
 
-const view = resolve("/site/partials/page-review/page-review.ftl");
+const view = resolve("/site/partials/page-review/page-review.ftlh");
 
 export function process({ locale, partId, content, values, pageNumber, isPreviewReviewPage }: ProcessParams): string {
   const resolvedValues = resolveValues(values, normalizeFields(content));
 
   return render<PageReview>(view, {
-    locale: locale,
     frameId: `${partId}-frame`,
     isPreviewReviewPage,
     title:

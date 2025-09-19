@@ -1,4 +1,4 @@
-import type { InputType } from "@storybook/types";
+import type { InputType } from "storybook/internal/types";
 
 export const controlInputMode: InputType = {
   name: "Input mode",

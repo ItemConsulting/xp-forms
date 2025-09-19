@@ -1,12 +1,11 @@
-[#-- @ftlvariable name="locale" type="String" --]
 [#-- @ftlvariable name="sections" type="java.util.List<String>" --]
 
 <div class="form-view--success">
   [#list sections![] as section]
     <div class="html-area flow">
-      ${section}
+      ${section?no_esc}
     </div>
   [#else]
-    [@localize key="part.formView.success" locale=locale /]
+    ${portal.localize("part.formView.success")}
   [/#list]
 </div>

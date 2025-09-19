@@ -1,4 +1,4 @@
-import id from "./text-area.ftl";
+import id from "./text-area.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import type { TextAreaField } from "./text-area.freemarker";
 import { controlAutocomplete, controlInputMode } from "../../../storybook-utils";
@@ -14,19 +14,19 @@ const meta: Meta<TextAreaField> = {
       id,
       params: {
         template: `
-          [#import "/site/partials/text-area/text-area.ftl" as TextArea]
-          [@TextArea.render field={
-            "type": "textarea",
-            "id": "input-1",
-            "label": label,
-            "name": "name",
-            "cols": cols,
-            "rows": rows,
-            "autocomplete": autocomplete,
-            "helpText": helpText,
-            "inputmode": inputmode,
-            "placeholder": placeholder
-          } locale=locale /]
+        [#import "/site/partials/text-area/text-area.ftlh" as TextArea]
+        [@TextArea.render field={
+        "type": "textarea",
+        "id": "input-1",
+        "label": label,
+        "name": "name",
+        "cols": cols,
+        "rows": rows,
+        "autocomplete": autocomplete,
+        "helpText": helpText,
+        "inputmode": inputmode,
+        "placeholder": placeholder
+        } /]
         `,
       },
     },

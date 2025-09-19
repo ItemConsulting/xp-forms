@@ -1,4 +1,3 @@
-[#-- @ftlvariable name="locale" type="String" --]
 [#-- @ftlvariable name="frameId" type="String" --]
 [#-- @ftlvariable name="pageId" type="String" --]
 [#-- @ftlvariable name="errors" type="java.util.Map" --]
@@ -8,16 +7,16 @@
 [#-- @ftlvariable name="fields" type="java.util.List" --]
 [#-- @ftlvariable name="submitButtonText" type="String" --]
 
-[#import "../input/input.ftl" as Input]
-[#import "../text-area/text-area.ftl" as TextArea]
-[#import "../select/select.ftl" as Select]
-[#import "../checkboxes/checkboxes.ftl" as Checkboxes]
-[#import "../radiobuttons/radiobuttons.ftl" as RadioButtons]
+[#import "../input/input.ftlh" as Input]
+[#import "../text-area/text-area.ftlh" as TextArea]
+[#import "../select/select.ftlh" as Select]
+[#import "../checkboxes/checkboxes.ftlh" as Checkboxes]
+[#import "../radiobuttons/radiobuttons.ftlh" as RadioButtons]
 
 <form method="post" data-turbo-frame="${frameId}">
   [#if backUrl?has_content]
     <a href="${backUrl}" class="forms--back-link" data-turbo-frame="_self">
-      [@localize key="part.formView.back" locale=locale /]
+      ${portal.localize("part.formView.back")}
     </a>
   [/#if]
 
@@ -29,7 +28,7 @@
       autofocus>
 
       <h2>
-        [@localize key="part.formView.thereIsAProblem" locale=locale /]
+        ${portal.localize("part.formView.thereIsAProblem")}
       </h2>
 
       <ul>
@@ -49,25 +48,25 @@
       <h2 class="form-view--title">${title}</h2>
     [/#if]
 
-    ${text!""}
+    ${text?no_esc!}
   </div>
 
   [#list fields![] as field]
     [#switch field.type]
       [#case "input"]
-        [@Input.render field locale errors /]
+        [@Input.render field errors /]
         [#break]
       [#case "textarea"]
-        [@TextArea.render field locale errors /]
+        [@TextArea.render field errors /]
         [#break]
       [#case "select"]
-        [@Select.render field locale errors /]
+        [@Select.render field errors /]
         [#break]
       [#case "checkboxes"]
-        [@Checkboxes.render field locale errors /]
+        [@Checkboxes.render field errors /]
         [#break]
       [#case "radiobuttons"]
-        [@RadioButtons.render field locale errors /]
+        [@RadioButtons.render field errors /]
         [#break]
     [/#switch]
   [/#list]

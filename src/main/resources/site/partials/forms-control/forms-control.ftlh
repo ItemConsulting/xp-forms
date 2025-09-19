@@ -1,4 +1,4 @@
-[#macro render field locale errors elementType="div"]
+[#macro render field errors elementType="div"]
   <${elementType}
     class="forms--control"
     data-has-error="${hasError(field, errors)}">
@@ -11,7 +11,7 @@
       <label for="${field.id}">
         ${field.label!}
         [#if !field.required!true]
-          <span class="forms--optional">[@localize key="part.formView.optional" locale=locale!"no" /]</span>
+          <span class="forms--optional">${portal.localize("part.formView.optional")}</span>
         [/#if]
       </label>
     [/#if]
@@ -19,9 +19,9 @@
     [#if field.helpText?has_content]
       <div
         id="${field.id}-help-text"
-        class="forms--help-text">
+        class="forms--help-text html-area">
 
-        ${field.helpText}
+        ${field.helpText?no_esc}
       </div>
     [/#if]
 

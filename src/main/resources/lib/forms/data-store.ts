@@ -5,7 +5,7 @@ import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker
 const store = getMap<Record<string, string>>("no.item.forms");
 
 export function loadFromStore(req: Request, contentId: string): SubmittedValues {
-  return JSON.parse(store.get(getUniqueKeyForUserAndForm(req, contentId)) ?? "{}");
+  return JSON.parse(store.get(getUniqueKeyForUserAndForm(req, contentId)) ?? "{}") as SubmittedValues;
 }
 
 export function saveToStore(req: Request, contentId: string, values: SubmittedValues): void {

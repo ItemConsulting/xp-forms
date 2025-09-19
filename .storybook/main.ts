@@ -8,9 +8,9 @@ const config: StorybookConfig = {
   addons: [
     "@storybook/addon-webpack5-compiler-swc",
     "@storybook/addon-links",
-    "@storybook/addon-essentials",
     "@storybook/addon-a11y",
     "@itemconsulting/preset-enonic-xp",
+    "@storybook/addon-docs"
   ],
   staticDirs: ["../src/main/resources/assets"],
   framework: {

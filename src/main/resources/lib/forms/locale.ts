@@ -3,12 +3,10 @@ import { LanguageRange, Locale } from "/lib/time";
 import { getSupportedLocales } from "/lib/xp/i18n";
 import type { Request } from "@enonic-types/core";
 
-const DEFAULT_LOCALE = Locale.ENGLISH.toLanguageTag();
+const DEFAULT_LOCALE = Locale.ROOT.toLanguageTag();
 
 export function getLocale({ content, site }: GetLocaleParams): string {
-  const language = content?.language ?? site?.language ?? getSite()?.language ?? DEFAULT_LOCALE;
-
-  return language.replace("_", "-");
+  return content?.language ?? site?.language ?? getSite()?.language ?? DEFAULT_LOCALE;
 }
 
 type GetLocaleParams = {

@@ -1,4 +1,4 @@
-import id from "./radiobuttons.ftl";
+import id from "./radiobuttons.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import type { RadioButtonsField } from "./radiobuttons.freemarker";
 
@@ -9,15 +9,15 @@ const meta: Meta<RadioButtonsField> = {
       id,
       params: {
         template: `
-          [#import "/site/partials/radiobuttons/radiobuttons.ftl" as RadioButtons]
-          [@RadioButtons.render field={
-            "type": "radiobuttons",
-            "id": "input-1",
-            "label": label,
-            "name": "fruit",
-            "helpText": helpText,
-            "options": options
-          } locale=locale /]
+        [#import "/site/partials/radiobuttons/radiobuttons.ftlh" as RadioButtons]
+        [@RadioButtons.render field={
+        "type": "radiobuttons",
+        "id": "input-1",
+        "label": label,
+        "name": "fruit",
+        "helpText": helpText,
+        "options": options
+        } /]
         `,
       },
     },

@@ -1,4 +1,4 @@
-import id from "./checkboxes.ftl";
+import id from "./checkboxes.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
 import type { CheckboxesField } from "./checkboxes.freemarker";
 
@@ -9,15 +9,15 @@ const meta: Meta<CheckboxesField> = {
       id,
       params: {
         template: `
-          [#import "/site/partials/checkboxes/checkboxes.ftl" as Checkboxes]
-          [@Checkboxes.render field={
-            "type": "checkboxes",
-            "id": "input-1",
-            "label": label,
-            "name": "fruits",
-            "helpText": helpText,
-            "options": options
-          } locale=locale /]
+        [#import "${id}" as Checkboxes]
+        [@Checkboxes.render field={
+        "type": "checkboxes",
+        "id": "input-1",
+        "label": label,
+        "name": "fruits",
+        "helpText": helpText,
+        "options": options
+        } /]
         `,
       },
     },

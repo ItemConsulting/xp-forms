@@ -1,4 +1,3 @@
-[#-- @ftlvariable name="locale" type="String" --]
 [#-- @ftlvariable name="frameId" type="String" --]
 [#-- @ftlvariable name="isPreviewReviewPage" type="Boolean" --]
 [#-- @ftlvariable name="editUrl" type="String" --]
@@ -16,20 +15,20 @@
 [#if isPreviewReviewPage]
   <div class="form-view--review">
     <a href="${editUrl}" class="forms--edit-link" data-turbo-frame="_self">
-      [@localize key="part.formView.edit" locale=locale /]
+      ${portal.localize("part.formView.edit")}
     </a>
 
     [@listSections /]
 
     <a href="${editUrl}" class="forms--edit-link" data-turbo-frame="_self">
-      [@localize key="part.formView.edit" locale=locale /]
+      ${portal.localize("part.formView.edit")}
     </a>
   </div>
 [#else]
   <div class="form-view--review">
     <form method="post" data-turbo-frame="${frameId}">
       <a href="${backUrl}" class="forms--back-link" data-turbo-frame="_self">
-        [@localize key="part.formView.back" locale=locale /]
+        ${portal.localize("part.formView.back")}
       </a>
 
       <h1>${title}</h1>
@@ -65,10 +64,10 @@
 
             [#list field.valuesResolved![] as valueResolved]
               <dd>
-                ${(valueResolved!"")?replace("\n", "<br>")}
+                ${(valueResolved!)?replace("\n", "<br>")}
               </dd>
             [#else]
-              <dd><i>[@localize key="part.formView.notProvided" locale=locale /]</i></dd>
+              <dd><i>${portal.localize("part.formView.notProvided")}</i></dd>
             [/#list]
           [/#items]
         </dl>

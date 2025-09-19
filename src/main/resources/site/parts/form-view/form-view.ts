@@ -1,7 +1,7 @@
 import { getContent, getComponent, getSite, pageUrl, getSiteConfig } from "/lib/xp/portal";
 import { assetUrl } from "/lib/enonic/asset";
 import { assertIsDefined, partPathToId } from "/lib/forms/utils";
-import { render } from "/lib/tineikt/freemarker";
+import { render } from "/lib/freemarker";
 import { forceArray } from "/lib/forms/arrays";
 import { getLocale } from "/lib/forms/locale";
 import { send as sendEvent } from "/lib/xp/event";
@@ -32,7 +32,7 @@ export type FormEvent<Values extends SubmittedValues> = {
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 
-const view = resolve("./form-view.ftl");
+const view = resolve("./form-view.ftlh");
 
 type QueryParams = {
   page: string;
@@ -111,7 +111,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   return {
     status: hasErrors(errors) ? 400 : 200,
     body: render<FreemarkerParams>(view, {
-      locale,
       errors,
       pages,
       values,
