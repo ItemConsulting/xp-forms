@@ -114,7 +114,7 @@
 
             <input name="value" type="TextLine">
               <label i18n="mixin.fields.hidden.value">Initialize field with this value</label>
-              <occurrences minimum="1" maximum="1"/>
+              <occurrences minimum="0" maximum="1"/>
             </input>
           </items>
         </option>
