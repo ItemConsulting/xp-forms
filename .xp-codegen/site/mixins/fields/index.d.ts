@@ -512,7 +512,7 @@ export type Fields = {
           /**
            * Initialize field with this value
            */
-          value: string;
+          value?: string;
         };
       }
   >;

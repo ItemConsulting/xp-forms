@@ -71,6 +71,13 @@
     [/#switch]
   [/#list]
 
+  [#if enableHoneypot?has_content && honeypotFiledId?has_content]
+    <div class="input-field-p">
+      <label for="${honeypotFiledId}">Nettside</label>
+      <input name="${honeypotFiledId}" type="text" id="${honeypotFiledId}" value="" autocomplete="off" />
+    </div>
+  [/#if]
+
   <button type="submit" class="form-view--submit-button">
     ${submitButtonText}
   </button>
