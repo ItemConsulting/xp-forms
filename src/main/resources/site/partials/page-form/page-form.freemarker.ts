@@ -14,6 +14,8 @@ export type PageForm = {
   errors: Errors;
   submitButtonText: string;
   backUrl?: string;
+  enableHoneypot?: boolean;
+  honeypotFiledId?: string;
 };
 
 export type Field = InputField | TextAreaField | SelectField | CheckboxesField | RadioButtonsField | HiddenField;

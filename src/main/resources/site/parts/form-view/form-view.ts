@@ -95,7 +95,11 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   }
   // If form submit, save values and redirect to next page
   else if (req.method === "POST" && !hasErrors(errors)) {
+    if (isHoneypotFilledOut(content, currentPageIndex, req.params)) {
+      return redirectToPage(content, currentPageNumber);
+    }
     saveToStore(req, content._id, values);
+
     return redirectToPage(content, currentPageNumber + 1);
   }
 
@@ -120,7 +124,8 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     pageContributions: {
       headEnd: ([] as string[])
         .concat(createStyleTag("styles/content-studio.min.css", req.mode !== "live"))
-        .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true)),
+        .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true))
+        .concat(createStyleTag("styles/form-h.min.css", siteConfig.includeStyles ?? true)),
     },
   };
 }
@@ -161,6 +166,18 @@ function redirectToPage(content: ContentForm, pageNumber: number): Response {
 
 function createStyleTag(path: string, include: boolean): string[] {
   return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
+}
+
+function isHoneypotFilledOut(content: ContentForm, currentPageIndex: number, params: Request["params"]): boolean {
+  const lookupPageIndex = currentPageIndex > 0 ? currentPageIndex - 1 : 0;
+  const currentPage = forceArray(content.data.pages)[lookupPageIndex];
+  if (currentPage && currentPage.enableHoneypot && currentPage.honeypotFiledId) {
+    if (params[currentPage.honeypotFiledId] !== "") {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function hasErrors(errors: Errors): boolean {

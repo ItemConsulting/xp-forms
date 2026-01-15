@@ -531,7 +531,7 @@ export type Form = {
             /**
              * Initialize field with this value
              */
-            value: string;
+            value?: string;
           };
         }
     >;
@@ -540,6 +540,16 @@ export type Form = {
      * Submit button text
      */
     submitButtonText: string;
+
+    /**
+     * Enable honeypot
+     */
+    enableHoneypot: boolean;
+
+    /**
+     * Honeypot field id
+     */
+    honeypotFiledId?: string;
   }>;
 
   /**

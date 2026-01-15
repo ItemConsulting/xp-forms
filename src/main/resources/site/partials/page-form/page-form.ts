@@ -27,7 +27,6 @@ const view = resolve("/site/partials/page-form/page-form.ftlh");
 
 export function process(params: ProcessParams): string {
   const pageId = `${params.partId}-page-${params.pageNumber}`;
-
   return render<PageForm>(view, {
     frameId: `${params.partId}-frame`,
     pageId,
@@ -43,6 +42,8 @@ export function process(params: ProcessParams): string {
       }),
     errors: params.errors,
     fields: getFields(params.page.fields, pageId, params.values),
+    enableHoneypot: params.page?.enableHoneypot ? true : false,
+    honeypotFiledId: params.page.honeypotFiledId as unknown as string,
     backUrl:
       params.pageNumber > 1
         ? pageUrl({
@@ -146,7 +147,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         type: "hidden",
         id: `${pageId}-${field.hidden.name}`,
         name: field.hidden.name,
-        value: field.hidden.value,
+        value: field.hidden.value ?? "",
       };
   }
 }
