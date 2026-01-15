@@ -1,5 +1,16 @@
 # xp-forms
 
+## 0.3.0
+
+### Minor Changes
+
+- eb66145: Add honeypot option to forms
+- 3ce070a: Select which page type should be shown as the first page
+
+### Patch Changes
+
+- 18878ff: Prevent view from crashing when values are missing. This enables rendering in preview mode, without crashing.
+
 ## 0.2.0
 
 ### Minor Changes
