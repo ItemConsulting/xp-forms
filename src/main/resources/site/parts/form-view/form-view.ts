@@ -20,6 +20,7 @@ import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } fr
 import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 import type { Request, Response, PartComponent } from "@enonic-types/core";
 import type { ContentForm } from "/lib/forms/contents";
+import { getUser } from "/lib/xp/auth";
 
 export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;
@@ -28,6 +29,7 @@ export type FormEvent<Values extends SubmittedValues> = {
   integration?: Integration;
   fields: FormFieldNormalized[];
   values: Values;
+  userKey?: string;
 };
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
@@ -77,13 +79,14 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     assertIsDefined(site);
 
     const fields = normalizeFields(content);
-
+    log.info("xp-forms -> user key => %s", getUser()?.key);
     sendEvent<FormEvent<SubmittedValues>>({
       type: "form.submit",
       data: {
         siteId: site._id,
         formId: content._id,
         branch: req.branch,
+        userKey: getUser()?.key,
         integration,
         fields,
         values: resolveValues(values, fields),

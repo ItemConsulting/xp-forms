@@ -29,6 +29,8 @@ dependencies {
   include "com.enonic.xp:lib-node:${xpVersion}"
   include "com.enonic.xp:lib-portal:${xpVersion}"
   include "com.enonic.xp:lib-project:${xpVersion}"
+  include "com.enonic.xp:lib-auth:${xpVersion}"
+
   include "com.enonic.lib:lib-asset:1.0.3"
   include "no.item:lib-xp-freemarker:3.0.0-SNAPSHOT"
   include "no.item:lib-xp-time:1.2.1"
