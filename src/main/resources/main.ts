@@ -4,7 +4,8 @@ import { handleEmailForm, type EmailFormData } from "/forms/forms";
 listener<EmailFormData>({
   type: "custom.form.submit",
   callback: (event): void => {
-    if (event.data.integration?.id === "no.item.forms:email") {
+    // For now we add ege here as we we have a custom form but we want the same handler
+    if (event.data.integration?.id === "no.item.forms:email" || event.data.integration?.id === "no.ege.www:email") {
       handleEmailForm(event.data);
     }
   },
