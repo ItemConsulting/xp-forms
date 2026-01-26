@@ -1,5 +1,11 @@
 # xp-forms
 
+## 0.3.1
+
+### Patch Changes
+
+- 2cb866b: Add userkey to onsubmit event
+
 ## 0.3.0
 
 ### Minor Changes
