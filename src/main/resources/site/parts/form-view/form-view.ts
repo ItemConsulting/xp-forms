@@ -79,7 +79,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     assertIsDefined(site);
 
     const fields = normalizeFields(content);
-    log.info("xp-forms -> user key => %s", getUser()?.key);
+
     sendEvent<FormEvent<SubmittedValues>>({
       type: "form.submit",
       data: {
