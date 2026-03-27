@@ -1,5 +1,12 @@
 # xp-forms
 
+## 0.4.0
+
+### Minor Changes
+
+- a4fc820: Add from email to siteconfig
+- 38ecf89: Add siteconfig to hide emailform from selection, make hidden_fields work
+
 ## 0.3.1
 
 ### Patch Changes
