@@ -63,6 +63,18 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
 }
 
 export function handleEmailForm(data: EmailFormData): void {
+  const formSubmissionSenderEmail = runAsAdmin(
+    () =>
+      getSiteConfig<XP.SiteConfig>({
+        applicationKey: app.name,
+        key: data.siteId,
+      })?.formSubmissionSenderEmail,
+    {
+      repository: findRepoThatContainsContentWithId(data.siteId),
+      branch: data.branch ?? "master",
+    },
+  );
+
   const formSubmissionReceiverEmail = runAsAdmin(
     () =>
       getSiteConfig<XP.SiteConfig>({
@@ -75,9 +87,8 @@ export function handleEmailForm(data: EmailFormData): void {
     },
   );
 
+  assertIsDefined(formSubmissionSenderEmail, "formSubmissionSenderEmail");
   assertIsDefined(formSubmissionReceiverEmail, "formSubmissionReceiverEmail");
-
-  log.info("Handling email form submission...");
 
   const body = data.fields
     .map((field) => `${field.description ?? field.name}: ${forceArray(data.values[field.name]).join(", ")}`)
@@ -85,10 +96,8 @@ export function handleEmailForm(data: EmailFormData): void {
 
   sendEmail({
     subject: data.values.subject,
-    from: `${data.values.name} <${data.values.email}>`,
+    from: formSubmissionSenderEmail,
     to: formSubmissionReceiverEmail,
     body,
   });
-
-  log.info("E-mail with content-form info sent.");
 }
