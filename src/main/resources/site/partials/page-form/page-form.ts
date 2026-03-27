@@ -147,7 +147,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         type: "hidden",
         id: `${pageId}-${field.hidden.name}`,
         name: field.hidden.name,
-        value: field.hidden.value ?? "",
+        value: getFirstValue(values, { label: field.hidden.name, name: field.hidden.name }) ?? field.hidden.value ?? "",
       };
   }
 }

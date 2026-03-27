@@ -68,6 +68,9 @@
       [#case "radiobuttons"]
         [@RadioButtons.render field errors /]
         [#break]
+      [#case "hidden"]
+        <input type="hidden" name="${field.name}" value="${field.value!""}" />
+        [#break]
     [/#switch]
   [/#list]
 

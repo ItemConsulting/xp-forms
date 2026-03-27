@@ -15,6 +15,11 @@ declare global {
       formSubmissionReceiverEmail?: string;
 
       /**
+       * Hide default email integration
+       */
+      hideDefaultEmailIntegration: boolean;
+
+      /**
        * Include default styles
        */
       includeStyles: boolean;
