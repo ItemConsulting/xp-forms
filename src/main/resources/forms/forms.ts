@@ -63,24 +63,18 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
 }
 
 export function handleEmailForm(data: EmailFormData): void {
-  const formSubmissionSenderEmail = runAsAdmin(
-    () =>
-      getSiteConfig<XP.SiteConfig>({
+  const { formSubmissionSenderEmail, formSubmissionReceiverEmail } = runAsAdmin(
+    () => {
+      const config = getSiteConfig<XP.SiteConfig>({
         applicationKey: app.name,
         key: data.siteId,
-      })?.formSubmissionSenderEmail,
-    {
-      repository: findRepoThatContainsContentWithId(data.siteId),
-      branch: data.branch ?? "master",
-    },
-  );
+      });
 
-  const formSubmissionReceiverEmail = runAsAdmin(
-    () =>
-      getSiteConfig<XP.SiteConfig>({
-        applicationKey: app.name,
-        key: data.siteId,
-      })?.formSubmissionReceiverEmail,
+      return {
+        formSubmissionSenderEmail: config?.formSubmissionSenderEmail,
+        formSubmissionReceiverEmail: config?.formSubmissionReceiverEmail,
+      };
+    },
     {
       repository: findRepoThatContainsContentWithId(data.siteId),
       branch: data.branch ?? "master",
