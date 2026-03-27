@@ -2,6 +2,7 @@ import { findRepoThatContainsContentWithId, runAsAdmin } from "/lib/forms/contex
 import { localize } from "/lib/xp/i18n";
 import { getUser } from "/lib/xp/auth";
 import { getSiteConfig } from "/lib/xp/content";
+import { getSiteConfig as getPortalSiteConfig } from "/lib/xp/portal";
 import { send as sendEmail } from "/lib/xp/mail";
 import { assertIsDefined } from "/lib/forms/utils";
 import { forceArray } from "/lib/forms/arrays";
@@ -19,6 +20,11 @@ export type EmailFormData = FormEvent<{
 
 export function extensions(req: Request): FormExtensions | FormExtensions[] {
   const locale = getLocaleFromRequest(req);
+  const siteConfig = getPortalSiteConfig<XP.SiteConfig>();
+
+  if (siteConfig?.hideDefaultEmailIntegration) {
+    return [];
+  }
 
   return {
     id: "email",
