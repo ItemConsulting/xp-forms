@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site xmlns="urn:enonic:xp:model:1.0">
   <form>
+    <input name="formSubmissionSenderEmail" type="TextLine">
+      <label i18n="site.formSubmissionSenderEmail">Sender email address</label>
+      <help-text i18n="site.formSubmissionSenderEmailHelpText">The "from" address used when sending form submission emails</help-text>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <regexp>^\S+@\S+\.\S+$</regexp>
+      </config>
+    </input>
+
     <input name="formSubmissionReceiverEmail" type="TextLine">
-      <label i18n="site.formSubmissionReceiverEmail">Email address</label>
+      <label i18n="site.formSubmissionReceiverEmail">Receiver email address</label>
       <help-text i18n="site.formSubmissionReceiverEmailHelpText">When the form type "E-mail" is selected, the result should be sent to this email</help-text>
       <occurrences minimum="0" maximum="1"/>
       <config>

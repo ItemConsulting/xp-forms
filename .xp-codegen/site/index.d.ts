@@ -5,7 +5,12 @@ declare global {
   namespace XP {
     interface SiteConfig {
       /**
-       * Email address
+       * Sender email address
+       */
+      formSubmissionSenderEmail?: string;
+
+      /**
+       * Receiver email address
        */
       formSubmissionReceiverEmail?: string;
 

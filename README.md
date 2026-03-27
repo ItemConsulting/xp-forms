@@ -2,8 +2,20 @@
 
 ## Usage
 
-> [!TIP]  
-> A version of the review page – called the "Preview page" – can be displayed by appending `?page=0` to the url. 
+> [!TIP]
+> A version of the review page – called the "Preview page" – can be displayed by appending `?page=0` to the url.
+
+### Site configuration
+
+When using the built-in "Email" form type, the following fields must be configured in the site config for the xp-forms app:
+
+| Field | Description |
+|-------|-------------|
+| **Sender email address** | The "from" address used when sending form submission emails. Must be a whitelisted address on your mail server. |
+| **Receiver email address** | The address form submissions are sent to. |
+
+> [!IMPORTANT]
+> Both fields are required for email submissions to work. If either is missing, the form submission will fail with an error.
 
 ### Listening for form submissions
 
