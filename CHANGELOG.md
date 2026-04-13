@@ -1,5 +1,11 @@
 # xp-forms
 
+## 0.4.1
+
+### Patch Changes
+
+- 6e81419: Add no-cache headers to formview
+
 ## 0.4.0
 
 ### Minor Changes
