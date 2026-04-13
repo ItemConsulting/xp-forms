@@ -117,6 +117,9 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
   return {
     status: hasErrors(errors) ? 400 : 200,
+    headers: {
+      "Cache-Control": "private, no-store",
+    },
     body: render<FreemarkerParams>(view, {
       errors,
       pages,
