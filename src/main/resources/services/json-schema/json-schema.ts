@@ -14,7 +14,7 @@ export function get(req: Request<{ params: QueryParams }>): Response {
       })
     : null;
 
-  if (!content || content.type !== "no.item.forms:form") {
+  if (content?.type !== "no.item.forms:form") {
     return {
       status: 404,
     };

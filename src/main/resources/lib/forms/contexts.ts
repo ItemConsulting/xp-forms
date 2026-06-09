@@ -1,6 +1,6 @@
 import { run, type ContextParams } from "/lib/xp/context";
 import { list as listProjects } from "/lib/xp/project";
-import { multiRepoConnect, MultiRepoConnection, type MultiRepoConnectParams } from "/lib/xp/node";
+import { multiRepoConnect, type MultiRepoConnection, type MultiRepoConnectParams } from "/lib/xp/node";
 import type { Unarray } from "/lib/forms/types";
 
 export function runAsAdmin<T>(f: () => T, params: Partial<ContextParams> = {}): T {

@@ -5,9 +5,10 @@ import { notEmptyOrUndefined } from "/lib/forms/utils";
  */
 export function matchAll(regex: RegExp, str: string): RegExpExecArray[] {
   const matches: RegExpExecArray[] = [];
-  let match;
-  while ((match = regex.exec(str)) !== null) {
+  let match: RegExpExecArray | null = regex.exec(str);
+  while (match !== null) {
     matches.push(match);
+    match = regex.exec(str);
   }
 
   return matches;

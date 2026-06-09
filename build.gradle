@@ -32,8 +32,8 @@ dependencies {
   include "com.enonic.xp:lib-auth:${xpVersion}"
 
   include "com.enonic.lib:lib-asset:1.0.3"
-  include "no.item:lib-xp-freemarker:3.0.0-SNAPSHOT"
-  include "no.item:lib-xp-time:1.2.1"
+  include "no.item:lib-xp-freemarker:3.0.0"
+  include "no.item:lib-xp-time:1.6.1"
 }
 
 repositories {
@@ -46,7 +46,7 @@ repositories {
 
 node {
   download = true
-  version = "22.12.0"
+  version = "22.22.3"
 }
 
 tasks.withType(Copy).configureEach {

@@ -1,6 +1,6 @@
 import id from "./page-review.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
-import { PageReview } from "./page-review.freemarker";
+import type { PageReview } from "./page-review.freemarker";
 
 const meta: Meta<PageReview> = {
   title: "Part/Form View",

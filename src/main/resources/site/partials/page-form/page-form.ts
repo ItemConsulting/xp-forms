@@ -42,7 +42,7 @@ export function process(params: ProcessParams): string {
       }),
     errors: params.errors,
     fields: getFields(params.page.fields, pageId, params.values),
-    enableHoneypot: params.page?.enableHoneypot ? true : false,
+    enableHoneypot: params.page?.enableHoneypot ?? false,
     honeypotFiledId: params.page.honeypotFiledId as unknown as string,
     backUrl:
       params.pageNumber > 1
@@ -96,7 +96,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         required: hasSelectedValue(field.textarea.properties, "validationRequired"),
       };
 
-    case "select":
+    case "select": {
       const selectValue = getFirstValue(values, field.select) ?? field.select.value;
       return {
         type: "select",
@@ -110,8 +110,9 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
           .map(setChecked(selectValue)),
         required: hasSelectedValue(field.select.properties, "validationRequired"),
       };
+    }
 
-    case "checkboxes":
+    case "checkboxes": {
       const checkboxesValue = forceArray(values[getName(field.checkboxes)] ?? field.checkboxes.value);
 
       return {
@@ -126,8 +127,9 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
           .map(setChecked(checkboxesValue)),
         required: hasSelectedValue(field.checkboxes.properties, "validationRequired"),
       };
+    }
 
-    case "radiobuttons":
+    case "radiobuttons": {
       const radioButtonsValue = getFirstValue(values, field.radiobuttons) ?? field.radiobuttons.value;
       return {
         type: "radiobuttons",
@@ -141,6 +143,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
           .map(setChecked(radioButtonsValue)),
         required: hasSelectedValue(field.radiobuttons.properties, "validationRequired"),
       };
+    }
 
     case "hidden":
       return {

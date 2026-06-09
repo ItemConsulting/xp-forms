@@ -42,7 +42,7 @@ function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
   const validators: ValidatorConfig[] = [];
   switch (field._selected) {
     case "input":
-    case "textarea":
+    case "textarea": {
       const inputName = getName(field._selected === "input" ? field.input : field.textarea);
       const inputProperties = field._selected === "input" ? field.input.properties : field.textarea.properties;
 
@@ -63,8 +63,9 @@ function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
       }
 
       break;
+    }
     case "select":
-    case "radiobuttons":
+    case "radiobuttons": {
       const selectName = getName(field._selected === "select" ? field.select : field.radiobuttons);
       const properties = field._selected === "select" ? field.select.properties : field.radiobuttons.properties;
 
@@ -73,7 +74,8 @@ function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
       }
 
       break;
-    case "checkboxes":
+    }
+    case "checkboxes": {
       const checkboxesName = getName(field.checkboxes);
       if (hasSelectedValue(field.checkboxes.properties, "validationRequired")) {
         validators.push(requiredValidator(checkboxesName, field.checkboxes.properties.validationRequired, locale));
@@ -88,6 +90,7 @@ function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
       }
 
       break;
+    }
   }
 
   return validators;

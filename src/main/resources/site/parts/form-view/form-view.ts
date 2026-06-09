@@ -53,7 +53,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const pagesRaw = forceArray(content.data.pages);
   const hasReviewPage = content.data.reviewPage?._selected === "showReviewPage";
   const totalPages = pagesRaw.length + (hasReviewPage ? 1 : 0) + SUCCESS_PAGE_COUNT;
-  const currentPageNumber = Math.max(parseInt(page ?? part.config.firstPageNumber ?? "1"), RETURN_REVIEW_PAGE);
+  const currentPageNumber = Math.max(parseInt(page ?? part.config.firstPageNumber ?? "1", 10), RETURN_REVIEW_PAGE);
   const currentPageIndex = Math.min(currentPageNumber, totalPages) - 1; // zero indexed
   const currentPageRaw = pagesRaw[currentPageIndex];
   const locale = getLocale({ content });
@@ -177,7 +177,7 @@ function createStyleTag(path: string, include: boolean): string[] {
 function isHoneypotFilledOut(content: ContentForm, currentPageIndex: number, params: Request["params"]): boolean {
   const lookupPageIndex = currentPageIndex > 0 ? currentPageIndex - 1 : 0;
   const currentPage = forceArray(content.data.pages)[lookupPageIndex];
-  if (currentPage && currentPage.enableHoneypot && currentPage.honeypotFiledId) {
+  if (currentPage?.enableHoneypot && currentPage.honeypotFiledId) {
     if (params[currentPage.honeypotFiledId] !== "") {
       return true;
     }
@@ -213,11 +213,6 @@ function resolveValue(field: FormFieldNormalized, value: string | string[]): str
     // Look up labels for multiple values
     case "checkboxes":
       return forceArray(value).map((value) => field.options[value]);
-
-    // Return single value
-    case "input":
-    case "textarea":
-    case "hidden":
     default:
       return singleValue ?? "";
   }

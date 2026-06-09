@@ -100,7 +100,7 @@ function getSchemaId(id: string, baseUrl?: string): string {
 
 function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty> {
   switch (field.type) {
-    case "checkboxes":
+    case "checkboxes": {
       const arrProperty: SchemaPropertyArray = {
         type: "array",
         items: {
@@ -120,8 +120,9 @@ function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty>
       return {
         [field.name]: arrProperty,
       };
+    }
     case "input":
-    case "textarea":
+    case "textarea": {
       const strProperty: SchemaPropertyString = {
         type: "string",
         description: field.description,
@@ -142,6 +143,7 @@ function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty>
       return {
         [field.name]: strProperty,
       };
+    }
     default:
       return {
         [field.name]: {
