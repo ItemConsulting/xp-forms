@@ -3,12 +3,6 @@
 [#-- @ftlvariable name="values" type="java.util.HashMap" --]
 [#-- @ftlvariable name="errors" type="java.util.HashMap" --]
 [#-- @ftlvariable name="adminErrors" type="java.util.List" --]
-[#import "../../partials/input/input.ftlh" as Input]
-[#import "../../partials/text-area/text-area.ftlh" as TextArea]
-[#import "../../partials/select/select.ftlh" as Select]
-[#import "../../partials/checkboxes/checkboxes.ftlh" as Checkboxes]
-[#import "../../partials/radiobuttons/radiobuttons.ftlh" as RadioButtons]
-
 <turbo-frame
   id="${frameId}"
   class="forms"
@@ -17,11 +11,11 @@
 
   [#if adminErrors?has_content]
     [#list adminErrors.errors![] as error]
-      <div class="form-view--admin-error">${error}</div>
+      <div class="forms-alert" data-color="danger">${error}</div>
     [/#list]
 
     [#list adminErrors.warnings![] as error]
-      <div class="form-view--admin-warning">${error}</div>
+      <div class="forms-alert" data-color="warning">${error}</div>
     [/#list]
   [/#if]
 

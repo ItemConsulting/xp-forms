@@ -1,7 +1,7 @@
-import { getSite, type Content, type Site } from "/lib/xp/portal";
+import type { Request } from "@enonic-types/core";
 import { LanguageRange, Locale } from "/lib/time";
 import { getSupportedLocales } from "/lib/xp/i18n";
-import type { Request } from "@enonic-types/core";
+import { type Content, getSite, type Site } from "/lib/xp/portal";
 
 const DEFAULT_LOCALE = Locale.ROOT.toLanguageTag();
 

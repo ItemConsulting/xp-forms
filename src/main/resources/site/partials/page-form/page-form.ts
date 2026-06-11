@@ -1,11 +1,11 @@
-import { render } from "/lib/freemarker";
-import { getName, hasSelectedValue, type FormFieldRaw, type FormPageRaw, type Errors } from "/lib/forms/form-utils";
-import { pageUrl, processHtml, type Content } from "/lib/xp/portal";
-import { localize } from "/lib/xp/i18n";
 import { forceArray } from "/lib/forms/arrays";
+import { type Errors, type FormFieldRaw, type FormPageRaw, getName, hasSelectedValue } from "/lib/forms/form-utils";
 import { notNullOrUndefined } from "/lib/forms/utils";
-import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import { render } from "/lib/freemarker";
+import { localize } from "/lib/xp/i18n";
+import { type Content, pageUrl, processHtml } from "/lib/xp/portal";
 import type { Field, PageForm } from "/site/partials/page-form/page-form.freemarker";
+import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export type Option = {
   text: string;
@@ -66,7 +66,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
   switch (field?._selected) {
     case "input":
       return {
-        type: "input",
+        type: "text",
         id: `${pageId}-${getName(field.input)}`,
         label: field.input.label,
         name: getName(field.input),

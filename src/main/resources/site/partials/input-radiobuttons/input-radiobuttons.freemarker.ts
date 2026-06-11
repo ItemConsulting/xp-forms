@@ -1,4 +1,4 @@
-export type RadioButtonsField = {
+export type InputRadioButtons = {
   type: "radiobuttons";
   id: string;
   label: string;

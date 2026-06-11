@@ -2,11 +2,11 @@
   form {
     display: flex;
     flex-direction: column;
-    row-gap: var(--forms--spacing-sm, 1lh);
+    row-gap: var(--ds-size-8);
   }
 
-  .forms--back-link,
   .forms--edit-link,
+  a[rel="prev"],
   button {
     align-self: start;
   }

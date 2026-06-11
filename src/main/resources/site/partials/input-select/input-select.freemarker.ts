@@ -1,4 +1,4 @@
-export type SelectField = {
+export type InputSelect = {
   type: "select";
   id: string;
   label: string;

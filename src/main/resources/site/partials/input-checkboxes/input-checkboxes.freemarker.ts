@@ -1,4 +1,4 @@
-export type CheckboxesField = {
+export type InputCheckboxes = {
   type: "checkboxes";
   id: string;
   label: string;

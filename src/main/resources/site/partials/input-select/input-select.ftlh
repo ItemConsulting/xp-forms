@@ -1,12 +1,13 @@
-[#import "../forms-control/forms-control.ftlh" as FormControl]
+[#import "../input-field/input-field.ftlh" as Field]
 
 [#macro render field errors={}]
-  [#assign ariaDescribedBy=FormControl.ariaDescribedBy(field, errors)]
+  [#assign ariaDescribedBy=Field.ariaDescribedBy(field, errors)]
 
-  [@FormControl.render field errors]
+  [@Field.render field errors]
     <select
       id="${field.id}"
-      name="${field.name}">
+      name="${field.name}"
+      class="ds-input">
 
       [#list field.options![] as option]
         <option
@@ -17,5 +18,5 @@
         </option>
       [/#list]
     </select>
-  [/@FormControl.render]
+  [/@Field.render]
 [/#macro]

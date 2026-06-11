@@ -1,15 +1,14 @@
 .forms {
   display: flex;
   flex-direction: column;
-  gap: var(--forms--spacing-sm, 1lh);
+  gap: var(--ds-size-4, 1lh);
 }
 
-.form-view--admin-error,
-.form-view--admin-warning {
-  background-color: var(--forms--admin-error-background);
-  color: var(--forms--admin-error-color);
+.forms-alert {
+  background-color: var(--ds-color-surface-tinted);
+  color: var(--ds-color-text-default);
   padding: 1rem;
-  border: 1px solid var(--forms--admin-error-border);
+  border: 1px solid var(--ds-color-border-default);
 
   &::before {
     content: var(--forms--admin-icon);
@@ -17,16 +16,16 @@
   }
 }
 
-.form-view--admin-error {
+.forms-alert[data-color="danger"] {
   --forms--admin-icon: "⛔";
-  --forms--admin-error-background: #f8d7da;
-  --forms--admin-error-border: #f1aeb5;
-  --forms--admin-error-color: #58151c;
+  --ds-color-surface-tinted: var(--ds-color-danger-surface-tinted, #f8e4e4);
+  --ds-color-border-default: var(--ds-color-danger-border-default, #ce4d4d);
+  --ds-color-text-default: var(--ds-color-danger-text-default, #590d0d);
 }
 
-.form-view--admin-warning {
+.forms-alert[data-color="warning"] {
   --forms--admin-icon: "⚠️";
-  --forms--admin-error-background: #fff3cd;
-  --forms--admin-error-border: #ffe69c;
-  --forms--admin-error-color: #664d03;
+  --ds-color-surface-tinted: var(--ds-color-warning-surface-tinted, #fae6c6);
+  --ds-color-border-default: var(--ds-color-warning-border-default, #a56d13);
+  --ds-color-text-default: var(--ds-color-warning-text-default, #3c2807);
 }

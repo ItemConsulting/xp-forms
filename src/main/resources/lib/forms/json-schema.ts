@@ -1,6 +1,6 @@
 import { flatMap, forceArray } from "/lib/forms/arrays";
-import { serviceUrl, type Content } from "/lib/xp/portal";
-import { getName, hasSelectedValue, type FormFieldRaw, type Properties } from "/lib/forms/form-utils";
+import { type FormFieldRaw, getName, hasSelectedValue, type Properties } from "/lib/forms/form-utils";
+import { type Content, serviceUrl } from "/lib/xp/portal";
 import type { Form } from "/site/content-types";
 
 export type JSONSchema = {

@@ -48,13 +48,13 @@
     "@item-enonic-types/lib-time": "^1.6.1",
     "@itemconsulting/preset-enonic-xp": "^0.5.0",
     "@itemconsulting/xp-storybook-utils": "^0.3.0",
-    "@storybook/addon-a11y": "^10.4.2",
-    "@storybook/addon-docs": "^10.4.2",
-    "@storybook/addon-links": "^10.4.2",
+    "@storybook/addon-a11y": "^10.4.3",
+    "@storybook/addon-docs": "^10.4.3",
+    "@storybook/addon-links": "^10.4.3",
     "@storybook/addon-webpack5-compiler-swc": "^4.0.3",
-    "@storybook/server-webpack5": "^10.4.2",
-    "@swc/core": "^1.15.40",
-    "@types/node": "^25.9.2",
+    "@storybook/server-webpack5": "^10.4.3",
+    "@swc/core": "^1.15.41",
+    "@types/node": "^22",
     "autoprefixer": "^10.5.0",
     "concurrently": "^10",
     "cssnano": "^8.0.1",
@@ -70,8 +70,12 @@
     "postcss-url": "^10.1.4",
     "q-i": "^2",
     "rimraf": "^6",
-    "storybook": "^10.4.2",
+    "storybook": "^10.4.3",
     "tsup": "^8",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@digdir/designsystemet-css": "^1.15.0",
+    "@digdir/designsystemet-web": "^1.15.0"
   }
 }

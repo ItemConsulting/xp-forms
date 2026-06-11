@@ -1,23 +1,23 @@
-import { sanitize } from "/lib/xp/common";
+import { flatMap, forceArray } from "/lib/forms/arrays";
+import type { PickSelectedValue } from "/lib/forms/types";
 import {
+  type Errors,
   maxItemsValidator,
   maxLengthValidator,
   minItemsValidator,
   minLengthValidator,
   patternValidator,
   requiredValidator,
-  validate,
-  type Errors,
   type ValidatorConfig,
+  validate,
 } from "/lib/forms/validation";
-import { flatMap, forceArray } from "/lib/forms/arrays";
-import type { PickSelectedValue, Unarray } from "/lib/forms/types";
+import { sanitize } from "/lib/xp/common";
 import type { Form as FormRaw } from "/site/content-types";
 import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export type { Errors } from "/lib/forms/validation";
-export type FormPageRaw = NonNullable<Unarray<FormRaw["pages"]>>;
-export type FormFieldRaw = Unarray<FormPageRaw["fields"]>;
+export type FormPageRaw = NonNullable<FormRaw["pages"]>[number];
+export type FormFieldRaw = FormPageRaw["fields"][number];
 export type FormFieldTypes = FormFieldRaw["_selected"];
 export type Properties<Type extends Exclude<FormFieldTypes, "hidden">> = PickSelectedValue<
   FormFieldRaw,

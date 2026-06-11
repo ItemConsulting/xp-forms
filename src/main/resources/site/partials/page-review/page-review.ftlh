@@ -27,15 +27,15 @@
 [#else]
   <div class="form-view--review">
     <form method="post" data-turbo-frame="${frameId}">
-      <a href="${backUrl}" class="forms--back-link" data-turbo-frame="_self">
+      <a href="${backUrl}" rel="prev" class="ds-link" data-turbo-frame="_self">
         ${portal.localize("part.formView.back")}
       </a>
 
-      <h1>${title}</h1>
+      <h1 class="ds-heading" data-size="xl">${title}</h1>
 
       [@listSections /]
 
-      [#-- Create input fields to submit all values of the form --]
+      [#-- Create input-text fields to submit all values of the form --]
       [#list sections as section]
         [#list section.fields![] as field]
           [#list field.values![] as value]
@@ -44,18 +44,15 @@
         [/#list]
       [/#list]
 
-      <button type="submit">${submitButtonText!"Send"}</button>
+      <button type="submit" class="ds-button">${submitButtonText!"Send"}</button>
     </form>
   </div>
 [/#if]
 
 [#macro listSections]
   [#list sections as section]
-    <section
-      class="form-view--review-section"
-      aria-labelledby="form-review-section-${section_index}">
-
-      <h2 id="form-review-section-${section_index}">${section.title!}</h2>
+    <div class="form-view--review-section">
+      <h2>${section.title!}</h2>
 
       [#list section.fields![]]
         <dl>
@@ -64,7 +61,7 @@
 
             [#list field.valuesResolved![] as valueResolved]
               <dd>
-                ${(valueResolved!)?replace("\n", "<br>")}
+                ${(valueResolved!)?replace("\n", "<br>")?no_esc}
               </dd>
             [#else]
               <dd><i>${portal.localize("part.formView.notProvided")}</i></dd>
@@ -72,6 +69,6 @@
           [/#items]
         </dl>
       [/#list]
-    </section>
+    </div>
   [/#list]
 [/#macro]

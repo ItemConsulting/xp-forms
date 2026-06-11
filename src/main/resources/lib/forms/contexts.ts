@@ -1,7 +1,6 @@
-import { run, type ContextParams } from "/lib/xp/context";
+import { type ContextParams, run } from "/lib/xp/context";
+import { type MultiRepoConnection, type MultiRepoConnectParams, multiRepoConnect } from "/lib/xp/node";
 import { list as listProjects } from "/lib/xp/project";
-import { multiRepoConnect, type MultiRepoConnection, type MultiRepoConnectParams } from "/lib/xp/node";
-import type { Unarray } from "/lib/forms/types";
 
 export function runAsAdmin<T>(f: () => T, params: Partial<ContextParams> = {}): T {
   return run(
@@ -37,7 +36,7 @@ export function findRepoThatContainsContentWithId(id: string): string | undefine
   return res.hits[0]?.repoId;
 }
 
-type MultiRepoConnectParamsSource = Unarray<MultiRepoConnectParams["sources"]>;
+type MultiRepoConnectParamsSource = MultiRepoConnectParams["sources"][number];
 
 function connectToAllContentRepos(): MultiRepoConnection {
   const projects = runAsAdmin(() => listProjects());

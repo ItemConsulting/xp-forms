@@ -7,45 +7,43 @@
 [#-- @ftlvariable name="fields" type="java.util.List" --]
 [#-- @ftlvariable name="submitButtonText" type="String" --]
 
-[#import "../input/input.ftlh" as Input]
-[#import "../text-area/text-area.ftlh" as TextArea]
-[#import "../select/select.ftlh" as Select]
-[#import "../checkboxes/checkboxes.ftlh" as Checkboxes]
-[#import "../radiobuttons/radiobuttons.ftlh" as RadioButtons]
+[#import "../input-text/input-text.ftlh" as Input]
+[#import "../input-text-area/input-text-area.ftlh" as TextArea]
+[#import "../input-select/input-select.ftlh" as Select]
+[#import "../input-checkboxes/input-checkboxes.ftlh" as Checkboxes]
+[#import "../input-radiobuttons/input-radiobuttons.ftlh" as RadioButtons]
 
 <form method="post" data-turbo-frame="${frameId}">
   [#if backUrl?has_content]
-    <a href="${backUrl}" class="forms--back-link" data-turbo-frame="_self">
+    <a href="${backUrl}" rel="prev" class="ds-link" data-turbo-frame="_self">
       ${portal.localize("part.formView.back")}
     </a>
   [/#if]
 
   [#list errors!{}]
-    <div
-      role="alert"
-      class="forms--error-list"
-      tabindex="-1"
-      autofocus>
+    <ds-error-summary class="ds-error-summary">
+      <h2>${portal.localize("part.formView.thereIsAProblem")}</h2>
 
-      <h2>
-        ${portal.localize("part.formView.thereIsAProblem")}
-      </h2>
-
-      <ul>
+      <ul class="ds-list">
         [#items as key, values]
           [#list values![] as value]
             <li>
-              <a href="#${pageId}-${key}" data-turbo="false">${value}</a>
+              <a
+                class="ds-link"
+                data-color="neutral"
+                href="#${pageId}-${key}"
+                data-turbo="false">${value}
+              </a>
             </li>
           [/#list]
         [/#items]
       </ul>
-    </div>
+    </ds-error-summary>
   [/#list]
 
   <div class="html-area">
     [#if title?has_content]
-      <h2 class="form-view--title">${title}</h2>
+      <h2 class="ds-heading" data-size="md">${title}</h2>
     [/#if]
 
     ${text?no_esc!}
@@ -53,7 +51,7 @@
 
   [#list fields![] as field]
     [#switch field.type]
-      [#case "input"]
+      [#case "text"]
         [@Input.render field errors /]
         [#break]
       [#case "textarea"]
@@ -81,7 +79,7 @@
     </div>
   [/#if]
 
-  <button type="submit" class="form-view--submit-button">
+  <button type="submit" class="ds-button">
     ${submitButtonText}
   </button>
 </form>

@@ -1,20 +1,20 @@
-import id from "./checkboxes.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
-import type { CheckboxesField } from "./checkboxes.freemarker";
+import type { InputSelect } from "./input-select.freemarker";
+import id from "./input-select.ftlh";
 
-const meta: Meta<CheckboxesField> = {
-  title: "Field/Checkboxes",
+const meta: Meta<InputSelect> = {
+  title: "Field/Select",
   parameters: {
     server: {
       id,
       params: {
         template: `
-        [#import "${id}" as Checkboxes]
-        [@Checkboxes.render field={
-        "type": "checkboxes",
+        [#import "/site/partials/input-select/input-select.ftlh" as Select]
+        [@Select.render field={
+        "type": "select",
         "id": "input-1",
         "label": label,
-        "name": "fruits",
+        "name": "fruit",
         "helpText": helpText,
         "options": options
         } /]
@@ -26,15 +26,14 @@ const meta: Meta<CheckboxesField> = {
 
 export default meta;
 
-export const checkboxes: StoryObj<CheckboxesField> = {
+export const select: StoryObj<InputSelect> = {
   args: {
     label: "Frukt",
-    helpText: "Velg frukten du vil ha til lunsj",
+    helpText: "Yndlingsfrukt",
     options: [
       {
         text: "Pære",
         value: "pear",
-        checked: true,
       },
       {
         text: "Banan",
@@ -42,11 +41,7 @@ export const checkboxes: StoryObj<CheckboxesField> = {
       },
       {
         text: "Appelsin",
-        value: "apple",
-      },
-      {
-        text: "Melon",
-        value: "melon",
+        value: "organge",
       },
     ],
   },

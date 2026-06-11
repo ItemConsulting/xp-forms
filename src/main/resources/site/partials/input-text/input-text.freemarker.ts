@@ -1,5 +1,5 @@
-export type InputField = {
-  type: "input";
+export type InputText = {
+  type: "text";
   id: string;
   label: string;
   name: string;

@@ -1,26 +1,26 @@
-import { getContent, getComponent, getSite, pageUrl, getSiteConfig } from "/lib/xp/portal";
+import type { PartComponent, Request, Response } from "@enonic-types/core";
 import { assetUrl } from "/lib/enonic/asset";
-import { assertIsDefined, partPathToId } from "/lib/forms/utils";
-import { render } from "/lib/freemarker";
-import { forceArray } from "/lib/forms/arrays";
-import { getLocale } from "/lib/forms/locale";
-import { send as sendEvent } from "/lib/xp/event";
-import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
-import { getJsonSchema, normalizeFields, type FormFieldNormalized } from "/lib/forms/json-schema";
 import { compareSchemas, type SchemaError } from "/lib/forms/admin-schema-validation";
+import { forceArray } from "/lib/forms/arrays";
+import type { ContentForm } from "/lib/forms/contents";
+import { deleteFromStore, loadFromStore, saveToStore } from "/lib/forms/data-store";
 import {
   getIntegration,
   getPrepopulationValues,
   getReferenceJsonSchema,
   type Integration,
 } from "/lib/forms/extensions";
-import { getErrors, type Errors } from "/lib/forms/form-utils";
-import { deleteFromStore, loadFromStore, saveToStore } from "/lib/forms/data-store";
+import { type Errors, getErrors } from "/lib/forms/form-utils";
+import { type FormFieldNormalized, getJsonSchema, normalizeFields } from "/lib/forms/json-schema";
+import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
-import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
-import type { Request, Response, PartComponent } from "@enonic-types/core";
-import type { ContentForm } from "/lib/forms/contents";
+import { assertIsDefined, partPathToId } from "/lib/forms/utils";
+import { render } from "/lib/freemarker";
 import { getUser } from "/lib/xp/auth";
+import { send as sendEvent } from "/lib/xp/event";
+import { getComponent, getContent, getSite, getSiteConfig, pageUrl } from "/lib/xp/portal";
+import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
 
 export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;

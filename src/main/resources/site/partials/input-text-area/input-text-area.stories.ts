@@ -1,9 +1,9 @@
-import id from "./text-area.ftlh";
 import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
-import type { TextAreaField } from "./text-area.freemarker";
 import { controlAutocomplete, controlInputMode } from "../../../storybook-utils";
+import type { InputTextArea } from "./input-text-area.freemarker";
+import id from "./input-text-area.ftlh";
 
-const meta: Meta<TextAreaField> = {
+const meta: Meta<InputTextArea> = {
   title: "Field/TextArea",
   argTypes: {
     autocomplete: controlAutocomplete,
@@ -14,7 +14,7 @@ const meta: Meta<TextAreaField> = {
       id,
       params: {
         template: `
-        [#import "/site/partials/text-area/text-area.ftlh" as TextArea]
+        [#import "/site/partials/input-text-area/input-text-area.ftlh" as TextArea]
         [@TextArea.render field={
         "type": "textarea",
         "id": "input-1",
@@ -35,7 +35,7 @@ const meta: Meta<TextAreaField> = {
 
 export default meta;
 
-export const textArea: StoryObj<TextAreaField> = {
+export const textArea: StoryObj<InputTextArea> = {
   args: {
     label: "Adresse",
     cols: 60,

@@ -1,7 +1,7 @@
 import { difference, flatMap, intersection } from "/lib/forms/arrays";
-import { localize } from "/lib/xp/i18n";
-import type { JSONSchema } from "/lib/forms/json-schema";
 import type { Integration } from "/lib/forms/extensions";
+import type { JSONSchema } from "/lib/forms/json-schema";
+import { localize } from "/lib/xp/i18n";
 
 export type SchemaError = {
   errors: string[];

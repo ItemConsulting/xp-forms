@@ -1,25 +1,18 @@
-[#macro render field errors elementType="div"]
-  <${elementType}
-    class="forms--control"
-    data-has-error="${hasError(field, errors)}">
-
-    [#if elementType=="fieldset" && field.label?has_content]
-      <legend>
-        ${field.label}
-      </legend>
-    [#elseif elementType!="fieldset"]
-      <label for="${field.id}">
-        ${field.label!}
-        [#if !field.required!true]
-          <span class="forms--optional">${portal.localize("part.formView.optional")}</span>
-        [/#if]
-      </label>
-    [/#if]
+[#macro render field errors]
+  <div class="ds-field">
+    <label for="${field.id}" class="ds-label">
+      ${field.label!}
+      [#if !field.required!true]
+        <span class="ds-tag" data-size="sm">
+          ${portal.localize("part.formView.optional")}
+        </span>
+      [/#if]
+    </label>
 
     [#if field.helpText?has_content]
       <div
         id="${field.id}-help-text"
-        class="forms--help-text html-area">
+        data-field="description">
 
         ${field.helpText?no_esc}
       </div>
@@ -28,19 +21,16 @@
     [@renderErrorList field errors /]
 
     [#nested]
-  </${elementType}>
+  </div>
 [/#macro]
 
 [#macro renderErrorList field errors={}]
   [#assign errorList=errors[field.name]![] /]
 
   [#list errorList]
-    <div
-      id="${field.id}-error-text"
-      class="forms--error-texts">
-
+    <div id="${field.id}-error-text">
       [#items as error]
-        <div class="forms--error-text">
+        <div class="ds-validation-message" data-field="validation">
           ${error}
         </div>
       [/#items]

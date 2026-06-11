@@ -1,6 +1,6 @@
+import { forceArray } from "/lib/forms/arrays";
 import { isEmptyOrUndefined, notEmptyOrUndefined, notNullOrUndefined, stringToRegex } from "/lib/forms/utils";
 import { localize } from "/lib/xp/i18n";
-import { forceArray } from "/lib/forms/arrays";
 
 export type Errors = Record<string, string[]>;
 

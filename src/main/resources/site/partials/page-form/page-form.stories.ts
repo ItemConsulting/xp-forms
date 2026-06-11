@@ -21,8 +21,8 @@ export const formPage: StoryObj<PageForm> = {
     frameId: "frame",
     fields: [
       {
-        type: "input",
-        id: "input-1",
+        type: "input-text",
+        id: "input-text-1",
         label: "Navn",
         name: "name",
         autocomplete: "name",
@@ -34,7 +34,7 @@ export const formPage: StoryObj<PageForm> = {
       },
       {
         type: "textarea",
-        id: "input-2",
+        id: "input-text-2",
         label: "Kommentar",
         name: "comment",
         placeholder: "Skriv en kommentar",
@@ -57,7 +57,7 @@ export const formPageWithError: StoryObj<PageForm> = {
     },
     fields: [
       {
-        type: "input",
+        type: "input-text",
         id: "page-1-email",
         label: "Email",
         name: "email",

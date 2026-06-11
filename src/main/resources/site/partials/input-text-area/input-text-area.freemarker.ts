@@ -1,4 +1,4 @@
-export type TextAreaField = {
+export type InputTextArea = {
   type: "textarea";
   id: string;
   label: string;

@@ -1,14 +1,14 @@
+import type { Request } from "@enonic-types/core";
+import { forceArray } from "/lib/forms/arrays";
 import { findRepoThatContainsContentWithId, runAsAdmin } from "/lib/forms/contexts";
-import { localize } from "/lib/xp/i18n";
+import type { FormExtensions } from "/lib/forms/extensions";
+import { getLocaleFromRequest } from "/lib/forms/locale";
+import { assertIsDefined } from "/lib/forms/utils";
 import { getUser } from "/lib/xp/auth";
 import { getSiteConfig } from "/lib/xp/content";
-import { getSiteConfig as getPortalSiteConfig } from "/lib/xp/portal";
+import { localize } from "/lib/xp/i18n";
 import { send as sendEmail } from "/lib/xp/mail";
-import { assertIsDefined } from "/lib/forms/utils";
-import { forceArray } from "/lib/forms/arrays";
-import { getLocaleFromRequest } from "/lib/forms/locale";
-import type { Request } from "@enonic-types/core";
-import type { FormExtensions } from "/lib/forms/extensions";
+import { getSiteConfig as getPortalSiteConfig } from "/lib/xp/portal";
 import type { FormEvent } from "/site/parts/form-view/form-view";
 
 export type EmailFormData = FormEvent<{
