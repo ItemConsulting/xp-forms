@@ -10,11 +10,14 @@ import {
   getReferenceJsonSchema,
   type Integration,
 } from "/lib/forms/extensions";
-import { type Errors, getErrors } from "/lib/forms/form-utils";
+import { getValidators } from "/lib/forms/form-utils";
 import { type FormFieldNormalized, getJsonSchema, normalizeFields } from "/lib/forms/json-schema";
 import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
+import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
+import type { Errors } from "/lib/forms/types";
 import { assertIsDefined, partPathToId } from "/lib/forms/utils";
+import { createFormSchema } from "/lib/forms/validation";
 import { render } from "/lib/freemarker";
 import { getUser } from "/lib/xp/auth";
 import { send as sendEvent } from "/lib/xp/event";
@@ -66,7 +69,16 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
   const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
 
-  const errors = req.method === "POST" ? getErrors(values, currentPageRaw, locale) : {};
+  const validators = forceArray(currentPageRaw?.fields)
+    .map(getValidators)
+    .reduce((acc, fieldValidators) => ({ ...acc, ...fieldValidators }), {});
+  const formSchema = createFormSchema(validators);
+
+  const result: StandardSchemaV1.Result<SubmittedValues> =
+    req.method === "POST"
+      ? formSchema["~standard"].validate(values, { libraryOptions: { locale } })
+      : { value: values };
+  const errors = issuesToErrors(result.issues);
 
   // If after last page, send back to first page
   if (currentPageNumber > totalPages) {
@@ -97,7 +109,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     deleteFromStore(req, content._id);
   }
   // If form submit, save values and redirect to next page
-  else if (req.method === "POST" && !hasErrors(errors)) {
+  else if (req.method === "POST" && !result.issues) {
     if (isHoneypotFilledOut(content, currentPageIndex, req.params)) {
       return redirectToPage(content, currentPageNumber);
     }
@@ -116,7 +128,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   });
 
   return {
-    status: hasErrors(errors) ? 400 : 200,
+    status: result.issues ? 400 : 200,
     headers: {
       "Cache-Control": "private, no-store",
     },
@@ -170,6 +182,30 @@ function redirectToPage(content: ContentForm, pageNumber: number): Response {
   };
 }
 
+/** Groups Standard Schema issues by their first path segment into the `Errors` shape the views consume. */
+export function issuesToErrors(issues: ReadonlyArray<StandardSchemaV1.Issue> = []): Errors {
+  return issues.reduce<Errors>((errors, issue) => {
+    const key = getIssueKey(issue);
+
+    if (key !== undefined) {
+      errors[key] = errors[key] ?? [];
+      errors[key].push(issue.message);
+    }
+
+    return errors;
+  }, {});
+}
+
+function getIssueKey(issue: StandardSchemaV1.Issue): string | undefined {
+  const segment = issue.path?.[0];
+
+  if (segment === undefined) {
+    return undefined;
+  }
+
+  return (typeof segment === "object" ? segment.key : segment).toString();
+}
+
 function createStyleTag(path: string, include: boolean): string[] {
   return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
 }
@@ -184,10 +220,6 @@ function isHoneypotFilledOut(content: ContentForm, currentPageIndex: number, par
   }
 
   return false;
-}
-
-function hasErrors(errors: Errors): boolean {
-  return Object.keys(errors).length > 0;
 }
 
 export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {

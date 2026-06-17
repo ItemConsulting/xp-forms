@@ -1,4 +1,4 @@
-import type { Errors } from "/lib/forms/validation";
+import type { Errors } from "/lib/forms/types";
 import type { InputCheckboxes } from "/site/partials/input-checkboxes/input-checkboxes.freemarker";
 import type { InputRadioButtons } from "/site/partials/input-radiobuttons/input-radiobuttons.freemarker";
 import type { InputSelect } from "/site/partials/input-select/input-select.freemarker";

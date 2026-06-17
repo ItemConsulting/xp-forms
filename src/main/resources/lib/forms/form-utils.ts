@@ -1,21 +1,19 @@
-import { flatMap, forceArray } from "/lib/forms/arrays";
+import { forceArray } from "/lib/forms/arrays";
+import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
 import type { PickSelectedValue } from "/lib/forms/types";
 import {
-  type Errors,
+  combineValidators,
   maxItemsValidator,
   maxLengthValidator,
   minItemsValidator,
   minLengthValidator,
   patternValidator,
   requiredValidator,
-  type ValidatorConfig,
-  validate,
 } from "/lib/forms/validation";
 import { sanitize } from "/lib/xp/common";
 import type { Form as FormRaw } from "/site/content-types";
-import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import type { SubmittedValue } from "/site/parts/form-view/form-view.freemarker";
 
-export type { Errors } from "/lib/forms/validation";
 export type FormPageRaw = NonNullable<FormRaw["pages"]>[number];
 export type FormFieldRaw = FormPageRaw["fields"][number];
 export type FormFieldTypes = FormFieldRaw["_selected"];
@@ -32,14 +30,9 @@ export function hasSelectedValue<T extends string>(properties: { _selected: T[] 
   return forceArray(properties._selected).indexOf(value) !== -1;
 }
 
-export function getErrors(params: SubmittedValues, page: FormPageRaw | undefined, locale: string): Errors {
-  const validators = flatMap(forceArray(page?.fields), (field) => getValidators(field, locale));
+export function getValidators(field: FormFieldRaw): Record<string, StandardSchemaV1<SubmittedValue, SubmittedValue>> {
+  const validators: StandardSchemaV1<SubmittedValue, SubmittedValue>[] = [];
 
-  return validate(params, validators);
-}
-
-function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
-  const validators: ValidatorConfig[] = [];
   switch (field._selected) {
     case "input":
     case "textarea": {
@@ -47,22 +40,22 @@ function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
       const inputProperties = field._selected === "input" ? field.input.properties : field.textarea.properties;
 
       if (hasSelectedValue(inputProperties, "validationRequired")) {
-        validators.push(requiredValidator(inputName, inputProperties.validationRequired, locale));
+        validators.push(requiredValidator([inputName], inputProperties.validationRequired));
       }
 
       if (hasSelectedValue(inputProperties, "validationMinLength")) {
-        validators.push(minLengthValidator(inputName, inputProperties.validationMinLength, locale));
+        validators.push(minLengthValidator([inputName], inputProperties.validationMinLength));
       }
 
       if (hasSelectedValue(inputProperties, "validationMaxLength")) {
-        validators.push(maxLengthValidator(inputName, inputProperties.validationMaxLength, locale));
+        validators.push(maxLengthValidator([inputName], inputProperties.validationMaxLength));
       }
 
       if (hasSelectedValue(inputProperties, "validationPattern")) {
-        validators.push(patternValidator(inputName, inputProperties.validationPattern, locale));
+        validators.push(patternValidator([inputName], inputProperties.validationPattern));
       }
 
-      break;
+      return validators.length > 0 ? { [inputName]: combineValidators(validators) } : {};
     }
     case "select":
     case "radiobuttons": {
@@ -70,28 +63,28 @@ function getValidators(field: FormFieldRaw, locale: string): ValidatorConfig[] {
       const properties = field._selected === "select" ? field.select.properties : field.radiobuttons.properties;
 
       if (hasSelectedValue(properties, "validationRequired")) {
-        validators.push(requiredValidator(selectName, properties.validationRequired, locale));
+        validators.push(requiredValidator([selectName], properties.validationRequired));
       }
 
-      break;
+      return validators.length > 0 ? { [selectName]: combineValidators(validators) } : {};
     }
     case "checkboxes": {
       const checkboxesName = getName(field.checkboxes);
       if (hasSelectedValue(field.checkboxes.properties, "validationRequired")) {
-        validators.push(requiredValidator(checkboxesName, field.checkboxes.properties.validationRequired, locale));
+        validators.push(requiredValidator([checkboxesName], field.checkboxes.properties.validationRequired));
       }
 
       if (hasSelectedValue(field.checkboxes.properties, "validationMinItems")) {
-        validators.push(minItemsValidator(checkboxesName, field.checkboxes.properties.validationMinItems, locale));
+        validators.push(minItemsValidator([checkboxesName], field.checkboxes.properties.validationMinItems));
       }
 
       if (hasSelectedValue(field.checkboxes.properties, "validationMaxItems")) {
-        validators.push(maxItemsValidator(checkboxesName, field.checkboxes.properties.validationMaxItems, locale));
+        validators.push(maxItemsValidator([checkboxesName], field.checkboxes.properties.validationMaxItems));
       }
 
-      break;
+      return validators.length > 0 ? { [checkboxesName]: combineValidators(validators) } : {};
     }
+    default:
+      return {};
   }
-
-  return validators;
 }

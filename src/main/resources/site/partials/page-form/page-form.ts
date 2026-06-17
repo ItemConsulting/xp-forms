@@ -1,5 +1,6 @@
 import { forceArray } from "/lib/forms/arrays";
-import { type Errors, type FormFieldRaw, type FormPageRaw, getName, hasSelectedValue } from "/lib/forms/form-utils";
+import { type FormFieldRaw, type FormPageRaw, getName, hasSelectedValue } from "/lib/forms/form-utils";
+import type { Errors } from "/lib/forms/types";
 import { notNullOrUndefined } from "/lib/forms/utils";
 import { render } from "/lib/freemarker";
 import { localize } from "/lib/xp/i18n";

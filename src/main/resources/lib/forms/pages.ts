@@ -1,12 +1,12 @@
-import { partPathToId } from "/lib/forms/utils";
-import { forceArray } from "/lib/forms/arrays";
-import { process as processReviewPage } from "/site/partials/page-review/page-review";
-import { process as processFormPage } from "/site/partials/page-form/page-form";
-import { process as processSuccessPage } from "/site/partials/page-success/page-success";
 import type { PartComponent } from "@enonic-types/core";
-import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
-import type { Errors } from "/lib/forms/validation";
+import type { Errors } from "/lib/forms/types";
+import { partPathToId } from "/lib/forms/utils";
+import { process as processFormPage } from "/site/partials/page-form/page-form";
+import { process as processReviewPage } from "/site/partials/page-review/page-review";
+import { process as processSuccessPage } from "/site/partials/page-success/page-success";
+import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export const RETURN_ALL_PAGES = -2;
 export const RETURN_REVIEW_PAGE = -1;

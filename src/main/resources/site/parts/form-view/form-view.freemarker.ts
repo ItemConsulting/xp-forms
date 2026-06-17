@@ -1,11 +1,12 @@
-import type { Errors } from "/lib/forms/validation";
+import type { Errors } from "/lib/forms/types";
 
 export type FreemarkerParams = {
   frameId: string;
   pages: string[];
   errors: Errors;
-  values: Record<string, string[] | string | undefined>;
+  values: SubmittedValues;
   adminErrors?: Errors;
 };
 
-export type SubmittedValues = Record<string, string[] | string | undefined>;
+export type SubmittedValue = string[] | string | undefined;
+export type SubmittedValues = Record<string, SubmittedValue>;
