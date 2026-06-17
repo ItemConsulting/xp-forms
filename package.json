@@ -24,7 +24,7 @@
     "versioning": "npx changeset version && npm i --package-lock-only && NEW_VERSION=$(node -p \"require('./package.json').version\") && sed -i \"s/version.*/version = ${NEW_VERSION}/\" gradle.properties"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.0",
     "@changesets/cli": "^2.31.0",
     "@enonic-types/core": "^7",
     "@enonic-types/global": "^7",
@@ -48,17 +48,17 @@
     "@item-enonic-types/lib-time": "^1.6.1",
     "@itemconsulting/preset-enonic-xp": "^0.5.0",
     "@itemconsulting/xp-storybook-utils": "^0.3.0",
-    "@storybook/addon-a11y": "^10.4.3",
-    "@storybook/addon-docs": "^10.4.3",
-    "@storybook/addon-links": "^10.4.3",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-links": "^10.4.6",
     "@storybook/addon-webpack5-compiler-swc": "^4.0.3",
-    "@storybook/server-webpack5": "^10.4.3",
+    "@storybook/server-webpack5": "^10.4.6",
     "@swc/core": "^1.15.41",
     "@swc/jest": "^0.2.39",
     "@types/node": "^22",
     "autoprefixer": "^10.5.0",
     "concurrently": "^10",
-    "cssnano": "^8.0.1",
+    "cssnano": "^8.0.2",
     "esbuild-plugin-globals": "^0.2.0",
     "glob": "^13.0.6",
     "jest": "^30.4.2",
@@ -73,13 +73,13 @@
     "postcss-url": "^10.1.4",
     "q-i": "^2",
     "rimraf": "^6",
-    "storybook": "^10.4.3",
+    "storybook": "^10.4.6",
     "ts-jest": "^29.4.11",
     "tsup": "^8",
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@digdir/designsystemet-css": "^1.15.0",
-    "@digdir/designsystemet-web": "^1.15.0"
+    "@digdir/designsystemet-css": "^1.16.0",
+    "@digdir/designsystemet-web": "^1.16.0"
   }
 }
