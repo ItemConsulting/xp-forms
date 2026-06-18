@@ -1,10 +1,11 @@
 import { forceArray } from "/lib/forms/arrays";
 import { type FormFieldRaw, type FormPageRaw, getName, hasSelectedValue } from "/lib/forms/form-utils";
+import { getFieldNameFromConfig } from "/lib/forms/honeypot";
 import type { Errors } from "/lib/forms/types";
-import { notNullOrUndefined } from "/lib/forms/utils";
+import { getOptionIfPresent, notNullOrUndefined } from "/lib/forms/utils";
 import { render } from "/lib/freemarker";
 import { localize } from "/lib/xp/i18n";
-import { type Content, pageUrl, processHtml } from "/lib/xp/portal";
+import { type Content, getSiteConfig, pageUrl, processHtml } from "/lib/xp/portal";
 import type { Field, PageForm } from "/site/partials/page-form/page-form.freemarker";
 import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
@@ -27,7 +28,14 @@ export type ProcessParams = {
 const view = resolve("/site/partials/page-form/page-form.ftlh");
 
 export function process(params: ProcessParams): string {
+  const siteConfig = getSiteConfig<XP.SiteConfig>();
+  const spamPreventionType = siteConfig?.spamPrevention._selected ?? "honeypot";
+  const turnstileSiteKey =
+    getOptionIfPresent(siteConfig?.spamPrevention, "turnstile")?.turnstile.turnstileSiteKey ??
+    app.config.turnstileSiteKey;
+
   const pageId = `${params.partId}-page-${params.pageNumber}`;
+
   return render<PageForm>(view, {
     frameId: `${params.partId}-frame`,
     pageId,
@@ -43,8 +51,9 @@ export function process(params: ProcessParams): string {
       }),
     errors: params.errors,
     fields: getFields(params.page.fields, pageId, params.values),
-    enableHoneypot: params.page?.enableHoneypot ?? false,
-    honeypotFiledId: params.page.honeypotFiledId as unknown as string,
+    spamPreventionType,
+    honeypotFiledName: getFieldNameFromConfig(),
+    turnstileSiteKey,
     backUrl:
       params.pageNumber > 1
         ? pageUrl({

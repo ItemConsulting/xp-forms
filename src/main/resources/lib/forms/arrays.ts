@@ -5,6 +5,10 @@ export function forceArray<A>(data: A | Array<A> | undefined | null): ReadonlyAr
   return Array.isArray(data) ? data : [data];
 }
 
+export function first<A>(data: A | A[] | undefined | null): A | undefined {
+  return Array.isArray(data) ? data[0] : (data ?? undefined);
+}
+
 export function flatMap<A, B>(arr: Array<A>, f: (a: A) => Array<B>): Array<B> {
   return arr.reduce<B[]>((acc, val) => acc.concat(f(val)), []);
 }
@@ -22,8 +26,14 @@ export function intersection<A>(xs: readonly A[], ys: readonly A[]): A[] {
 /**
  * Returns the first value from an Array that matches a predicate
  */
+export function find<T, S extends T>(arr: T[], predicate: (value: T) => value is S): S | undefined;
+export function find<T>(arr: T[], predicate: (value: T) => boolean): T | undefined;
 export function find<T>(arr: T[], predicate: (value: T) => boolean): T | undefined {
-  return arr.filter(predicate)[0];
+  for (const key in arr) {
+    if (predicate(arr[key])) {
+      return arr[key];
+    }
+  }
 }
 
 /**

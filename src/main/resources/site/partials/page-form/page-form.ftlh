@@ -5,6 +5,9 @@
 [#-- @ftlvariable name="title" type="String" --]
 [#-- @ftlvariable name="text" type="String" --]
 [#-- @ftlvariable name="fields" type="java.util.List" --]
+[#-- @ftlvariable name="spamPreventionType" type="String" --]
+[#-- @ftlvariable name="honeypotFiledName" type="String" --]
+[#-- @ftlvariable name="turnstileSiteKey" type="String" --]
 [#-- @ftlvariable name="submitButtonText" type="String" --]
 
 [#import "../input-text/input-text.ftlh" as Input]
@@ -32,7 +35,9 @@
                 class="ds-link"
                 data-color="neutral"
                 href="#${pageId}-${key}"
-                data-turbo="false">${value}
+                data-turbo="false">
+
+                ${value}
               </a>
             </li>
           [/#list]
@@ -72,12 +77,23 @@
     [/#switch]
   [/#list]
 
-  [#if enableHoneypot?has_content && honeypotFiledId?has_content]
-    <div class="input-field-p">
-      <label for="${honeypotFiledId}">Nettside</label>
-      <input name="${honeypotFiledId}" type="text" id="${honeypotFiledId}" value="" autocomplete="off" />
-    </div>
-  [/#if]
+  [#switch spamPreventionType]
+    [#case "honeypot"]
+      [#assign fieldId = honeypotFiledName!'website' ]
+      <div class="input-field-p">
+        <label for="${fieldId}">Nettside</label>
+        <input
+          name="${fieldId}"
+          type="text"
+          id="${fieldId}"
+          value=""
+          autocomplete="off" />
+      </div>
+      [#break]
+    [#case "turnstile"]
+      <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
+      [#break]
+  [/#switch]
 
   <button type="submit" class="ds-button">
     ${submitButtonText}

@@ -1,34 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site xmlns="urn:enonic:xp:model:1.0">
   <form>
-    <input name="formSubmissionSenderEmail" type="TextLine">
-      <label i18n="site.formSubmissionSenderEmail">Sender email address</label>
-      <help-text i18n="site.formSubmissionSenderEmailHelpText">The "from" address used when sending form submission emails</help-text>
-      <occurrences minimum="0" maximum="1"/>
-      <config>
-        <regexp>^\S+@\S+\.\S+$</regexp>
-      </config>
-    </input>
-
-    <input name="formSubmissionReceiverEmail" type="TextLine">
-      <label i18n="site.formSubmissionReceiverEmail">Receiver email address</label>
-      <help-text i18n="site.formSubmissionReceiverEmailHelpText">When the form type "E-mail" is selected, the result should be sent to this email</help-text>
-      <occurrences minimum="0" maximum="1"/>
-      <config>
-        <regexp>^\S+@\S+\.\S+$</regexp>
-      </config>
-    </input>
-
-    <input name="hideDefaultEmailIntegration" type="CheckBox">
-      <label i18n="site.hideDefaultEmailIntegration">Hide default email integration</label>
-      <help-text i18n="site.hideDefaultEmailIntegrationHelpText">Hide the built-in "Email" form type. Use this when your application provides its own email form type.</help-text>
-    </input>
-
     <input name="includeStyles" type="CheckBox">
       <label i18n="site.includeStyles">Include default styles</label>
-      <help-text i18n="site.includeStylesHelpText">It is recommended that each website provides its own styles for the forms. But you can include default styles by checking this box.</help-text>
+      <help-text i18n="site.includeStylesHelpText">It is recommended that each website provides its own styles for the
+        forms. But you can include default styles by checking this box.
+      </help-text>
       <default>checked</default>
     </input>
+
+    <option-set name="spamPrevention">
+      <label i18n="site.spamPrevention">Spam prevention</label>
+      <help-text i18n="site.spamPrevention.helpText">Choose which spam prevention mechanism you want to use</help-text>
+      <occurrences minimum="1" maximum="1"/>
+
+      <options minimum="0" maximum="1">
+        <option name="turnstile">
+          <label i18n="site.spamPrevention.turnstile">Cloudflare turnstile</label>
+          <help-text i18n="site.spamPrevention.turnstileHelpText">Invisible captcha solution from Cloudflare</help-text>
+          <items>
+            <mixin name="cloudflare-turnstile"/>
+          </items>
+        </option>
+
+        <option name="honeypot">
+          <label i18n="site.spamPrevention.honeypot">Honeypot</label>
+          <help-text i18n="site.spamPrevention.honeypotHelpText">Hidden field in form that will catch the simpler bots
+          </help-text>
+          <items>
+            <input name="honeypotFieldName" type="TextLine">
+              <label i18n="site.spamPrevention.honeypot.honeypotFieldName">Honeypot field id</label>
+              <help-text i18n="site.spamPrevention.honeypot.honeypotFieldNameHelpText">The name of the honeypot field,
+                should be a convincing field name
+              </help-text>
+              <occurrences minimum="0" maximum="1"/>
+              <default>website</default>
+            </input>
+          </items>
+        </option>
+      </options>
+    </option-set>
+
+    <option-set name="formTypes">
+      <label i18n="site.formTypes">Built in form types</label>
+      <help-text i18n="site.formTypesHelpText">Enable APIs that handles form submissions</help-text>
+      <occurrences minimum="1" maximum="1"/>
+
+      <options minimum="0" maximum="1">
+        <option name="email">
+          <label i18n="site.formTypes.email">E-mail</label>
+          <help-text i18n="site.formTypes.emailHelpText">Send the form response by email</help-text>
+          <items>
+            <input name="formSubmissionSenderEmail" type="TextLine">
+              <label i18n="site.formTypes.email.formSubmissionSenderEmail">Sender email address</label>
+              <help-text i18n="site.formTypes.email.formSubmissionSenderEmailHelpText">
+                The "from" address used when sending form submission emails
+              </help-text>
+              <occurrences minimum="0" maximum="1"/>
+              <config>
+                <regexp>^\S+@\S+\.\S+$</regexp>
+              </config>
+            </input>
+
+            <input name="formSubmissionReceiverEmail" type="TextLine">
+              <label i18n="site.formTypes.email.formSubmissionReceiverEmail">Receiver email address</label>
+              <help-text i18n="site.formTypes.email.formSubmissionReceiverEmailHelpText">
+                When the form type "E-mail" is selected, the result should be sent to this email
+              </help-text>
+              <occurrences minimum="0" maximum="1"/>
+              <config>
+                <regexp>^\S+@\S+\.\S+$</regexp>
+              </config>
+            </input>
+          </items>
+        </option>
+      </options>
+    </option-set>
   </form>
 
   <processors>

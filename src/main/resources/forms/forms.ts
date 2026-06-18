@@ -1,9 +1,9 @@
 import type { Request } from "@enonic-types/core";
-import { forceArray } from "/lib/forms/arrays";
+import { find, forceArray } from "/lib/forms/arrays";
 import { findRepoThatContainsContentWithId, runAsAdmin } from "/lib/forms/contexts";
 import type { FormExtensions } from "/lib/forms/extensions";
 import { getLocaleFromRequest } from "/lib/forms/locale";
-import { assertIsDefined } from "/lib/forms/utils";
+import { assertIsDefined, notNullOrUndefined } from "/lib/forms/utils";
 import { getUser } from "/lib/xp/auth";
 import { getSiteConfig } from "/lib/xp/content";
 import { localize } from "/lib/xp/i18n";
@@ -22,10 +22,20 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
   const locale = getLocaleFromRequest(req);
   const siteConfig = getPortalSiteConfig<XP.SiteConfig>();
 
-  if (siteConfig?.hideDefaultEmailIntegration) {
-    return [];
-  }
+  return forceArray(siteConfig?.formTypes)
+    .map((formType) => {
+      switch (formType._selected) {
+        case "email":
+          return createEmailExtension(locale);
 
+        default:
+          return undefined;
+      }
+    })
+    .filter(notNullOrUndefined);
+}
+
+function createEmailExtension(locale: string): FormExtensions {
   return {
     id: "email",
     displayName: localize({
@@ -71,10 +81,14 @@ export function extensions(req: Request): FormExtensions | FormExtensions[] {
 export function handleEmailForm(data: EmailFormData): void {
   const { formSubmissionSenderEmail, formSubmissionReceiverEmail } = runAsAdmin(
     () => {
-      const config = getSiteConfig<XP.SiteConfig>({
+      const siteConfig = getSiteConfig<XP.SiteConfig>({
         applicationKey: app.name,
         key: data.siteId,
       });
+
+      const config = find(forceArray(siteConfig?.formTypes), (formType) => {
+        return formType._selected === "email";
+      })?.email;
 
       return {
         formSubmissionSenderEmail: config?.formSubmissionSenderEmail,

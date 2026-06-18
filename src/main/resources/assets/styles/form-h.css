@@ -1,3 +1,6 @@
+/* Visually hidden honeypot field — must stay out of the a11y tree and tab order.
+   visibility: hidden removes it from both; the off-screen position is extra insurance.
+   Do not change without reviewing the honeypot logic in form-view.ts. */
 .input-field-p {
   position: absolute;
   left: -9999px;
