@@ -540,16 +540,6 @@ export type Form = {
      * Submit button text
      */
     submitButtonText: string;
-
-    /**
-     * Enable honeypot
-     */
-    enableHoneypot: boolean;
-
-    /**
-     * Honeypot field id
-     */
-    honeypotFiledId?: string;
   }>;
 
   /**

@@ -32,8 +32,10 @@ dependencies {
   include "com.enonic.xp:lib-auth:${xpVersion}"
 
   include "com.enonic.lib:lib-asset:1.0.3"
+  include "com.enonic.lib:lib-http-client:3.2.2"
   include "no.item:lib-xp-freemarker:3.0.0"
   include "no.item:lib-xp-time:1.6.1"
+  include "no.item:lib-xp-cloudflare-turnstile:0.6.0"
 }
 
 repositories {

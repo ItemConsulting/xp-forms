@@ -40,22 +40,6 @@
           <occurrences minimum="1" maximum="1"/>
           <default>Neste</default>
         </input>
-
-        <input name="enableHoneypot" type="CheckBox">
-          <label i18n="contentType.form.enableHoneypot">Enable honeypot</label>
-          <help-text i18n="contentType.form.enableHoneypotHelp">Enables honeypot solution to protect against bot form submissions</help-text>
-          <config>
-            <alignment>right</alignment>
-          </config>
-        </input>
-
-        <input name="honeypotFiledId" type="TextLine">
-          <label i18n="contentType.form.honeypotFiledId">Honeypot field id</label>
-          <help-text i18n="contentType.form.honeypotFiledIdHelp">The name of the honeypot field, should be a convincing field name</help-text>
-          <occurrences minimum="0" maximum="1"/>
-          <default>website</default>
-        </input>
-
       </items>
     </item-set>
 

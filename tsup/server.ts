@@ -55,7 +55,7 @@ export default function buildServerConfig(): Options {
       "/lib/util",
       "/lib/vanilla",
       "/lib/text-encoding",
-      "/lib/thymeleaf",
+      "/lib/cloudflare-turnstile",
       /^\/lib\/xp\//,
       "/lib/menu",
       "/lib/time",

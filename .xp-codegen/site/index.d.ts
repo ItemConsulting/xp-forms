@@ -5,24 +5,77 @@ declare global {
   namespace XP {
     interface SiteConfig {
       /**
-       * Sender email address
-       */
-      formSubmissionSenderEmail?: string;
-
-      /**
-       * Receiver email address
-       */
-      formSubmissionReceiverEmail?: string;
-
-      /**
-       * Hide default email integration
-       */
-      hideDefaultEmailIntegration: boolean;
-
-      /**
        * Include default styles
        */
       includeStyles: boolean;
+
+      /**
+       * Spam prevention
+       */
+      spamPrevention:
+        | {
+            /**
+             * Selected
+             */
+            _selected: "turnstile";
+
+            /**
+             * Text
+             */
+            turnstile: {
+              /**
+               * Turnstile Site Key
+               */
+              turnstileSiteKey?: string;
+
+              /**
+               * Turnstile Secret Key
+               */
+              turnstileSecretKey?: string;
+            };
+          }
+        | {
+            /**
+             * Selected
+             */
+            _selected: "honeypot";
+
+            /**
+             * Text
+             */
+            honeypot: {
+              /**
+               * Honeypot field id
+               */
+              honeypotFieldName?: string;
+            };
+          };
+
+      /**
+       * Built in form types
+       */
+      formTypes:
+        | {
+            /**
+             * Selected
+             */
+            _selected: "email";
+
+            /**
+             * E-mail
+             */
+            email: {
+              /**
+               * Sender email address
+               */
+              formSubmissionSenderEmail?: string;
+
+              /**
+               * Receiver email address
+               */
+              formSubmissionReceiverEmail?: string;
+            };
+          };
     }
   }
 }

@@ -1,3 +1,6 @@
+import { find, forceArray } from "/lib/forms/arrays";
+import type { PickSelected } from "/lib/forms/types";
+
 /**
  * Returns an id generated from the part path.
  * @param {string | undefined} partPath The parts path. Needs to support undefined because of Fragments.
@@ -39,4 +42,14 @@ export function stringToRegex(str: string): RegExp | undefined {
     return new RegExp(match[1], match[2]);
   }
   return undefined;
+}
+
+export function getOptionIfPresent<OptionSet extends { _selected: string }, Selected extends OptionSet["_selected"]>(
+  optionSet: OptionSet | OptionSet[] | undefined,
+  selected: Selected,
+): PickSelected<OptionSet, Selected> | undefined {
+  return find(
+    forceArray(optionSet),
+    (option): option is PickSelected<OptionSet, Selected> => option._selected === selected,
+  );
 }

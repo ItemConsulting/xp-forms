@@ -11,16 +11,19 @@ import {
   type Integration,
 } from "/lib/forms/extensions";
 import { getValidators } from "/lib/forms/form-utils";
+import { verify as verifyHoneypot } from "/lib/forms/honeypot";
 import { type FormFieldNormalized, getJsonSchema, normalizeFields } from "/lib/forms/json-schema";
 import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
 import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
+import { FIELD_TURNSTILE_RESPONSE, TURNSTILE_CLIENT_JS, verifyTurnstile } from "/lib/forms/turnstile";
 import type { Errors } from "/lib/forms/types";
 import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { createFormSchema } from "/lib/forms/validation";
 import { render } from "/lib/freemarker";
 import { getUser } from "/lib/xp/auth";
 import { send as sendEvent } from "/lib/xp/event";
+import { localize } from "/lib/xp/i18n";
 import { getComponent, getContent, getSite, getSiteConfig, pageUrl } from "/lib/xp/portal";
 import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
@@ -41,12 +44,14 @@ const view = resolve("./form-view.ftlh");
 
 type QueryParams = {
   page: string;
+  [FIELD_TURNSTILE_RESPONSE]: string | string[];
 };
 
 export function all(req: Request<{ params: QueryParams }>): Response {
   const content = getContent<ContentForm>();
   const part = getComponent<FormViewPart>();
   const siteConfig = getSiteConfig<XP.SiteConfig>();
+  const spamPreventionType = siteConfig?.spamPrevention._selected ?? "honeypot";
 
   assertIsDefined(content);
   assertIsDefined(part);
@@ -80,6 +85,8 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       : { value: values };
   const errors = issuesToErrors(result.issues);
 
+  const isHuman = spamPreventionType === "honeypot" ? verifyHoneypot(req) : verifyTurnstile(req);
+
   // If after last page, send back to first page
   if (currentPageNumber > totalPages) {
     return redirectToPage(content, 1);
@@ -108,11 +115,19 @@ export function all(req: Request<{ params: QueryParams }>): Response {
 
     deleteFromStore(req, content._id);
   }
+  // If this is a bot
+  else if (req.method === "POST" && !isHuman) {
+    if (spamPreventionType === "turnstile") {
+      errors[FIELD_TURNSTILE_RESPONSE] = [
+        localize({
+          key: "part.formView.verify.error.turnstile",
+          locale,
+        }),
+      ];
+    }
+  }
   // If form submit, save values and redirect to next page
   else if (req.method === "POST" && !result.issues) {
-    if (isHoneypotFilledOut(content, currentPageIndex, req.params)) {
-      return redirectToPage(content, currentPageNumber);
-    }
     saveToStore(req, content._id, values);
 
     return redirectToPage(content, currentPageNumber + 1);
@@ -141,9 +156,16 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     }),
     pageContributions: {
       headEnd: ([] as string[])
+        .concat(createScriptTag(TURNSTILE_CLIENT_JS, spamPreventionType === "turnstile"))
+        .concat(
+          createScriptTag(
+            assetUrl({ path: "scripts/reload-cloudflare-turnstile.mjs" }),
+            spamPreventionType === "turnstile",
+          ),
+        )
         .concat(createStyleTag("styles/content-studio.min.css", req.mode !== "live"))
         .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true))
-        .concat(createStyleTag("styles/form-h.min.css", siteConfig.includeStyles ?? true)),
+        .concat(createStyleTag("styles/form-h.min.css", spamPreventionType === "honeypot")),
     },
   };
 }
@@ -210,16 +232,8 @@ function createStyleTag(path: string, include: boolean): string[] {
   return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
 }
 
-function isHoneypotFilledOut(content: ContentForm, currentPageIndex: number, params: Request["params"]): boolean {
-  const lookupPageIndex = currentPageIndex > 0 ? currentPageIndex - 1 : 0;
-  const currentPage = forceArray(content.data.pages)[lookupPageIndex];
-  if (currentPage?.enableHoneypot && currentPage.honeypotFiledId) {
-    if (params[currentPage.honeypotFiledId] !== "") {
-      return true;
-    }
-  }
-
-  return false;
+function createScriptTag(path: string, include: boolean): string[] {
+  return include ? [`<script src="${path}" async defer></script>`] : [];
 }
 
 export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {

@@ -22,12 +22,18 @@
   // codebase - it simply changes what the include setting finds.
   "exclude": [
     "./**/*.d.ts",
+    "./**/*.stories.ts",
   ],
 
   "compilerOptions": {
+    "strict": true,
     "skipLibCheck": true,
     "lib": [
-      "DOM" // console, document, window, etc...
+      "ES2020",
+      "DOM", // console, document, window, etc...
+    ],
+    "types": [
+      "@types/cloudflare-turnstile"
     ]
   },
 }

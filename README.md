@@ -1,18 +1,34 @@
 # Forms
 
-## Usage
-
 > [!TIP]
 > A version of the review page – called the "Preview page" – can be displayed by appending `?page=0` to the url.
 
-### Site configuration
+## Site configuration
 
-When using the built-in "Email" form type, the following fields must be configured in the site config for the xp-forms app:
+### Spam prevention
 
-| Field | Description |
-|-------|-------------|
-| **Sender email address** | The "from" address used when sending form submission emails. Must be a whitelisted address on your mail server. |
-| **Receiver email address** | The address form submissions are sent to. |
+You can choose between two types of spam prevention. [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) or a simple "honeypot".
+
+ 1. You can configure the `turnstileSiteKey` and `turnstileSecretKey` in the site configuration, or in the *no.item.forms.cfg* file under *XP_HOME/config*.
+     ```ini
+     # These testing keys will always succeed
+     turnstileSiteKey=1x00000000000000000000BB
+     turnstileSecretKey=1x0000000000000000000000000000000AA
+     ``` 
+ 2. The `[name]` of the honeypot field in the HTML can be configured under the site configuration. The default value is `"website"`.
+
+> [!TIP]
+> See the [Turnstile documentation page](https://developers.cloudflare.com/turnstile/troubleshooting/testing/#test-sitekeys) for more test keys.
+
+### Built in email form type
+
+You can enable and configure the built-in "Email" form type under the site config. If you enable it, the following 
+fields must be configured in the site config for the xp-forms app:
+
+| Field                      | Description                                                                                                     |
+|----------------------------|-----------------------------------------------------------------------------------------------------------------|
+| **Sender email address**   | The "from" address used when sending form submission emails. Must be a whitelisted address on your mail server. |
+| **Receiver email address** | The address form submissions are sent to.                                                                       |
 
 > [!IMPORTANT]
 > Both fields are required for email submissions to work. If either is missing, the form submission will fail with an error.
