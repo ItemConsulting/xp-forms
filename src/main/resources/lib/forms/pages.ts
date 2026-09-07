@@ -6,6 +6,7 @@ import { partPathToId } from "/lib/forms/utils";
 import { process as processFormPage } from "/site/partials/page-form/page-form";
 import { process as processReviewPage } from "/site/partials/page-review/page-review";
 import { process as processSuccessPage } from "/site/partials/page-success/page-success";
+import type { SpamPreventionConfig } from "/site/partials/page-utils/page-utils.freemarker";
 import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export const RETURN_ALL_PAGES = -2;
@@ -19,9 +20,18 @@ type GetPagesParams = {
   values: SubmittedValues;
   errors: Errors;
   pageIndex: number;
+  spamPreventionConfig: SpamPreventionConfig;
 };
 
-export function getPages({ locale, part, content, values, errors, pageIndex }: GetPagesParams): string[] {
+export function getPages({
+  locale,
+  part,
+  content,
+  values,
+  errors,
+  pageIndex,
+  spamPreventionConfig,
+}: GetPagesParams): string[] {
   const partId = partPathToId(part.path);
   const pagesRaw = forceArray(content.data.pages);
   const hasReviewPage = content.data.reviewPage?._selected === "showReviewPage";
@@ -38,6 +48,7 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
         errors,
         content,
         pageNumber: index + 1,
+        spamPreventionConfig,
       }),
     );
 
@@ -50,6 +61,8 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
             values,
             isPreviewReviewPage,
             pageNumber: pageIndex + 1,
+            errors,
+            spamPreventionConfig,
           }),
         ]
       : [];
@@ -69,6 +82,8 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
       values,
       isPreviewReviewPage,
       pageNumber: pageIndex + 1,
+      errors,
+      spamPreventionConfig,
     });
 
     return [reviewPage];
@@ -83,6 +98,7 @@ export function getPages({ locale, part, content, values, errors, pageIndex }: G
         errors,
         content,
         pageNumber: pageIndex + 1,
+        spamPreventionConfig,
       }),
     ];
   }

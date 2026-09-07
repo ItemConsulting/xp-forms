@@ -11,6 +11,11 @@
 [#-- @ftlvariable name="field.values" type="java.util.List<String>" --]
 [#-- @ftlvariable name="field.valuesResolved" type="java.util.List<String>" --]
 [#-- @ftlvariable name="submitButtonText" type="String" --]
+[#-- @ftlvariable name="errors" type="java.util.Map" --]
+[#-- @ftlvariable name="pageId" type="String" --]
+[#-- @ftlvariable name="spamPreventionConfig" type="java.util.Map" --]
+
+[#import "../page-utils/page-utils.ftlh" as PageUtils]
 
 [#if isPreviewReviewPage]
   <div class="form-view--review">
@@ -26,6 +31,8 @@
   </div>
 [#else]
   <div class="form-view--review">
+    [@PageUtils.errorSummary errors pageId /]
+
     <form method="post" data-turbo-frame="${frameId}">
       <a href="${backUrl}" rel="prev" class="ds-link" data-turbo-frame="_self">
         ${portal.localize("part.formView.back")}
@@ -43,6 +50,8 @@
           [/#list]
         [/#list]
       [/#list]
+
+      [@PageUtils.spamPrevention spamPreventionConfig /]
 
       <button type="submit" class="ds-button">${submitButtonText!"Send"}</button>
     </form>

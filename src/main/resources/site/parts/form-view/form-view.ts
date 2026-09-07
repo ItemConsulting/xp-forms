@@ -11,7 +11,7 @@ import {
   type Integration,
 } from "/lib/forms/extensions";
 import { getValidators } from "/lib/forms/form-utils";
-import { verify as verifyHoneypot } from "/lib/forms/honeypot";
+import { getFieldNameFromConfig, verify as verifyHoneypot } from "/lib/forms/honeypot";
 import { type FormFieldNormalized, getJsonSchema, normalizeFields } from "/lib/forms/json-schema";
 import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
@@ -25,6 +25,7 @@ import { getUser } from "/lib/xp/auth";
 import { send as sendEvent } from "/lib/xp/event";
 import { localize } from "/lib/xp/i18n";
 import { getComponent, getContent, getSite, getSiteConfig, pageUrl } from "/lib/xp/portal";
+import type { SpamPreventionConfig } from "/site/partials/page-utils/page-utils.freemarker";
 import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
 
@@ -140,6 +141,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     values,
     errors,
     pageIndex: req.mode === "edit" ? RETURN_ALL_PAGES : currentPageIndex,
+    spamPreventionConfig: getSpamPreventionConfig(siteConfig),
   });
 
   return {
@@ -261,5 +263,27 @@ function resolveValue(field: FormFieldNormalized, value: string | string[]): str
       return forceArray(value).map((value) => field.options[value]);
     default:
       return singleValue ?? "";
+  }
+}
+
+function getSpamPreventionConfig(siteConfig: XP.SiteConfig | undefined): SpamPreventionConfig {
+  switch (siteConfig?.spamPrevention._selected) {
+    case "honeypot":
+      return {
+        type: "honeypot",
+        honeypotFiledName: getFieldNameFromConfig(),
+      };
+    case "turnstile": {
+      const turnstileSiteKey = siteConfig.spamPrevention.turnstile.turnstileSiteKey ?? app.config.turnstileSiteKey;
+      assertIsDefined(turnstileSiteKey, "turnstileSiteKey");
+      return {
+        type: "turnstile",
+        turnstileSiteKey,
+      };
+    }
+    default:
+      return {
+        type: "none",
+      };
   }
 }
