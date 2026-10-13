@@ -6,7 +6,7 @@
 
     [#if field.helpText?has_content]
       <p class="ds-paragraph" data-variant="default">
-        ${field.helpText}
+        ${field.helpText?no_esc}
       </p>
     [/#if]
 

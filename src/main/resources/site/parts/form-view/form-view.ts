@@ -11,7 +11,7 @@ import {
   type Integration,
 } from "/lib/forms/extensions";
 import { getValidators } from "/lib/forms/form-utils";
-import { verify as verifyHoneypot } from "/lib/forms/honeypot";
+import { getFieldNameFromConfig, verify as verifyHoneypot } from "/lib/forms/honeypot";
 import { type FormFieldNormalized, getJsonSchema, normalizeFields } from "/lib/forms/json-schema";
 import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
@@ -25,6 +25,7 @@ import { getUser } from "/lib/xp/auth";
 import { send as sendEvent } from "/lib/xp/event";
 import { localize } from "/lib/xp/i18n";
 import { getComponent, getContent, getSite, getSiteConfig, pageUrl } from "/lib/xp/portal";
+import type { SpamPreventionConfig } from "/site/partials/page-utils/page-utils.freemarker";
 import type { FreemarkerParams, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 import { HEADER_KEY_REDIRECT } from "/site/processors/redirect";
 
@@ -85,8 +86,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       : { value: values };
   const errors = issuesToErrors(result.issues);
 
-  const isHuman = spamPreventionType === "honeypot" ? verifyHoneypot(req) : verifyTurnstile(req);
-
   // If after last page, send back to first page
   if (currentPageNumber > totalPages) {
     return redirectToPage(content, 1);
@@ -116,7 +115,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     deleteFromStore(req, content._id);
   }
   // If this is a bot
-  else if (req.method === "POST" && !isHuman) {
+  else if (req.method === "POST" && !isHuman(req, spamPreventionType)) {
     if (spamPreventionType === "turnstile") {
       errors[FIELD_TURNSTILE_RESPONSE] = [
         localize({
@@ -140,6 +139,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     values,
     errors,
     pageIndex: req.mode === "edit" ? RETURN_ALL_PAGES : currentPageIndex,
+    spamPreventionConfig: getSpamPreventionConfig(siteConfig),
   });
 
   return {
@@ -156,12 +156,14 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     }),
     pageContributions: {
       headEnd: ([] as string[])
-        .concat(createScriptTag(TURNSTILE_CLIENT_JS, spamPreventionType === "turnstile"))
         .concat(
           createScriptTag(
-            assetUrl({ path: "scripts/reload-cloudflare-turnstile.mjs" }),
+            `${TURNSTILE_CLIENT_JS}?render=explicit&amp;onload=xpFormsTurnstileOnload`,
             spamPreventionType === "turnstile",
           ),
+        )
+        .concat(
+          createScriptTag(assetUrl({ path: "scripts/cloudflare-turnstile.mjs" }), spamPreventionType === "turnstile"),
         )
         .concat(createStyleTag("styles/content-studio.min.css", req.mode !== "live"))
         .concat(createStyleTag("styles/main.min.css", siteConfig.includeStyles ?? true))
@@ -228,6 +230,10 @@ function getIssueKey(issue: StandardSchemaV1.Issue): string | undefined {
   return (typeof segment === "object" ? segment.key : segment).toString();
 }
 
+function isHuman(req: Request, spamPreventionType: string): boolean {
+  return spamPreventionType === "honeypot" ? verifyHoneypot(req) : verifyTurnstile(req);
+}
+
 function createStyleTag(path: string, include: boolean): string[] {
   return include ? [`<link href="${assetUrl({ path })}" rel="stylesheet">`] : [];
 }
@@ -261,5 +267,27 @@ function resolveValue(field: FormFieldNormalized, value: string | string[]): str
       return forceArray(value).map((value) => field.options[value]);
     default:
       return singleValue ?? "";
+  }
+}
+
+function getSpamPreventionConfig(siteConfig: XP.SiteConfig | undefined): SpamPreventionConfig {
+  switch (siteConfig?.spamPrevention._selected) {
+    case "honeypot":
+      return {
+        type: "honeypot",
+        honeypotFiledName: getFieldNameFromConfig(),
+      };
+    case "turnstile": {
+      const turnstileSiteKey = siteConfig.spamPrevention.turnstile.turnstileSiteKey ?? app.config.turnstileSiteKey;
+      assertIsDefined(turnstileSiteKey, "turnstileSiteKey");
+      return {
+        type: "turnstile",
+        turnstileSiteKey,
+      };
+    }
+    default:
+      return {
+        type: "none",
+      };
   }
 }

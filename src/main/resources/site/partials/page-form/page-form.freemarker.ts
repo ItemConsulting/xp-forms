@@ -4,6 +4,7 @@ import type { InputRadioButtons } from "/site/partials/input-radiobuttons/input-
 import type { InputSelect } from "/site/partials/input-select/input-select.freemarker";
 import type { InputText } from "/site/partials/input-text/input-text.freemarker";
 import type { InputTextArea } from "/site/partials/input-text-area/input-text-area.freemarker";
+import type { SpamPreventionConfig } from "/site/partials/page-utils/page-utils.freemarker";
 
 export type PageForm = {
   frameId: string;
@@ -14,9 +15,7 @@ export type PageForm = {
   errors: Errors;
   submitButtonText: string;
   backUrl?: string;
-  spamPreventionType: string;
-  honeypotFiledName?: string;
-  turnstileSiteKey?: string;
+  spamPreventionConfig: SpamPreventionConfig;
 };
 
 export type Field = InputText | InputTextArea | InputSelect | InputCheckboxes | InputRadioButtons | HiddenField;
