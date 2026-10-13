@@ -38,7 +38,11 @@
       </div>
       [#break]
     [#case "turnstile"]
-      <div class="cf-turnstile" data-sitekey="${config.turnstileSiteKey}"></div>
+      <div
+        class="cf-turnstile"
+        data-sitekey="${config.turnstileSiteKey}"
+        data-pending-text="${portal.localize("part.formView.verify.pending")}"></div>
+      <div class="forms-turnstile-status" role="status"></div>
       [#break]
   [/#switch]
 [/#macro]
