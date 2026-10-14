@@ -1,7 +1,7 @@
 {
   // Type-checks the node:test suite. Runtime resolution of "/lib/*" is done by loader.mjs; here the
   // same specifiers are mapped for the compiler. Paths are relative to this directory (src/test).
-  "include": ["*.test.mts", "expect.mts", "stubs/*.mts", "../../.xp-codegen/**/*.d.ts"],
+  "include": ["*.test.mts", "stubs/*.mts", "../../.xp-codegen/**/*.d.ts"],
 
   "compilerOptions": {
     "target": "ES2022",
