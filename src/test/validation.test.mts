@@ -1,4 +1,5 @@
-import { describe, expect, it } from "@jest/globals";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
 import {
   combineValidators,
@@ -24,21 +25,21 @@ function runForm(schema: StandardSchemaV1<SubmittedValues, SubmittedValues>, val
 
 describe("requiredValidator", () => {
   it("passes for a non-empty string and a non-empty array", () => {
-    expect(run(requiredValidator(["f"], {}), "x")).toEqual({ value: "x" });
-    expect(run(requiredValidator(["f"], {}), ["a"])).toEqual({ value: ["a"] });
+    assert.deepEqual(run(requiredValidator(["f"], {}), "x"), { value: "x" });
+    assert.deepEqual(run(requiredValidator(["f"], {}), ["a"]), { value: ["a"] });
   });
 
   it("fails for empty string, undefined and empty array", () => {
     const validator = requiredValidator(["email"], { errorMessage: "Required" });
     const expected = { issues: [{ message: "Required", path: ["email"] }] };
 
-    expect(run(validator, "")).toEqual(expected);
-    expect(run(validator, undefined)).toEqual(expected);
-    expect(run(validator, [])).toEqual(expected);
+    assert.deepEqual(run(validator, ""), expected);
+    assert.deepEqual(run(validator, undefined), expected);
+    assert.deepEqual(run(validator, []), expected);
   });
 
   it("falls back to the localized message key when no errorMessage is given", () => {
-    expect(run(requiredValidator(["email"], {}), "")).toEqual({
+    assert.deepEqual(run(requiredValidator(["email"], {}), ""), {
       issues: [{ message: "validation.required", path: ["email"] }],
     });
   });
@@ -48,13 +49,13 @@ describe("minLengthValidator", () => {
   const validator = minLengthValidator(["f"], { minLength: 3, errorMessage: "too short" });
 
   it("passes when length >= minLength", () => {
-    expect(run(validator, "abc")).toEqual({ value: "abc" });
-    expect(run(validator, ["a", "b", "c"])).toEqual({ value: ["a", "b", "c"] });
+    assert.deepEqual(run(validator, "abc"), { value: "abc" });
+    assert.deepEqual(run(validator, ["a", "b", "c"]), { value: ["a", "b", "c"] });
   });
 
   it("fails when shorter (including undefined → length 0)", () => {
-    expect(run(validator, "ab")).toEqual({ issues: [{ message: "too short", path: ["f"] }] });
-    expect(run(validator, undefined)).toEqual({ issues: [{ message: "too short", path: ["f"] }] });
+    assert.deepEqual(run(validator, "ab"), { issues: [{ message: "too short", path: ["f"] }] });
+    assert.deepEqual(run(validator, undefined), { issues: [{ message: "too short", path: ["f"] }] });
   });
 });
 
@@ -62,12 +63,12 @@ describe("maxLengthValidator", () => {
   const validator = maxLengthValidator(["f"], { maxLength: 3, errorMessage: "too long" });
 
   it("passes when length <= maxLength (undefined counts as 0)", () => {
-    expect(run(validator, "abc")).toEqual({ value: "abc" });
-    expect(run(validator, undefined)).toEqual({ value: undefined });
+    assert.deepEqual(run(validator, "abc"), { value: "abc" });
+    assert.deepEqual(run(validator, undefined), { value: undefined });
   });
 
   it("fails when longer", () => {
-    expect(run(validator, "abcd")).toEqual({ issues: [{ message: "too long", path: ["f"] }] });
+    assert.deepEqual(run(validator, "abcd"), { issues: [{ message: "too long", path: ["f"] }] });
   });
 });
 
@@ -75,23 +76,23 @@ describe("patternValidator", () => {
   const validator = patternValidator(["f"], { regexString: "/^\\d+$/", errorMessage: "bad" });
 
   it("passes when the value matches", () => {
-    expect(run(validator, "123")).toEqual({ value: "123" });
+    assert.deepEqual(run(validator, "123"), { value: "123" });
   });
 
   it("lets empty values pass (left to requiredValidator)", () => {
-    expect(run(validator, "")).toEqual({ value: "" });
-    expect(run(validator, undefined)).toEqual({ value: undefined });
+    assert.deepEqual(run(validator, ""), { value: "" });
+    assert.deepEqual(run(validator, undefined), { value: undefined });
   });
 
   it("fails on a non-matching value and never matches arrays", () => {
-    expect(run(validator, "12a")).toEqual({ issues: [{ message: "bad", path: ["f"] }] });
-    expect(run(validator, ["1"])).toEqual({ issues: [{ message: "bad", path: ["f"] }] });
+    assert.deepEqual(run(validator, "12a"), { issues: [{ message: "bad", path: ["f"] }] });
+    assert.deepEqual(run(validator, ["1"]), { issues: [{ message: "bad", path: ["f"] }] });
   });
 
   it("accepts a RegExp instance for regexString", () => {
     const re = patternValidator(["f"], { regexString: /^\d+$/, errorMessage: "bad" });
-    expect(run(re, "42")).toEqual({ value: "42" });
-    expect(run(re, "x")).toEqual({ issues: [{ message: "bad", path: ["f"] }] });
+    assert.deepEqual(run(re, "42"), { value: "42" });
+    assert.deepEqual(run(re, "x"), { issues: [{ message: "bad", path: ["f"] }] });
   });
 });
 
@@ -99,10 +100,10 @@ describe("minItemsValidator", () => {
   const validator = minItemsValidator(["f"], { minItems: 2, errorMessage: "need more" });
 
   it("counts via forceArray", () => {
-    expect(run(validator, ["a", "b"])).toEqual({ value: ["a", "b"] });
-    expect(run(validator, ["a"])).toEqual({ issues: [{ message: "need more", path: ["f"] }] });
-    expect(run(validator, "x")).toEqual({ issues: [{ message: "need more", path: ["f"] }] });
-    expect(run(validator, undefined)).toEqual({ issues: [{ message: "need more", path: ["f"] }] });
+    assert.deepEqual(run(validator, ["a", "b"]), { value: ["a", "b"] });
+    assert.deepEqual(run(validator, ["a"]), { issues: [{ message: "need more", path: ["f"] }] });
+    assert.deepEqual(run(validator, "x"), { issues: [{ message: "need more", path: ["f"] }] });
+    assert.deepEqual(run(validator, undefined), { issues: [{ message: "need more", path: ["f"] }] });
   });
 });
 
@@ -110,9 +111,9 @@ describe("maxItemsValidator", () => {
   const validator = maxItemsValidator(["f"], { maxItems: 2, errorMessage: "too many" });
 
   it("counts via forceArray", () => {
-    expect(run(validator, ["a", "b"])).toEqual({ value: ["a", "b"] });
-    expect(run(validator, "x")).toEqual({ value: "x" });
-    expect(run(validator, ["a", "b", "c"])).toEqual({ issues: [{ message: "too many", path: ["f"] }] });
+    assert.deepEqual(run(validator, ["a", "b"]), { value: ["a", "b"] });
+    assert.deepEqual(run(validator, "x"), { value: "x" });
+    assert.deepEqual(run(validator, ["a", "b", "c"]), { issues: [{ message: "too many", path: ["f"] }] });
   });
 });
 
@@ -123,7 +124,7 @@ describe("combineValidators", () => {
       minLengthValidator(["f"], { minLength: 3, errorMessage: "min" }),
     ]);
 
-    expect(run(schema, "")).toEqual({
+    assert.deepEqual(run(schema, ""), {
       issues: [
         { message: "req", path: ["f"] },
         { message: "min", path: ["f"] },
@@ -138,7 +139,7 @@ describe("combineValidators", () => {
     ]);
 
     // non-empty but too short → required passes, minLength fails
-    expect(run(schema, "ab")).toEqual({ issues: [{ message: "min", path: ["f"] }] });
+    assert.deepEqual(run(schema, "ab"), { issues: [{ message: "min", path: ["f"] }] });
   });
 
   it("returns the value when everything passes", () => {
@@ -147,11 +148,11 @@ describe("combineValidators", () => {
       minLengthValidator(["f"], { minLength: 3, errorMessage: "min" }),
     ]);
 
-    expect(run(schema, "abcd")).toEqual({ value: "abcd" });
+    assert.deepEqual(run(schema, "abcd"), { value: "abcd" });
   });
 
   it("passes for an empty list of validators", () => {
-    expect(run(combineValidators([]), "x")).toEqual({ value: "x" });
+    assert.deepEqual(run(combineValidators([]), "x"), { value: "x" });
   });
 });
 
@@ -162,7 +163,7 @@ describe("createFormSchema", () => {
   });
 
   it("collects issues across fields, keeping each issue's path (no double-pathing)", () => {
-    expect(runForm(schema, { name: "", age: "1" })).toEqual({
+    assert.deepEqual(runForm(schema, { name: "", age: "1" }), {
       issues: [
         { message: "name required", path: ["name"] },
         { message: "age too short", path: ["age"] },
@@ -171,20 +172,20 @@ describe("createFormSchema", () => {
   });
 
   it("reports only the fields that fail", () => {
-    expect(runForm(schema, { name: "John", age: "1" })).toEqual({
+    assert.deepEqual(runForm(schema, { name: "John", age: "1" }), {
       issues: [{ message: "age too short", path: ["age"] }],
     });
   });
 
   it("returns the validated field values when everything passes", () => {
-    expect(runForm(schema, { name: "John", age: "12" })).toEqual({
+    assert.deepEqual(runForm(schema, { name: "John", age: "12" }), {
       value: { name: "John", age: "12" },
     });
   });
 
   it("includes only validated fields in the success value (ignores un-validated keys)", () => {
     const result = runForm(schema, { name: "John", age: "12", extra: "ignored" });
-    expect(result).toEqual({ value: { name: "John", age: "12" } });
+    assert.deepEqual(result, { value: { name: "John", age: "12" } });
   });
 
   it("composes combined per-field validators (multiple issues for one field)", () => {
@@ -195,7 +196,7 @@ describe("createFormSchema", () => {
       ]),
     });
 
-    expect(runForm(composed, { f: "" })).toEqual({
+    assert.deepEqual(runForm(composed, { f: "" }), {
       issues: [
         { message: "req", path: ["f"] },
         { message: "min", path: ["f"] },
@@ -204,6 +205,6 @@ describe("createFormSchema", () => {
   });
 
   it("returns an empty value object for an empty validator record", () => {
-    expect(runForm(createFormSchema({}), { a: "x" })).toEqual({ value: {} });
+    assert.deepEqual(runForm(createFormSchema({}), { a: "x" }), { value: {} });
   });
 });

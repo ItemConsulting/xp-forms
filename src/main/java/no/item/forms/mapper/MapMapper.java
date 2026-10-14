@@ -42,7 +42,10 @@ public final class MapMapper implements MapSerializable {
           final Object map = currentField.get(gen);
           if (map instanceof Map) // On Nashorn it is true. On GraalJS it is false.
           {
-            ((Map) map).put(key, null);
+            // The generator's current object is the map it is writing to, keyed by property name
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> current = (Map<String, Object>) map;
+            current.put(key, null);
           } else {
             gen.rawValue(key, null);
           }

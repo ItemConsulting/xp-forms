@@ -98,9 +98,6 @@ crashlytics-build.properties
 .sass-cache
 *.css.map
 
-# Jest
-/coverage
-
 # ES lint
 /.eslintcache
 

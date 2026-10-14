@@ -7,7 +7,6 @@ const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.ts"],
   addons: [
     "@storybook/addon-webpack5-compiler-swc",
-    "@storybook/addon-links",
     "@storybook/addon-a11y",
     "@itemconsulting/preset-enonic-xp",
     "@storybook/addon-docs"
