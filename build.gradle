@@ -48,6 +48,13 @@ repositories {
 node {
   download = true
   version = file(".nvmrc").text.trim()
+  // `npm ci` on CI, so the build uses exactly what package-lock.json pins
+  npmInstallCommand = System.getenv("CI") ? "ci" : "install"
+}
+
+// XP 7.14 (systemVersion) runs on Java 17, so compile for it whatever JDK runs the build
+tasks.withType(JavaCompile).configureEach {
+  options.release = 17
 }
 
 tasks.withType(Copy).configureEach {

@@ -25,8 +25,8 @@
     "format": "biome format --write src/main/resources",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./src/test/register.mjs --test src/test/*.test.mts",
     "storybook": "storybook dev -p 6006",
-    "release": "npm run build",
-    "versioning": "npx changeset version && npm i --package-lock-only && NEW_VERSION=$(node -p \"require('./package.json').version\") && sed -i \"s/version.*/version = ${NEW_VERSION}/\" gradle.properties"
+    "release": "changeset publish",
+    "versioning": "changeset version && npm i --package-lock-only && node .changeset/gradle-version.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
