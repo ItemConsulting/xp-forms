@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Publish
 on:
   # GitHub only reads workflow_run triggers from the default branch, so this file on main is the

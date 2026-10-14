@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-api-8.0.0.json
+kind: "API"
+title: "JSON Schema"
+description: "JSON Schema describing the fields of a form, by the id of its content"
+# Reachable on /api/no.item.forms:json-schema; sites mount it contextually through cms/site.yaml
+mount: ["web"]
+allow:
+  - "role:system.everyone"

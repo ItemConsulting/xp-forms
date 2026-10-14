@@ -11,8 +11,8 @@ import {
   requiredValidator,
 } from "/lib/forms/validation";
 import { sanitize } from "/lib/xp/common";
-import type { Form as FormRaw } from "/site/content-types";
-import type { SubmittedValue } from "/site/parts/form-view/form-view.freemarker";
+import type { Form as FormRaw } from "/cms/content-types";
+import type { SubmittedValue } from "/cms/parts/form-view/form-view.freemarker";
 
 export type FormPageRaw = NonNullable<FormRaw["pages"]>[number];
 export type FormFieldRaw = FormPageRaw["fields"][number];

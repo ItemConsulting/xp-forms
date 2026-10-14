@@ -1,0 +1,310 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Properties"
+  i18n: "mixin.fieldPropsInput.displayName"
+description:
+  text: "Different properties an input field can have"
+  i18n: "mixin.fieldPropsInput.description"
+form:
+  - type: "OptionSet"
+    name: "properties"
+    expanded: false
+    label:
+      text: "Properties"
+      i18n: "mixin.fieldPropsInput.properties"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - name: "placeholder"
+        label:
+          text: "Placeholder"
+          i18n: "mixin.fieldPropsInput.placeholder"
+        helpText:
+          text: "Placeholder text in input field"
+          i18n: "mixin.fieldPropsInput.placeholderHelpText"
+        items:
+          - type: "TextLine"
+            name: "placeholder"
+            label:
+              text: "Placeholder text"
+              i18n: "mixin.fieldPropsInput.placeholderText"
+            helpText:
+              text: "Placeholder text in input field"
+              i18n: "mixin.fieldPropsInput.placeholderHelpText"
+            occurrences:
+              min: 1
+              max: 1
+      - name: "inputMode"
+        label:
+          text: "Keyboard on mobile"
+          i18n: "mixin.fieldPropsInput.inputMode"
+        helpText:
+          text: "Chose keyboard to use"
+          i18n: "mixin.fieldPropsInput.inputModeHelpText"
+        items:
+          - type: "RadioButton"
+            name: "inputmode"
+            label:
+              text: "Keyboard on mobile"
+              i18n: "mixin.fieldPropsInput.inputMode"
+            helpText:
+              text: "Select keyboard to show on mobile"
+              i18n: "mixin.fieldPropsInput.inputModeHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            options:
+              - value: "text"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeText"
+                  text: "Text"
+              - value: "decimal"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeDecimal"
+                  text: "Decimal"
+              - value: "numeric"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeNumeric"
+                  text: "Numeric"
+              - value: "tel"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeTel"
+                  text: "Tel"
+              - value: "search"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeSearch"
+                  text: "Search"
+              - value: "email"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeEmail"
+                  text: "Email"
+              - value: "url"
+                label:
+                  i18n: "mixin.fieldPropsInput.inputModeUrl"
+                  text: "Url"
+            default: "text"
+      - name: "autocomplete"
+        label:
+          text: "Autocomplete"
+          i18n: "mixin.fieldPropsInput.autocomplete"
+        helpText:
+          text: "The browser can automatically fill in fields"
+          i18n: "mixin.fieldPropsInput.autocompleteHelpText"
+        items:
+          - type: "ComboBox"
+            name: "autocomplete"
+            label:
+              text: "Autocomplete"
+              i18n: "mixin.fieldPropsInput.autocomplete"
+            helpText:
+              text: "The browser can automatically fill in fields"
+              i18n: "mixin.fieldPropsInput.autocompleteHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            options:
+              - value: "off"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteOff"
+                  text: "Off"
+              - value: "on"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteOn"
+                  text: "On"
+              - value: "name"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteName"
+                  text: "Name"
+              - value: "honorific-prefix"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteHonorificPrefix"
+                  text: "Honorific-prefix"
+              - value: "given-name"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteGivenName"
+                  text: "Given-name"
+              - value: "additional-name"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteAdditionalName"
+                  text: "Additional-name"
+              - value: "family-name"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteFamilyName"
+                  text: "Family-name"
+              - value: "honorific-suffix"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteHonorificSuffix"
+                  text: "Honorific-suffix"
+              - value: "nickname"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteNickname"
+                  text: "Nickname"
+              - value: "email"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteEmail"
+                  text: "Email"
+              - value: "username"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteUsername"
+                  text: "Username"
+              - value: "organization-title"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteOrganizationTitle"
+                  text: "Organization-title"
+              - value: "organization"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteOrganization"
+                  text: "Organization"
+              - value: "street-address"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteStreetAddress"
+                  text: "Street-address"
+              - value: "address-level4"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteAddressLevel4"
+                  text: "Address-level4"
+              - value: "address-level3"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteAddressLevel3"
+                  text: "Address-level3"
+              - value: "address-level2"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteAddressLevel2"
+                  text: "Address-level2"
+              - value: "address-level1"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteAddressLevel1"
+                  text: "Address-level1"
+              - value: "country"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteCountry"
+                  text: "Country"
+              - value: "country-name"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteCountryName"
+                  text: "Country-name"
+              - value: "postal-code"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompletePostalCode"
+                  text: "Postal-code"
+              - value: "bday"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteBirthday"
+                  text: "Birthday"
+              - value: "bday-day"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteBirthdayDay"
+                  text: "Birthday (day)"
+              - value: "bday-month"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteBirthdayMonth"
+                  text: "Birthday (month)"
+              - value: "bday-year"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteBirthdayYear"
+                  text: "Birthday (year)"
+              - value: "sex"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteSex"
+                  text: "Sex"
+              - value: "tel"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteTelephone"
+                  text: "Telephone"
+              - value: "url"
+                label:
+                  i18n: "mixin.fieldPropsInput.autocompleteUrl"
+                  text: "Url"
+      - name: "validationRequired"
+        label:
+          text: "Validation: Required"
+          i18n: "mixin.fieldPropsInput.validation.required"
+        helpText:
+          text: "This field must always have a value"
+          i18n: "mixin.fieldPropsInput.validation.requiredHelpText"
+        items:
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "mixin.fieldPropsInput.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+      - name: "validationMinLength"
+        label:
+          text: "Validation: Minimum length"
+          i18n: "mixin.fieldPropsInput.validation.minLength"
+        helpText:
+          text: "The input in this field must have a minimum length"
+          i18n: "mixin.fieldPropsInput.validation.minLengthHelpText"
+        items:
+          - type: "Long"
+            name: "minLength"
+            label:
+              text: "Minimum length"
+              i18n: "mixin.fieldPropsInput.minLength"
+            occurrences:
+              min: 1
+              max: 1
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "mixin.fieldPropsInput.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+      - name: "validationMaxLength"
+        label:
+          text: "Validation: Maximum length"
+          i18n: "mixin.fieldPropsInput.validation.maxLength"
+        helpText:
+          text: "The input in this field can have a maximum length"
+          i18n: "mixin.fieldPropsInput.validation.maxLengthHelpText"
+        items:
+          - type: "Long"
+            name: "maxLength"
+            label:
+              text: "Maximum length"
+              i18n: "mixin.fieldPropsInput.maxLength"
+            occurrences:
+              min: 1
+              max: 1
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "mixin.fieldPropsInput.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+      - name: "validationPattern"
+        label:
+          text: "Validation: Pattern"
+          i18n: "mixin.fieldPropsInput.validation.pattern"
+        helpText:
+          text: "The input in this field must pass the specified regex"
+          i18n: "mixin.fieldPropsInput.validation.patternHelpText"
+        items:
+          - type: "TextLine"
+            name: "regexString"
+            label:
+              text: "Regex String"
+              i18n: "mixin.fieldPropsInput.regexString"
+            occurrences:
+              min: 1
+              max: 1
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "mixin.fieldPropsInput.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+    selection:
+      min: 0
+      max: 0

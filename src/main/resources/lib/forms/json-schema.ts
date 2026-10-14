@@ -1,8 +1,8 @@
 import { flatMap, forceArray } from "/lib/forms/arrays";
 import { type FormFieldRaw, getName, hasSelectedValue, type Properties } from "/lib/forms/form-utils";
-import { type Content, serviceUrl } from "/lib/xp/portal";
-import type { Form } from "/site/content-types";
-import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import { apiUrl, type Content } from "/lib/xp/portal";
+import type { Form } from "/cms/content-types";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 export type JSONSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema";
@@ -88,15 +88,12 @@ export function getJsonSchema(content: Content<Form>, baseUrl?: string): JSONSch
 }
 
 function getSchemaId(id: string, baseUrl?: string): string {
-  if (baseUrl) {
-    return `${baseUrl}/_/service/no.item.forms/json-schema?id=${id}`;
-  } else {
-    return serviceUrl({
-      service: "json-schema",
-      params: { id },
-      type: "absolute",
-    });
-  }
+  return apiUrl({
+    api: "no.item.forms:json-schema",
+    params: { id },
+    type: "absolute",
+    baseUrl,
+  });
 }
 
 function getProperty(field: FormFieldNormalized): Record<string, SchemaProperty> {

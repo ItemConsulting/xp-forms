@@ -9,7 +9,7 @@ import { getSiteConfig } from "/lib/xp/content";
 import { localize } from "/lib/xp/i18n";
 import { send as sendEmail } from "/lib/xp/mail";
 import { getSiteConfig as getPortalSiteConfig } from "/lib/xp/portal";
-import type { FormEvent } from "/site/parts/form-view/form-view";
+import type { FormEvent } from "/cms/parts/form-view/form-view";
 
 export type EmailFormData = FormEvent<{
   email: string;
@@ -39,11 +39,11 @@ function createEmailExtension(locale: string): FormExtensions {
   return {
     id: "email",
     displayName: localize({
-      key: "formPlugin.email.displayName",
+      key: "site.formTypes.email",
       locale,
     }),
     description: localize({
-      key: "formPlugin.email.description",
+      key: "site.formTypes.emailHelpText",
       locale,
     }),
     jsonSchema: {
