@@ -1,5 +1,6 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, it } from "node:test";
 import { arrayRange, difference, find, flatMap, forceArray, intersection } from "/lib/forms/arrays";
+import { expect } from "./expect.mts";
 
 describe("forceArray", () => {
   it("wraps a scalar in an array", () => {

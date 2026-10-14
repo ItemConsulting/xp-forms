@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, it } from "node:test";
 import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
 import {
   combineValidators,
@@ -11,6 +11,7 @@ import {
   requiredValidator,
 } from "/lib/forms/validation";
 import type { SubmittedValue, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import { expect } from "./expect.mts";
 
 /** Runs a single-value field schema. */
 function run(schema: StandardSchemaV1<SubmittedValue, SubmittedValue>, value: SubmittedValue) {

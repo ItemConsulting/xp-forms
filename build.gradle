@@ -39,7 +39,6 @@ dependencies {
 }
 
 repositories {
-	mavenLocal()
 	mavenCentral()
 	xp.enonicRepo()
   maven { url "https://repo.itemtest.no/releases" }
@@ -48,7 +47,7 @@ repositories {
 
 node {
   download = true
-  version = "22.22.3"
+  version = file(".nvmrc").text.trim()
 }
 
 tasks.withType(Copy).configureEach {
@@ -81,6 +80,22 @@ tasks.register("npmCheck", NpmTask) {
 // if (!(project.hasProperty("dev") || project.hasProperty("development"))) {
 check.dependsOn npmCheck
 // }
+
+tasks.register("npmTest", NpmTask) {
+  dependsOn npmInstall
+  args = [
+    "run",
+    "test"
+  ]
+  environment = [
+    "FORCE_COLOR": "true",
+  ]
+  inputs.dir "src/test"
+  inputs.dir "src/main/resources"
+  outputs.upToDateWhen { false }
+}
+
+check.dependsOn npmTest
 
 tasks.register("npmBuild", NpmTask) {
   args = [

@@ -1,0 +1,27 @@
+{
+  // Type-checks the node:test suite. Runtime resolution of "/lib/*" is done by loader.mjs; here the
+  // same specifiers are mapped for the compiler. Paths are relative to this directory (src/test).
+  "include": ["*.test.mts", "expect.mts", "stubs/*.mts", "../../.xp-codegen/**/*.d.ts"],
+
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "strict": true,
+
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
+    "rootDirs": ["../main/resources", "../../.xp-codegen"],
+    "paths": {
+      "/lib/xp/*": ["../../node_modules/@enonic-types/lib-*"],
+      "/lib/enonic/*": ["../../node_modules/@enonic-types/lib-*"],
+      "/lib/*": ["../main/resources/lib/*", "../../node_modules/@item-enonic-types/lib-*"],
+      "/*": ["../main/resources/*", "../../.xp-codegen/*"]
+    },
+
+    "skipLibCheck": true,
+    "types": ["node", "@enonic-types/global", "@itemconsulting/xp-storybook-utils/global"]
+  }
+}

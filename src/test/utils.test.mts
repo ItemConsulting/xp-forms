@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, it } from "node:test";
 import {
   assertIsDefined,
   isEmptyOrUndefined,
@@ -8,6 +8,7 @@ import {
   partPathToId,
   stringToRegex,
 } from "/lib/forms/utils";
+import { expect } from "./expect.mts";
 
 describe("notNullOrUndefined", () => {
   it("is false for null/undefined, true otherwise", () => {
