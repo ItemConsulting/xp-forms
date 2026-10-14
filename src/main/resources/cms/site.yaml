@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-site-8.0.0.json
+kind: "Site"
+processors:
+  - name: "redirect"
+    order: 10
+apis:
+  # lib-asset 2 serves assets through its "asset" API, which the site has to mount for assetUrl() to work
+  - "asset"
+  # apiUrl() resolves to the site-contextual URL when called from a site, which requires the site to mount it
+  - "json-schema"

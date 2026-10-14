@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-application-8.0.0.json
+kind: "Application"
+title: "Forms"
+description: "Custom forms for user input"
+vendorName: "Item Consulting"
+vendorUrl: "https://item.no"

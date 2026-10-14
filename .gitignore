@@ -46,7 +46,6 @@ gradle-app.setting
 
 # VSCode
 bin/
-/settings.gradle
 /.vscode
 
 *.iml

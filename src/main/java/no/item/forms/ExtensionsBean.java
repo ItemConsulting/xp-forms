@@ -147,8 +147,8 @@ public class ExtensionsBean implements ScriptBean {
     portalRequest.setBaseUri(oldRequest.getBaseUri());
     portalRequest.setContextPath(oldRequest.getContextPath());
     portalRequest.setSite(oldRequest.getSite());
+    portalRequest.setProject(oldRequest.getProject());
     portalRequest.setContent(oldRequest.getContent());
-    portalRequest.setPageTemplate(oldRequest.getPageTemplate());
     portalRequest.setComponent(oldRequest.getComponent());
     portalRequest.setApplicationKey(oldRequest.getApplicationKey());
     portalRequest.setPageDescriptor(oldRequest.getPageDescriptor());

@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-cms-8.0.0.json
+kind: "CMS"
+form:
+  - type: "CheckBox"
+    name: "includeStyles"
+    label:
+      text: "Include default styles"
+      i18n: "site.includeStyles"
+    helpText:
+      text: "It is recommended that each website provides its own styles for the forms. But you can include default styles by checking this box."
+      i18n: "site.includeStylesHelpText"
+    occurrences:
+      min: 0
+      max: 1
+    default: "checked"
+  - type: "OptionSet"
+    name: "spamPrevention"
+    expanded: false
+    label:
+      text: "Spam prevention"
+      i18n: "site.spamPrevention"
+    helpText:
+      text: "Choose which spam prevention mechanism you want to use"
+      i18n: "site.spamPrevention.helpText"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - name: "turnstile"
+        label:
+          text: "Cloudflare turnstile"
+          i18n: "site.spamPrevention.turnstile"
+        helpText:
+          text: "Invisible captcha solution from Cloudflare"
+          i18n: "site.spamPrevention.turnstileHelpText"
+        items:
+          - type: "FormFragment"
+            name: "cloudflare-turnstile"
+      - name: "honeypot"
+        label:
+          text: "Honeypot"
+          i18n: "site.spamPrevention.honeypot"
+        helpText:
+          text: "Hidden field in form that will catch the simpler bots"
+          i18n: "site.spamPrevention.honeypotHelpText"
+        items:
+          - type: "TextLine"
+            name: "honeypotFieldName"
+            label:
+              text: "Honeypot field id"
+              i18n: "site.spamPrevention.honeypot.honeypotFieldName"
+            helpText:
+              text: "A field name for the Honeypot"
+              i18n: "site.spamPrevention.honeypot.honeypotFieldNameHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            default: "website"
+    selection:
+      min: 0
+      max: 1
+  - type: "OptionSet"
+    name: "formTypes"
+    expanded: false
+    label:
+      text: "Built in form types"
+      i18n: "site.formTypes"
+    helpText:
+      text: "Enable APIs that handles form submissions"
+      i18n: "site.formTypesHelpText"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - name: "email"
+        label:
+          text: "E-mail"
+          i18n: "site.formTypes.email"
+        helpText:
+          text: "Send the form response by email"
+          i18n: "site.formTypes.emailHelpText"
+        items:
+          - type: "TextLine"
+            name: "formSubmissionSenderEmail"
+            label:
+              text: "Sender email address"
+              i18n: "site.formTypes.email.formSubmissionSenderEmail"
+            helpText:
+              text: "The \"from\" address used when sending form submission emails"
+              i18n: "site.formTypes.email.formSubmissionSenderEmailHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            regexp: "^\\S+@\\S+\\.\\S+$"
+          - type: "TextLine"
+            name: "formSubmissionReceiverEmail"
+            label:
+              text: "Receiver email address"
+              i18n: "site.formTypes.email.formSubmissionReceiverEmail"
+            helpText:
+              text: "When the form type \"E-mail\" is selected, the result should be sent to this email"
+              i18n: "site.formTypes.email.formSubmissionReceiverEmailHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            regexp: "^\\S+@\\S+\\.\\S+$"
+    selection:
+      min: 0
+      max: 1

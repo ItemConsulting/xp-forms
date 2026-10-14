@@ -2,7 +2,7 @@ import { forceArray } from "/lib/forms/arrays";
 import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
 import { isEmptyOrUndefined, notEmptyOrUndefined, notNullOrUndefined, stringToRegex } from "/lib/forms/utils";
 import { localize } from "/lib/xp/i18n";
-import type { SubmittedValue, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import type { SubmittedValue, SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 /**
  * Combines several single-value [Standard Schemas](https://standardschema.dev) into one that runs

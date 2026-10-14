@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-content-type-8.0.0.json
+kind: "ContentType"
+superType: "base:structured"
+title:
+  text: "Form"
+  i18n: "contentType.form.displayName"
+description:
+  text: "Tool to build"
+  i18n: "contentType.form.description"
+form:
+  - type: "FieldSet"
+    label:
+      text: "Submission"
+      i18n: "contentType.form.submission"
+    items:
+      - type: "CustomSelector"
+        name: "integrationId"
+        label:
+          text: "Form type"
+          i18n: "contentType.form.integrationId"
+        occurrences:
+          min: 0
+          max: 1
+        service: "form-integrations"
+  - type: "ItemSet"
+    name: "pages"
+    label:
+      text: "Page"
+      i18n: "contentType.form.page"
+    occurrences:
+      min: 1
+      max: 0
+    items:
+      - type: "TextLine"
+        name: "title"
+        label:
+          text: "Title"
+          i18n: "contentType.form.title"
+        occurrences:
+          min: 1
+          max: 1
+      - type: "HtmlArea"
+        name: "text"
+        label:
+          text: "Page description"
+          i18n: "contentType.form.pageDescription"
+        occurrences:
+          min: 0
+          max: 1
+      - type: "FormFragment"
+        name: "fields"
+      - type: "TextLine"
+        name: "submitButtonText"
+        label:
+          text: "Submit button text"
+          i18n: "contentType.form.submitButtonText"
+        occurrences:
+          min: 1
+          max: 1
+        default: "Neste"
+  - type: "OptionSet"
+    name: "reviewPage"
+    expanded: false
+    label:
+      text: "Review page"
+      i18n: "contentType.form.reviewPage"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - name: "showReviewPage"
+        label:
+          text: "Show review page"
+          i18n: "contentType.form.showReviewPage"
+        items:
+          - type: "TextLine"
+            name: "title"
+            label:
+              text: "Review page title"
+              i18n: "contentType.form.showReviewPage.title"
+            occurrences:
+              min: 1
+              max: 1
+            default: "Vurder svarene dine og send inn"
+          - type: "TextLine"
+            name: "submitButtonText"
+            label:
+              text: "Submit button text"
+              i18n: "contentType.form.submitButtonText"
+            occurrences:
+              min: 1
+              max: 1
+            default: "Aksepter og send inn"
+    selection:
+      min: 0
+      max: 1
+  - type: "ItemSet"
+    name: "successPageSections"
+    label:
+      text: "Success page"
+      i18n: "contentType.form.successPageSections"
+    occurrences:
+      min: 1
+      max: 1
+    items:
+      - type: "HtmlArea"
+        name: "text"
+        label:
+          text: "Text"
+          i18n: "contentType.form.successPageSections.text"
+        occurrences:
+          min: 0
+          max: 1
+        default: "Tusen takk. Ditt svar har blitt registrert."
