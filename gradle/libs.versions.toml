@@ -1,0 +1,13 @@
+[versions]
+asset = "2.0.1"
+http-client = "4.0.1"
+freemarker = "4.0.0"
+time = "2.0.0"
+cloudflare-turnstile = "1.0.0"
+
+[libraries]
+lib-asset = { module = "com.enonic.lib:lib-asset", version.ref = "asset" }
+lib-http-client = { module = "com.enonic.lib:lib-http-client", version.ref = "http-client" }
+lib-freemarker = { module = "no.item:lib-xp-freemarker", version.ref = "freemarker" }
+lib-time = { module = "no.item:lib-xp-time", version.ref = "time" }
+lib-cloudflare-turnstile = { module = "no.item:lib-xp-cloudflare-turnstile", version.ref = "cloudflare-turnstile" }

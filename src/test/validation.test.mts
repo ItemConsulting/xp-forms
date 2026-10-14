@@ -11,7 +11,7 @@ import {
   patternValidator,
   requiredValidator,
 } from "/lib/forms/validation";
-import type { SubmittedValue, SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import type { SubmittedValue, SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 /** Runs a single-value field schema. */
 function run(schema: StandardSchemaV1<SubmittedValue, SubmittedValue>, value: SubmittedValue) {

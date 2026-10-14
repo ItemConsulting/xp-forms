@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Publish
 on:
   # Called by CI once it has built a push to main or next (the prerelease branch, in changesets
