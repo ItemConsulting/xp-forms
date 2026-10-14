@@ -12,7 +12,7 @@ import {
 } from "/lib/forms/extensions";
 import { getValidators } from "/lib/forms/form-utils";
 import { getFieldNameFromConfig, verify as verifyHoneypot } from "/lib/forms/honeypot";
-import { type FormFieldNormalized, getJsonSchema, normalizeFields } from "/lib/forms/json-schema";
+import { type FormFieldNormalized, getJsonSchema, normalizeFields, resolveValues } from "/lib/forms/json-schema";
 import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
 import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
@@ -240,34 +240,6 @@ function createStyleTag(path: string, include: boolean): string[] {
 
 function createScriptTag(path: string, include: boolean): string[] {
   return include ? [`<script src="${path}" async defer></script>`] : [];
-}
-
-export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {
-  return fields.reduce<SubmittedValues>((res, value) => {
-    const dataValue = data[value.name];
-
-    if (dataValue) {
-      res[value.name] = resolveValue(value, dataValue);
-    }
-    return res;
-  }, {});
-}
-
-function resolveValue(field: FormFieldNormalized, value: string | string[]): string | string[] {
-  const singleValue = forceArray(value)[0];
-
-  switch (field.type) {
-    // Look up label for single value
-    case "select":
-    case "radiobuttons":
-      return field.options[singleValue];
-
-    // Look up labels for multiple values
-    case "checkboxes":
-      return forceArray(value).map((value) => field.options[value]);
-    default:
-      return singleValue ?? "";
-  }
 }
 
 function getSpamPreventionConfig(siteConfig: XP.SiteConfig | undefined): SpamPreventionConfig {

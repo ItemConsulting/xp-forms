@@ -82,6 +82,10 @@ const server = {
   format: "cjs" as const,
   target: false, // no lowering by oxc (its floor is es2015); the nashornEs5 plugin lowers to es5
   platform: "neutral" as const,
+  // One output file per source file, requiring each other, so a stack trace names the file an error
+  // is in. Bundling would merge modules that import each other in a cycle into a shared chunk.
+  unbundle: true,
+  root: SRC,
   clean: false, // outDir also holds resources copied there by Gradle
   dts: false, // d.ts files are useless at runtime
   minify: false, // minifying server files makes debugging harder
@@ -91,12 +95,17 @@ const server = {
   tsconfig: `${SRC}/tsconfig.json`,
   inputOptions: {
     external: isRuntimeModule,
+    // XP caches a module's exports only once it has finished executing, so a require cycle makes
+    // XP run the modules again and again until the stack overflows. Fail the build on one instead.
+    checks: { circularDependency: true },
+    onLog(level, log, defaultHandler) {
+      defaultHandler(log.code === "CIRCULAR_DEPENDENCY" ? "error" : level, log);
+    },
     resolve: {
       mainFields: ["module", "main"],
     },
   },
   outputOptions: {
-    chunkFileNames: "_chunks/[name]-[hash].js", // avoid chunk-name collisions
     generatedCode: { symbols: false },
   },
 };

@@ -1,6 +1,6 @@
 import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
-import { normalizeFields } from "/lib/forms/json-schema";
+import { normalizeFields, resolveValues } from "/lib/forms/json-schema";
 import type { Errors } from "/lib/forms/types";
 import { render } from "/lib/freemarker";
 import { localize } from "/lib/xp/i18n";
@@ -8,7 +8,6 @@ import { pageUrl } from "/lib/xp/portal";
 import { getFields } from "/site/partials/page-form/page-form";
 import type { PageReview } from "/site/partials/page-review/page-review.freemarker";
 import type { SpamPreventionConfig } from "/site/partials/page-utils/page-utils.freemarker";
-import { resolveValues } from "/site/parts/form-view/form-view";
 import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export type ProcessParams = {

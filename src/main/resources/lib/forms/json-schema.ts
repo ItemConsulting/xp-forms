@@ -2,6 +2,7 @@ import { flatMap, forceArray } from "/lib/forms/arrays";
 import { type FormFieldRaw, getName, hasSelectedValue, type Properties } from "/lib/forms/form-utils";
 import { type Content, serviceUrl } from "/lib/xp/portal";
 import type { Form } from "/site/content-types";
+import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export type JSONSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema";
@@ -217,4 +218,32 @@ function getOptionsReducer(
 ): Record<string, string> {
   result[option.value] = option.text;
   return result;
+}
+
+export function resolveValues(data: SubmittedValues, fields: FormFieldNormalized[]): SubmittedValues {
+  return fields.reduce<SubmittedValues>((res, value) => {
+    const dataValue = data[value.name];
+
+    if (dataValue) {
+      res[value.name] = resolveValue(value, dataValue);
+    }
+    return res;
+  }, {});
+}
+
+function resolveValue(field: FormFieldNormalized, value: string | string[]): string | string[] {
+  const singleValue = forceArray(value)[0];
+
+  switch (field.type) {
+    // Look up label for single value
+    case "select":
+    case "radiobuttons":
+      return field.options[singleValue];
+
+    // Look up labels for multiple values
+    case "checkboxes":
+      return forceArray(value).map((value) => field.options[value]);
+    default:
+      return singleValue ?? "";
+  }
 }
