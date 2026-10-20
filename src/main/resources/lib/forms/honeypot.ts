@@ -9,9 +9,9 @@ export function verify(req: Request): boolean {
   return (first(req.params[getFieldNameFromConfig()]) ?? "").length === 0;
 }
 
-export function getFieldNameFromConfig(): string {
-  const siteConfig = getSiteConfig<XP.SiteConfig>();
-
+export function getFieldNameFromConfig(
+  siteConfig: XP.SiteConfig | null | undefined = getSiteConfig<XP.SiteConfig>(),
+): string {
   return (
     getOptionIfPresent(siteConfig?.spamPrevention, "honeypot")?.honeypot.honeypotFieldName ??
     DEFAULT_FIELD_NAME_HONEYPOT

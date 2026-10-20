@@ -124,6 +124,8 @@ form:
             occurrences:
               min: 0
               max: 1
+            exclude: "*"
+            include: "Bold Italic | RemoveFormat | SpecialChar Macro | Link Unlink"
           - type: "TextLine"
             name: "value"
             label:

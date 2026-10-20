@@ -5,7 +5,6 @@ export type FreemarkerParams = {
   pages: string[];
   errors: Errors;
   values: SubmittedValues;
-  adminErrors?: Errors;
 };
 
 export type SubmittedValue = string[] | string | undefined;

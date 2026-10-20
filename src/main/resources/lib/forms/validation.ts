@@ -1,332 +1,121 @@
 import { forceArray } from "/lib/forms/arrays";
-import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
-import { isEmptyOrUndefined, notEmptyOrUndefined, notNullOrUndefined, stringToRegex } from "/lib/forms/utils";
-import { localize } from "/lib/xp/i18n";
-import type { SubmittedValue, SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
+import type {
+  JSONSchema,
+  SchemaProperty,
+  SchemaPropertyArray,
+  SchemaPropertyString,
+  ValidationKeyword,
+} from "/lib/forms/json-schema";
+import type { Errors } from "/lib/forms/types";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
+
+/*
+  Validates the values of a form against the JSON Schema made from its fields (see
+  /lib/forms/json-schema). Only the keywords that schema uses are checked, the way a JSON Schema
+  validator checks them, so that a headless frontend validating the same schema with a library such
+  as Ajv gets the same result. Written for XP's script engine, which runs ES5.
+*/
+
+export type NormalizedValues = Record<string, string | string[]>;
 
 /**
- * Combines several single-value [Standard Schemas](https://standardschema.dev) into one that runs
- * them all against the same value and concatenates their issues. Used to merge the multiple
- * validators a single field can have (e.g. required + minLength + pattern) into one schema, so they
- * can be keyed by field name in {@link createFormSchema}.
+ * The values in the shape the schema describes. A field that holds one value gets the first one sent
+ * as a string, checkboxes get an array, and empty strings are left out, so that a field left empty is
+ * missing. Values for fields the schema does not know are left out too.
  */
-export function combineValidators(
-  validators: StandardSchemaV1<SubmittedValue, SubmittedValue>[],
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
+export function normalizeValues(schema: JSONSchema, values: SubmittedValues): NormalizedValues {
+  return Object.keys(schema.properties).reduce<NormalizedValues>((normalized, name) => {
+    const nonEmpty = forceArray(values[name]).filter((value) => typeof value === "string" && value !== "");
 
-        const issues = validators.reduce<StandardSchemaV1.Issue[]>(
-          (acc, validator) => acc.concat(validator["~standard"].validate(value, options).issues ?? []),
-          [],
-        );
+    if (nonEmpty.length > 0) {
+      normalized[name] = schema.properties[name].type === "array" ? nonEmpty : nonEmpty[0];
+    }
 
-        return issues.length > 0 ? { issues } : { value };
-      },
-    },
-  };
+    return normalized;
+  }, {});
 }
 
 /**
- * Composes a record of field schemas (keyed by field name) into a single
- * [Standard Schema](https://standardschema.dev) over the submitted values. Each field schema runs
- * against its own value and is responsible for setting its own issue `path` (to the field name).
- * Implemented without `Proxy`/ES2015+ runtime APIs so it runs on the Nashorn (ES5) server engine.
+ * Validates the values against the schema, and returns the messages of the rules that failed, keyed by
+ * field name. Empty when the values are valid.
  */
-export function createFormSchema(
-  validators: Record<string, StandardSchemaV1<SubmittedValue, SubmittedValue>>,
-): StandardSchemaV1<SubmittedValues, SubmittedValues> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValues;
+export function validate(schema: JSONSchema, values: SubmittedValues): Errors {
+  const normalized = normalizeValues(schema, values);
+  const required = schema.required ?? [];
 
-        const result = Object.keys(validators).reduce<{ value: SubmittedValues; issues: StandardSchemaV1.Issue[] }>(
-          (rec, name) => {
-            if (validators[name]) {
-              const fieldResult = validators[name]["~standard"].validate(value[name], options);
+  return Object.keys(schema.properties).reduce<Errors>((errors, name) => {
+    const property = schema.properties[name];
+    const value = normalized[name];
+    const failed: ValidationKeyword[] =
+      value === undefined ? (required.indexOf(name) !== -1 ? ["required"] : []) : validateProperty(property, value);
 
-              if ("value" in fieldResult) {
-                rec.value[name] = fieldResult.value;
-              }
+    if (failed.length > 0) {
+      errors[name] = failed.map((keyword) => getErrorMessage(property, keyword));
+    }
 
-              rec.issues = rec.issues.concat(fieldResult.issues ?? []);
-            }
-
-            return rec;
-          },
-          { value: {}, issues: [] },
-        );
-
-        return result.issues.length > 0 ? { issues: result.issues } : { value: result.value };
-      },
-    },
-  };
+    return errors;
+  }, {});
 }
 
-/**
- * Creates a single-value [Standard Schema](https://standardschema.dev) that fails when the value is
- * empty — an empty/`undefined` string, or an empty array for multi-value fields. On failure it emits
- * one issue at the given `path`.
- *
- * @param path the path set on emitted issues, e.g. `[fieldName]`.
- * @param props optional `errorMessage` overriding the localized `validation.required` message.
- */
-export function requiredValidator(
-  path: string[],
-  props: { errorMessage?: string },
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
-        const isValid = Array.isArray(value) ? value.length > 0 : notEmptyOrUndefined(value);
-        return isValid
-          ? { value }
-          : {
-              issues: [
-                {
-                  message:
-                    props.errorMessage ??
-                    localize({
-                      key: "validation.required",
-                      locale: getLocaleFromOptions(options),
-                    }),
-                  path,
-                },
-              ],
-            };
-      },
-    },
-  };
+function validateProperty(property: SchemaProperty, value: string | string[]): ValidationKeyword[] {
+  return property.type === "array"
+    ? validateArray(property, forceArray(value))
+    : validateString(property, typeof value === "string" ? value : value[0]);
 }
 
-/**
- * Creates a single-value [Standard Schema](https://standardschema.dev) that fails when the value is
- * shorter than `props.minLength` (by string/array length). On failure it emits one issue at
- * the given `path`.
- *
- * @param path the path set on emitted issues, e.g. `[fieldName]`.
- * @param props the `minLength` to enforce, and an optional `errorMessage` overriding the localized
- *   `validation.minLength` message.
- */
-export function minLengthValidator(
-  path: string[],
-  props: { minLength: number; errorMessage?: string },
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
-        const isValid = (value?.length ?? 0) >= props.minLength;
-        return isValid
-          ? {
-              value,
-            }
-          : {
-              issues: [
-                {
-                  message:
-                    props.errorMessage ??
-                    localize({
-                      key: "validation.minLength",
-                      values: [props.minLength?.toString()],
-                      locale: getLocaleFromOptions(options),
-                    }),
-                  path,
-                },
-              ],
-            };
-      },
-    },
-  };
-}
+function validateString(property: SchemaPropertyString, value: string): ValidationKeyword[] {
+  const failed: ValidationKeyword[] = [];
+  const length = codePointLength(value);
 
-/**
- * Creates a single-value [Standard Schema](https://standardschema.dev) that fails when the value is
- * longer than `props.maxLength` (by string/array length). On failure it emits one issue at
- * the given `path`.
- *
- * @param path the path set on emitted issues, e.g. `[fieldName]`.
- * @param props the `maxLength` to enforce, and an optional `errorMessage` overriding the localized
- *   `validation.maxLength` message.
- */
-export function maxLengthValidator(
-  path: string[],
-  props: { maxLength: number; errorMessage?: string },
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
-        const isValid = (value?.length ?? 0) <= props.maxLength;
-        return isValid
-          ? { value }
-          : {
-              issues: [
-                {
-                  message:
-                    props.errorMessage ??
-                    localize({
-                      key: "validation.maxLength",
-                      values: [props.maxLength?.toString()],
-                      locale: getLocaleFromOptions(options),
-                    }),
-                  path,
-                },
-              ],
-            };
-      },
-    },
-  };
-}
-
-/**
- * Creates a single-value [Standard Schema](https://standardschema.dev) that fails when the value does
- * not match `props.regexString`. Empty values pass (left to {@link requiredValidator}) and array
- * values never match. On failure it emits one issue at the given `path`.
- *
- * @param path the path set on emitted issues, e.g. `[fieldName]`.
- * @param props the `regexString` (a string or `RegExp`) to test against, and an optional
- *   `errorMessage` overriding the localized `validation.pattern` message.
- */
-export function patternValidator(
-  path: string[],
-  props: { regexString: string | RegExp; errorMessage?: string },
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
-
-        // "requiredValidator" is responsible for handling missing values with the correct error message
-        if (!Array.isArray(value) && isEmptyOrUndefined(value)) {
-          return { value };
-        }
-
-        const regex = typeof props.regexString === "string" ? stringToRegex(props.regexString) : props.regexString;
-        const isValid =
-          notNullOrUndefined(value) && notNullOrUndefined(regex) && !Array.isArray(value) && regex.test(value);
-
-        return isValid
-          ? { value }
-          : {
-              issues: [
-                {
-                  message:
-                    props.errorMessage ??
-                    localize({
-                      key: "validation.pattern",
-                      values: [props.regexString.toString()],
-                      locale: getLocaleFromOptions(options),
-                    }),
-                  path,
-                },
-              ],
-            };
-      },
-    },
-  };
-}
-
-/**
- * Creates a single-value [Standard Schema](https://standardschema.dev) that fails when the value has
- * fewer than `props.minItems` entries (counted via `forceArray`, for multi-value fields like
- * checkboxes). On failure it emits one issue at the given `path`.
- *
- * @param path the path set on emitted issues, e.g. `[fieldName]`.
- * @param props the `minItems` to enforce, and an optional `errorMessage` overriding the localized
- *   `validation.minItems` message.
- */
-export function minItemsValidator(
-  path: string[],
-  props: { minItems: number; errorMessage?: string },
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
-        const isValid = forceArray(value).length >= props.minItems;
-        return isValid
-          ? { value }
-          : {
-              issues: [
-                {
-                  message:
-                    props.errorMessage ??
-                    localize({
-                      key: "validation.minItems",
-                      values: [props.minItems?.toString()],
-                      locale: getLocaleFromOptions(options),
-                    }),
-                  path,
-                },
-              ],
-            };
-      },
-    },
-  };
-}
-
-/**
- * Creates a single-value [Standard Schema](https://standardschema.dev) that fails when the value has
- * more than `props.maxItems` entries (counted via `forceArray`, for multi-value fields like
- * checkboxes). On failure it emits one issue at the given `path`.
- *
- * @param path the path set on emitted issues, e.g. `[fieldName]`.
- * @param props the `maxItems` to enforce, and an optional `errorMessage` overriding the localized
- *   `validation.maxItems` message.
- */
-export function maxItemsValidator(
-  path: string[],
-  props: { maxItems: number; errorMessage?: string },
-): StandardSchemaV1<SubmittedValue, SubmittedValue> {
-  return {
-    "~standard": {
-      version: 1,
-      vendor: "xp-forms",
-      validate: (valueRaw, options) => {
-        const value = valueRaw as SubmittedValue;
-        const isValid = forceArray(value).length <= props.maxItems;
-        return isValid
-          ? { value }
-          : {
-              issues: [
-                {
-                  message:
-                    props.errorMessage ??
-                    localize({
-                      key: "validation.maxItems",
-                      values: [props.maxItems?.toString()],
-                      locale: getLocaleFromOptions(options),
-                    }),
-                  path,
-                },
-              ],
-            };
-      },
-    },
-  };
-}
-
-function getLocaleFromOptions(options: StandardSchemaV1.Options | undefined): string | undefined {
-  if (typeof options?.libraryOptions?.locale === "string") {
-    return options.libraryOptions.locale;
+  if (property.minLength !== undefined && length < property.minLength) {
+    failed.push("minLength");
   }
+
+  if (property.maxLength !== undefined && length > property.maxLength) {
+    failed.push("maxLength");
+  }
+
+  if (property.pattern !== undefined && !new RegExp(property.pattern).test(value)) {
+    failed.push("pattern");
+  }
+
+  if (property.regexp !== undefined && !new RegExp(property.regexp.pattern, property.regexp.flags).test(value)) {
+    failed.push("regexp");
+  }
+
+  if (property.enum !== undefined && property.enum.indexOf(value) === -1) {
+    failed.push("enum");
+  }
+
+  return failed;
+}
+
+function validateArray(property: SchemaPropertyArray, value: string[]): ValidationKeyword[] {
+  const failed: ValidationKeyword[] = [];
+  const allowed = property.items.enum;
+
+  if (property.minItems !== undefined && value.length < property.minItems) {
+    failed.push("minItems");
+  }
+
+  if (property.maxItems !== undefined && value.length > property.maxItems) {
+    failed.push("maxItems");
+  }
+
+  // One message for the field, however many of its values are not among the options
+  if (allowed !== undefined && value.some((item) => allowed.indexOf(item) === -1)) {
+    failed.push("enum");
+  }
+
+  return failed;
+}
+
+function getErrorMessage(property: SchemaProperty, keyword: ValidationKeyword): string {
+  return property.errorMessages?.[keyword] ?? keyword;
+}
+
+/** The length the way JSON Schema counts it: in characters, where JavaScript counts UTF-16 code units */
+export function codePointLength(value: string): number {
+  const surrogatePairs = value.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g);
+  return value.length - (surrogatePairs ? surrogatePairs.length : 0);
 }
