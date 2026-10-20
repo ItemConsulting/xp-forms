@@ -35,15 +35,6 @@ export function objectKeys<Obj extends object>(obj: Obj): (keyof Obj)[] {
   return Object.keys(obj) as (keyof Obj)[];
 }
 
-export function stringToRegex(str: string): RegExp | undefined {
-  const re = /\/(.+)\/([gim]?)/;
-  const match = str.match(re);
-  if (match) {
-    return new RegExp(match[1], match[2]);
-  }
-  return undefined;
-}
-
 export function getOptionIfPresent<OptionSet extends { _selected: string }, Selected extends OptionSet["_selected"]>(
   optionSet: OptionSet | OptionSet[] | undefined,
   selected: Selected,

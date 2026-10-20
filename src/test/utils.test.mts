@@ -7,8 +7,8 @@ import {
   notNullOrUndefined,
   objectKeys,
   partPathToId,
-  stringToRegex,
 } from "/lib/forms/utils";
+import { getSpamPreventionType } from "/lib/forms/spam-prevention";
 
 describe("notNullOrUndefined", () => {
   it("is false for null/undefined, true otherwise", () => {
@@ -30,23 +30,6 @@ describe("notEmptyOrUndefined / isEmptyOrUndefined", () => {
   it("treats a non-empty string as non-empty", () => {
     assert.equal(isEmptyOrUndefined("x"), false);
     assert.equal(notEmptyOrUndefined("x"), true);
-  });
-});
-
-describe("stringToRegex", () => {
-  it("parses a /pattern/flags string into a RegExp", () => {
-    const regex = stringToRegex("/^\\d+$/");
-    assert.ok(regex instanceof RegExp);
-    assert.equal(regex?.test("123"), true);
-    assert.equal(regex?.test("12a"), false);
-  });
-
-  it("keeps the flags", () => {
-    assert.equal(stringToRegex("/abc/i")?.flags, "i");
-  });
-
-  it("returns undefined for a string that is not in /.../ form", () => {
-    assert.equal(stringToRegex("abc"), undefined);
   });
 });
 
@@ -77,5 +60,16 @@ describe("assertIsDefined", () => {
   it("does not throw for a defined value", () => {
     assert.doesNotThrow(() => assertIsDefined(0));
     assert.doesNotThrow(() => assertIsDefined(""));
+  });
+});
+
+describe("getSpamPreventionType", () => {
+  it("is the one chosen in the site's config", () => {
+    assert.equal(getSpamPreventionType({ spamPrevention: { _selected: "honeypot" } } as XP.SiteConfig), "honeypot");
+  });
+
+  it("is none without a config, or with none chosen", () => {
+    assert.equal(getSpamPreventionType(null), "none");
+    assert.equal(getSpamPreventionType({} as XP.SiteConfig), "none");
   });
 });

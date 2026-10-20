@@ -16,10 +16,6 @@ export default meta;
 export const frame: StoryObj<FreemarkerParams> = {
   args: {
     frameId: "myframe",
-    adminErrors: {
-      errors: ["Dette er en error"],
-      warnings: ["Dette er en warning"],
-    },
     pages: [],
   },
 };

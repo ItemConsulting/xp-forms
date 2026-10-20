@@ -59,6 +59,11 @@ export function process(params: ProcessParams): string {
   });
 }
 
+// The help text is written in an HtmlArea, so links and macros in it must be processed
+function processHelpText(helpText: string | undefined): string | undefined {
+  return helpText ? processHtml({ value: helpText }) : undefined;
+}
+
 export function getFields(fields: FormPageRaw["fields"], pageId: string, values: SubmittedValues): Field[] {
   return forceArray(fields)
     .map((field) => getField(field, pageId, values))
@@ -73,9 +78,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         id: `${pageId}-${getName(field.input)}`,
         label: field.input.label,
         name: getName(field.input),
-        helpText: processHtml({
-          value: field.input.helpText ?? "",
-        }),
+        helpText: processHelpText(field.input.helpText),
         value: getFirstValue(values, field.input) ?? field.input.value,
         placeholder: field.input.properties?.placeholder?.placeholder,
         autocomplete: field.input.properties?.autocomplete?.autocomplete,
@@ -91,7 +94,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         name: getName(field.textarea),
         cols: field.textarea.cols,
         rows: field.textarea.rows,
-        helpText: field.textarea.helpText,
+        helpText: processHelpText(field.textarea.helpText),
         value: getFirstValue(values, field.textarea) ?? field.textarea.value,
         placeholder: field.textarea.properties?.placeholder?.placeholder,
         autocomplete: field.textarea.properties?.autocomplete?.autocomplete,
@@ -106,7 +109,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         id: `${pageId}-${getName(field.select)}`,
         label: field.select.label,
         name: getName(field.select),
-        helpText: field.select.helpText,
+        helpText: processHelpText(field.select.helpText),
         value: selectValue,
         options: forceArray(field.select.options)
           .filter((option) => option.value && option.text)
@@ -123,7 +126,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         id: `${pageId}-${getName(field.checkboxes)}`,
         label: field.checkboxes.label,
         name: getName(field.checkboxes),
-        helpText: field.checkboxes.helpText,
+        helpText: processHelpText(field.checkboxes.helpText),
         value: checkboxesValue,
         options: forceArray(field.checkboxes.options)
           .filter((option) => option.value && option.text)
@@ -139,7 +142,7 @@ function getField(field: FormFieldRaw, pageId: string, values: SubmittedValues):
         id: `${pageId}-${getName(field.radiobuttons)}`,
         label: field.radiobuttons.label,
         name: getName(field.radiobuttons),
-        helpText: field.radiobuttons.helpText,
+        helpText: processHelpText(field.radiobuttons.helpText),
         value: radioButtonsValue,
         options: forceArray(field.radiobuttons.options)
           .filter((option) => option.value && option.text)

@@ -11,6 +11,8 @@ const STUBS = resolvePath(process.cwd(), "src/test/stubs");
 
 const STUBBED = {
   "/lib/xp/i18n": `${STUBS}/lib-xp-i18n.mts`,
+  "/lib/xp/common": `${STUBS}/lib-xp-common.mts`,
+  "/lib/xp/portal": `${STUBS}/lib-xp-portal.mts`,
 };
 
 export function resolve(specifier, context, next) {

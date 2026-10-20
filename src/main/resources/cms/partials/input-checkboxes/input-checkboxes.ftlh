@@ -10,9 +10,9 @@
     <legend class="ds-label">${field.label}</legend>
 
     [#if field.helpText?has_content]
-      <p id="${field.id}-help-text" class="ds-paragraph" data-variant="default">
+      <div id="${field.id}-help-text" class="ds-paragraph" data-variant="default">
         ${field.helpText?no_esc}
-      </p>
+      </div>
     [/#if]
 
     [@Field.renderErrorList field errors /]

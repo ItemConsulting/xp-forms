@@ -1,43 +1,23 @@
 import type { PartComponent, Request, Response } from "@enonic-types/core";
 import { assetUrl } from "/lib/enonic/asset";
-import { compareSchemas, type SchemaError } from "/lib/forms/admin-schema-validation";
 import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
 import { deleteFromStore, loadFromStore, saveToStore } from "/lib/forms/data-store";
-import {
-  getIntegration,
-  getPrepopulationValues,
-  getReferenceJsonSchema,
-  type Integration,
-} from "/lib/forms/extensions";
-import { getValidators } from "/lib/forms/form-utils";
-import { getFieldNameFromConfig, verify as verifyHoneypot } from "/lib/forms/honeypot";
-import { type FormFieldNormalized, getJsonSchema, normalizeFields, resolveValues } from "/lib/forms/json-schema";
+import { getFormType, getPrepopulationValues } from "/lib/forms/extensions";
+import { verify as verifyHoneypot } from "/lib/forms/honeypot";
 import { getLocale } from "/lib/forms/locale";
 import { getPages, RETURN_ALL_PAGES, RETURN_REVIEW_PAGE, SUCCESS_PAGE_COUNT } from "/lib/forms/pages";
-import type { StandardSchemaV1 } from "/lib/forms/standard-schema";
+import { getSpamPreventionConfig } from "/lib/forms/spam-prevention";
+import { sendFormEvent, validatePages } from "/lib/forms/submission";
 import { FIELD_TURNSTILE_RESPONSE, TURNSTILE_CLIENT_JS, verifyTurnstile } from "/lib/forms/turnstile";
-import type { Errors } from "/lib/forms/types";
 import { assertIsDefined, partPathToId } from "/lib/forms/utils";
-import { createFormSchema } from "/lib/forms/validation";
 import { render } from "/lib/freemarker";
-import { getUser } from "/lib/xp/auth";
-import { send as sendEvent } from "/lib/xp/event";
 import { localize } from "/lib/xp/i18n";
 import { getComponent, getContent, getSite, getSiteConfig, pageUrl } from "/lib/xp/portal";
-import type { SpamPreventionConfig } from "/cms/partials/page-utils/page-utils.freemarker";
 import type { FreemarkerParams, SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 import { HEADER_KEY_REDIRECT } from "/cms/processors/redirect";
 
-export type FormEvent<Values extends SubmittedValues> = {
-  siteId: string;
-  formId: string;
-  branch: string | undefined;
-  integration?: Integration;
-  fields: FormFieldNormalized[];
-  values: Values;
-  userKey?: string;
-};
+export type { FormEvent } from "/lib/forms/submission";
 
 type FormViewPart = PartComponent<"no.item.forms:form-view">;
 
@@ -68,23 +48,15 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   const locale = getLocale({ content });
 
   const values: SubmittedValues = {
-    ...getPrepopulationValues(content.data.integrationId),
+    ...getPrepopulationValues(content.data.integrationId, content._id),
     ...loadFromStore(req, content._id),
     ...valuesFromUser,
   };
 
-  const integration = content.data.integrationId ? getIntegration(content.data.integrationId) : undefined;
+  const formType = getFormType(content.data.integrationId, content._id);
 
-  const validators = forceArray(currentPageRaw?.fields)
-    .map(getValidators)
-    .reduce((acc, fieldValidators) => ({ ...acc, ...fieldValidators }), {});
-  const formSchema = createFormSchema(validators);
-
-  const result: StandardSchemaV1.Result<SubmittedValues> =
-    req.method === "POST"
-      ? formSchema["~standard"].validate(values, { libraryOptions: { locale } })
-      : { value: values };
-  const errors = issuesToErrors(result.issues);
+  const errors = req.method === "POST" && currentPageRaw ? validatePages([currentPageRaw], values, locale) : {};
+  const hasErrors = Object.keys(errors).length > 0;
 
   // If after last page, send back to first page
   if (currentPageNumber > totalPages) {
@@ -92,25 +64,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   }
   // If on the success page, send event
   else if (currentPageNumber === totalPages) {
-    const site = getSite();
-
-    assertIsDefined(site);
-
-    const fields = normalizeFields(content);
-
-    sendEvent<FormEvent<SubmittedValues>>({
-      type: "form.submit",
-      data: {
-        siteId: site._id,
-        formId: content._id,
-        branch: req.branch,
-        userKey: getUser()?.key,
-        integration,
-        fields,
-        values: resolveValues(values, fields),
-      },
-      distributed: false,
-    });
+    sendFormEvent(req, getSite(), content, values, formType?.integration);
 
     deleteFromStore(req, content._id);
   }
@@ -126,7 +80,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
     }
   }
   // If form submit, save values and redirect to next page
-  else if (req.method === "POST" && !result.issues) {
+  else if (req.method === "POST" && !hasErrors) {
     saveToStore(req, content._id, values);
 
     return redirectToPage(content, currentPageNumber + 1);
@@ -143,7 +97,7 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   });
 
   return {
-    status: result.issues ? 400 : 200,
+    status: hasErrors ? 400 : 200,
     headers: {
       "Cache-Control": "private, no-store",
     },
@@ -152,7 +106,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
       pages,
       values,
       frameId: `${partPathToId(part.path)}-frame`,
-      adminErrors: getAdminErrors(req, content, locale, integration),
     }),
     pageContributions: {
       headEnd: ([] as string[])
@@ -172,26 +125,6 @@ export function all(req: Request<{ params: QueryParams }>): Response {
   };
 }
 
-function getAdminErrors(
-  req: Request,
-  content: ContentForm,
-  locale: string,
-  integration?: Integration,
-): SchemaError | undefined {
-  const referenceSchema = content.data.integrationId ? getReferenceJsonSchema(content.data.integrationId) : undefined;
-  const adminErrors =
-    referenceSchema && integration
-      ? compareSchemas(referenceSchema, getJsonSchema(content), locale, integration)
-      : undefined;
-
-  // Form-content with errors in them will probably fail on submission, so it's better to fail early in live mode.
-  if (req.mode === "live" && adminErrors && adminErrors.errors.length > 0) {
-    throw new Error(adminErrors.errors[0]);
-  }
-
-  return adminErrors;
-}
-
 function redirectToPage(content: ContentForm, pageNumber: number): Response {
   return {
     status: 303,
@@ -206,30 +139,6 @@ function redirectToPage(content: ContentForm, pageNumber: number): Response {
   };
 }
 
-/** Groups Standard Schema issues by their first path segment into the `Errors` shape the views consume. */
-export function issuesToErrors(issues: ReadonlyArray<StandardSchemaV1.Issue> = []): Errors {
-  return issues.reduce<Errors>((errors, issue) => {
-    const key = getIssueKey(issue);
-
-    if (key !== undefined) {
-      errors[key] = errors[key] ?? [];
-      errors[key].push(issue.message);
-    }
-
-    return errors;
-  }, {});
-}
-
-function getIssueKey(issue: StandardSchemaV1.Issue): string | undefined {
-  const segment = issue.path?.[0];
-
-  if (segment === undefined) {
-    return undefined;
-  }
-
-  return (typeof segment === "object" ? segment.key : segment).toString();
-}
-
 function isHuman(req: Request, spamPreventionType: string): boolean {
   return spamPreventionType === "honeypot" ? verifyHoneypot(req) : verifyTurnstile(req);
 }
@@ -240,26 +149,4 @@ function createStyleTag(path: string, include: boolean): string[] {
 
 function createScriptTag(path: string, include: boolean): string[] {
   return include ? [`<script src="${path}" async defer></script>`] : [];
-}
-
-function getSpamPreventionConfig(siteConfig: XP.SiteConfig | undefined): SpamPreventionConfig {
-  switch (siteConfig?.spamPrevention._selected) {
-    case "honeypot":
-      return {
-        type: "honeypot",
-        honeypotFiledName: getFieldNameFromConfig(),
-      };
-    case "turnstile": {
-      const turnstileSiteKey = siteConfig.spamPrevention.turnstile.turnstileSiteKey ?? app.config.turnstileSiteKey;
-      assertIsDefined(turnstileSiteKey, "turnstileSiteKey");
-      return {
-        type: "turnstile",
-        turnstileSiteKey,
-      };
-    }
-    default:
-      return {
-        type: "none",
-      };
-  }
 }

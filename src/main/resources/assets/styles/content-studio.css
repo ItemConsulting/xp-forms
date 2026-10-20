@@ -3,29 +3,3 @@
   flex-direction: column;
   gap: var(--ds-size-4, 1lh);
 }
-
-.forms-alert {
-  background-color: var(--ds-color-surface-tinted);
-  color: var(--ds-color-text-default);
-  padding: 1rem;
-  border: 1px solid var(--ds-color-border-default);
-
-  &::before {
-    content: var(--forms--admin-icon);
-    margin-right: 1rem;
-  }
-}
-
-.forms-alert[data-color="danger"] {
-  --forms--admin-icon: "⛔";
-  --ds-color-surface-tinted: var(--ds-color-danger-surface-tinted, #f8e4e4);
-  --ds-color-border-default: var(--ds-color-danger-border-default, #ce4d4d);
-  --ds-color-text-default: var(--ds-color-danger-text-default, #590d0d);
-}
-
-.forms-alert[data-color="warning"] {
-  --forms--admin-icon: "⚠️";
-  --ds-color-surface-tinted: var(--ds-color-warning-surface-tinted, #fae6c6);
-  --ds-color-border-default: var(--ds-color-warning-border-default, #a56d13);
-  --ds-color-text-default: var(--ds-color-warning-text-default, #3c2807);
-}

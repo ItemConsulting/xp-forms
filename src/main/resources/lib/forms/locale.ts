@@ -10,8 +10,8 @@ export function getLocale({ content, site }: GetLocaleParams): string {
 }
 
 type GetLocaleParams = {
-  content?: Content<unknown>;
-  site?: Site<XP.SiteConfig>;
+  content?: Pick<Content<unknown>, "language"> | null;
+  site?: Pick<Site<XP.SiteConfig>, "language"> | null;
 };
 
 export function getLocaleFromRequest(req: Request): string {

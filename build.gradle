@@ -32,6 +32,11 @@ dependencies {
   include libs.lib.freemarker
   include libs.lib.time
   include libs.lib.cloudflare.turnstile
+
+  testImplementation xplibs.api.core
+  testImplementation platform("org.junit:junit-bom:6.1.3")
+  testImplementation "org.junit.jupiter:junit-jupiter"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 repositories {
@@ -79,6 +84,19 @@ tasks.register("npmCheck", NpmTask) {
 // if (!(project.hasProperty("dev") || project.hasProperty("development"))) {
 check.dependsOn npmCheck
 // }
+
+/*
+  The Java tests have the main resources folder on their classpath, and npmBuild writes into that same
+  folder. They need nothing npmBuild makes, but Gradle refuses to run the two unordered in one build.
+*/
+test {
+  useJUnitPlatform()
+  mustRunAfter "npmBuild"
+}
+
+compileTestJava {
+  mustRunAfter "npmBuild"
+}
 
 tasks.register("npmTest", NpmTask) {
   dependsOn npmInstall
