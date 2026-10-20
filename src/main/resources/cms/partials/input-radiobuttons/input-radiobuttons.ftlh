@@ -5,9 +5,9 @@
     <legend class="ds-label" data-weight="medium">${field.label}</legend>
 
     [#if field.helpText?has_content]
-      <p class="ds-paragraph" data-variant="default">
+      <div class="ds-paragraph" data-variant="default">
         ${field.helpText?no_esc}
-      </p>
+      </div>
     [/#if]
 
     [@Field.renderErrorList field errors /]

@@ -4,7 +4,10 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 public final class PortalRequestMapper
@@ -12,9 +15,26 @@ public final class PortalRequestMapper
 {
     private final PortalRequest request;
 
-    public PortalRequestMapper(final PortalRequest request )
+    private final Map<String, String> headers;
+
+    /**
+     * With a locale, the request is given as one that accepts only that language. The headers are
+     * copied for it, since a copy of a request shares them with the request it was copied from.
+     */
+    public PortalRequestMapper( final PortalRequest request, final Locale locale )
     {
         this.request = request;
+
+        if ( locale == null )
+        {
+            this.headers = request.getHeaders();
+        }
+        else
+        {
+            this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
+            this.headers.putAll( request.getHeaders() );
+            this.headers.put( "Accept-Language", locale.toLanguageTag() );
+        }
     }
 
     @Override
@@ -53,8 +73,8 @@ public final class PortalRequestMapper
 
         serializeBody( gen );
         MapperHelper.serializeMultimap( "params", gen, this.request.getParams().asMap() );
-        gen.value( "headers", this.request.getHeaders() );
-        gen.value( "getHeader", (Function<String, String>) s -> request.getHeaders().get( s ) );
+        gen.value( "headers", this.headers );
+        gen.value( "getHeader", (Function<String, String>) this.headers::get );
         gen.value( "cookies", this.request.getCookies() );
     }
 

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-api-8.0.0.json
+kind: "API"
+title: "Submit"
+description: "Receives a filled-in form from a frontend that renders the form itself"
+# Sites mount it contextually through cms/site.yaml, so the form is read from the site's project and branch
+allow:
+  - "role:system.everyone"

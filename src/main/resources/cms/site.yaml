@@ -8,3 +8,5 @@ apis:
   - "asset"
   # apiUrl() resolves to the site-contextual URL when called from a site, which requires the site to mount it
   - "json-schema"
+  # A frontend that renders the form itself (such as Next.js through Guillotine) sends the values here
+  - "submit"
