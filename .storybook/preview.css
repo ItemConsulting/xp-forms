@@ -1,0 +1,9 @@
+/* Designsystemet components inherit their font, so the host page has to set it */
+:root {
+  /* @fontsource-variable/inter registers the font as "Inter Variable" */
+  --ds-font-family: "Inter Variable", sans-serif;
+}
+
+body {
+  font-family: var(--ds-font-family);
+}

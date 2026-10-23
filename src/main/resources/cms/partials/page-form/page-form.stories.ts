@@ -1,5 +1,5 @@
 import id from "./page-form.ftlh";
-import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
+import type { Meta, StoryObj } from "@itemconsulting/storybook-framework-enonic-xp";
 import type { PageForm } from "./page-form.freemarker";
 
 const meta: Meta<PageForm> = {
@@ -19,9 +19,14 @@ export const formPage: StoryObj<PageForm> = {
     text: "This is some intro text",
     submitButtonText: "Send inn",
     frameId: "frame",
+    pageId: "page-1",
+    errors: {},
+    spamPreventionConfig: {
+      type: "none",
+    },
     fields: [
       {
-        type: "input-text",
+        type: "text",
         id: "input-text-1",
         label: "Navn",
         name: "name",
@@ -52,12 +57,15 @@ export const formPageWithError: StoryObj<PageForm> = {
     frameId: "frame",
     pageId: "page-1",
     backUrl: "#",
+    spamPreventionConfig: {
+      type: "none",
+    },
     errors: {
       email: ["Please provide a valid email address", "Please fill in the email field"],
     },
     fields: [
       {
-        type: "input-text",
+        type: "text",
         id: "page-1-email",
         label: "Email",
         name: "email",
