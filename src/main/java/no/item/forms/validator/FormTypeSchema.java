@@ -13,11 +13,10 @@ import java.util.Set;
 /**
  * What a form type expects of a form, from the JSON Schema it registers.
  *
- * @param displayName The name of the form type, as the editor chose it
  * @param required    The fields that must have "Validation: required" selected
  * @param properties  The keywords of each field the form type names, by the name of the field
  */
-record FormTypeSchema(String displayName, List<String> required, Map<String, Set<String>> properties) {
+record FormTypeSchema(List<String> required, Map<String, Set<String>> properties) {
   /** Null for a form type that expects nothing of the form */
   static FormTypeSchema from(ExtensionResult extension) {
     ScriptValue value = extension.value();
@@ -52,6 +51,6 @@ record FormTypeSchema(String displayName, List<String> required, Map<String, Set
       });
     }
 
-    return new FormTypeSchema(String.valueOf(formType.get("displayName")), required, properties);
+    return new FormTypeSchema(required, properties);
   }
 }
