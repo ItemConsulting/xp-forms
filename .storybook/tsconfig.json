@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "lib": [
+      "dom",
+      "ES2020"
+    ],
+    "types": ["@itemconsulting/storybook-framework-enonic-xp", "vite/client"]
+  },
+  "exclude": ["build/*"]
+}
