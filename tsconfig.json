@@ -49,7 +49,7 @@
     // types you want included, whereas typeRoots supports saying you want particular folders.
     "types": [
       "node",
-      "@itemconsulting/xp-storybook-utils/global"
+      "@itemconsulting/storybook-framework-enonic-xp"
     ]
   }
 }

@@ -1,5 +1,5 @@
 import id from "./page-review.ftlh";
-import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
+import type { Meta, StoryObj } from "@itemconsulting/storybook-framework-enonic-xp";
 import type { PageReview } from "./page-review.freemarker";
 
 const meta: Meta<PageReview> = {
@@ -96,5 +96,10 @@ export const reviewPage: StoryObj<PageReview> = {
       },
     ],
     submitButtonText: "Accept and send",
+    pageId: "page-review",
+    errors: {},
+    spamPreventionConfig: {
+      type: "none",
+    },
   },
 };

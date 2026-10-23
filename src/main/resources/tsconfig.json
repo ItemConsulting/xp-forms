@@ -59,8 +59,7 @@
       // app, exports, log, require, resolve
       // https://developer.enonic.com/docs/xp/stable/framework/java-bridge
       // __.newBean, __.toNativeObject, __.nullOrValue
-      "@enonic-types/global",
-      "@itemconsulting/xp-storybook-utils/global"
+      "@enonic-types/global"
     ],
   },
 }

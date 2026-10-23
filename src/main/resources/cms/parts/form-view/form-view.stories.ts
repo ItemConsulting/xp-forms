@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
+import type { Meta, StoryObj } from "@itemconsulting/storybook-framework-enonic-xp";
 import type { FreemarkerParams } from "./form-view.freemarker";
 import id from "./form-view.ftlh";
 

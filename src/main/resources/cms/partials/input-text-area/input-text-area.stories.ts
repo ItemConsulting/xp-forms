@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@itemconsulting/xp-storybook-utils";
+import type { Meta, StoryObj } from "@itemconsulting/storybook-framework-enonic-xp";
 import { controlAutocomplete, controlInputMode } from "../../../storybook-utils";
 import type { InputTextArea } from "./input-text-area.freemarker";
 import id from "./input-text-area.ftlh";
