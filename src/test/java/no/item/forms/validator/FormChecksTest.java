@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 class FormChecksTest {
   private static final FormTypeSchema EMAIL = new FormTypeSchema(
-    "E-post",
     List.of("name", "email"),
     Map.of("name", Set.of("type", "minLength"), "email", Set.of("type"), "subject", Set.of("type"))
   );
@@ -49,7 +48,7 @@ class FormChecksTest {
     // email is missing, name lacks its minimum length, and subject is missing
     assertEquals(List.of("requiredMissing", "optionalFieldMissing", "minLengthMissing"), names(errors));
     assertNull(pathOf(errors.get(0)));
-    assertEquals(List.of("E-post", "email"), errors.get(0).getArgs());
+    assertEquals(List.of("email"), errors.get(0).getArgs());
     assertNull(pathOf(errors.get(2)));
   }
 

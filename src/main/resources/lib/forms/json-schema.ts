@@ -124,10 +124,10 @@ export type ParsedRegExp = {
 const PATTERN_FLAGS = ["i", "m"];
 
 /** The schema of every field in the form, with the messages in the given language */
-export function getJsonSchema(content: Content<Form>, locale: string, baseUrl?: string): JSONSchema {
+export function getJsonSchema(content: Content<Form>, locale: string): JSONSchema {
   return {
     ...fieldsToJsonSchema(normalizeFields(content), locale),
-    $id: getSchemaId(content._id, baseUrl),
+    $id: getSchemaId(content._id),
     title: content.displayName,
   };
 }
@@ -152,12 +152,11 @@ function fieldsToJsonSchema(fields: FormFieldNormalized[], locale: string): JSON
   };
 }
 
-function getSchemaId(id: string, baseUrl?: string): string {
+function getSchemaId(id: string): string {
   return apiUrl({
     api: "no.item.forms:json-schema",
     params: { id },
     type: "absolute",
-    baseUrl,
   });
 }
 
