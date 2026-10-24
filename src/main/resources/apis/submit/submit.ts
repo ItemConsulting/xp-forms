@@ -1,4 +1,6 @@
 import type { Request, Response } from "@enonic-types/core";
+import type { Errors } from "/cms/partials/error-summary/error-summary";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
 import { getFormType } from "/lib/forms/extensions";
@@ -7,11 +9,9 @@ import { getLocale } from "/lib/forms/locale";
 import { getSpamPreventionType } from "/lib/forms/spam-prevention";
 import { sendFormEvent, validatePages } from "/lib/forms/submission";
 import { FIELD_TURNSTILE_RESPONSE, verifyTurnstile } from "/lib/forms/turnstile";
-import type { Errors } from "/lib/forms/types";
 import { get as getOne, getSite as getSiteOfContent } from "/lib/xp/content";
 import { localize } from "/lib/xp/i18n";
 import { getSite, getSiteConfig } from "/lib/xp/portal";
-import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 /*
   A frontend that renders the form itself validates each page as the visitor goes, against the JSON
