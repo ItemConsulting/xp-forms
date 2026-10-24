@@ -1,4 +1,4 @@
-import type { Errors } from "/lib/forms/types";
+import type { Errors } from "/cms/partials/error-summary/error-summary";
 
 export type FreemarkerParams = {
   frameId: string;

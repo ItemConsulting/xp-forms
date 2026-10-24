@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { Ajv2020 } from "ajv/dist/2020.js";
-import type { FormPageRaw } from "/lib/forms/form-utils";
+import type { FormPageForm } from "/cms/form-fragments";
 import { getPageJsonSchema, type JSONSchema, parsePattern } from "/lib/forms/json-schema";
 import { codePointLength, normalizeValues, validate } from "/lib/forms/validation";
 import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
@@ -89,7 +89,7 @@ const PAGE = {
       hidden: { name: "source", value: "web" },
     },
   ],
-} as unknown as FormPageRaw;
+} as unknown as FormPageForm;
 
 const schema = getPageJsonSchema(PAGE, "no");
 
@@ -162,7 +162,7 @@ describe("getPageJsonSchema", () => {
           },
         },
       ],
-    } as unknown as FormPageRaw;
+    } as unknown as FormPageForm;
 
     assert.deepEqual(getPageJsonSchema(page, "no").properties.code, { type: "string", description: "Kode" });
   });
@@ -180,7 +180,7 @@ describe("a pattern with flags", () => {
         },
       },
     ],
-  } as unknown as FormPageRaw;
+  } as unknown as FormPageForm;
   const flagged = getPageJsonSchema(page, "no");
 
   it("is given in regexp, with the flags that are checked", () => {

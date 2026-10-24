@@ -1,7 +1,8 @@
 import type { DataFetchingEnvironment, Extensions, GraphQL, LocalContextRecord } from "@enonic-types/guillotine";
+import type { FormPageForm } from "/cms/form-fragments";
 import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
-import { type FormPageRaw, getName } from "/lib/forms/form-utils";
+import { getName } from "/lib/forms/form-utils";
 import { getFieldNameFromConfig } from "/lib/forms/honeypot";
 import { getPageJsonSchema, type JSONSchema } from "/lib/forms/json-schema";
 import { getLocale } from "/lib/forms/locale";
@@ -504,9 +505,9 @@ export function extensions(graphQL: GraphQL): Extensions {
         },
       },
       [OBJECT_TYPE_FORM_PAGES]: {
-        submitButtonText: (env: Env<FormPageRaw>) =>
+        submitButtonText: (env: Env<FormPageForm>) =>
           env.source.submitButtonText ?? localize({ key: "part.formView.submit", locale: getFormLocale(env) }),
-        validationSchema: (env: Env<FormPageRaw>): JSONSchema => getPageJsonSchema(env.source, getFormLocale(env)),
+        validationSchema: (env: Env<FormPageForm>): JSONSchema => getPageJsonSchema(env.source, getFormLocale(env)),
       },
       [OBJECT_TYPE_FORM_SHOW_REVIEW_PAGE]: {
         title: (env: Env<{ title?: string }>) =>

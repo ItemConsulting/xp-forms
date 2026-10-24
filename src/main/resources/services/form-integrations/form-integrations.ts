@@ -1,6 +1,6 @@
-import { getIntegrations } from "/lib/forms/extensions";
 import type { Response } from "@enonic-types/core";
 import type { CustomSelectorServiceResponseBody } from "@item-enonic-types/global";
+import { getIntegrations } from "/lib/forms/extensions";
 
 export function GET(): Response<{ body: CustomSelectorServiceResponseBody }> {
   const integrations = getIntegrations();

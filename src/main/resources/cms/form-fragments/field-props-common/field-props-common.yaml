@@ -2,16 +2,16 @@
 kind: "FormFragment"
 title:
   text: "Common properties"
-  i18n: "mixin.fieldPropsCommon.displayName"
+  i18n: "form-fragment.field-props-common.displayName"
 description:
   text: "Common properties for form fields"
-  i18n: "mixin.fieldPropsCommon.description"
+  i18n: "form-fragment.field-props-common.description"
 form:
   - type: "TextLine"
     name: "label"
     label:
       text: "Label"
-      i18n: "mixin.fieldPropsCommon.label"
+      i18n: "form-fragment.field-props-common.label"
     occurrences:
       min: 1
       max: 1
@@ -19,10 +19,10 @@ form:
     name: "name"
     label:
       text: "name"
-      i18n: "mixin.fieldPropsCommon.name"
+      i18n: "form-fragment.field-props-common.name"
     helpText:
       text: "Programmatic name for the field"
-      i18n: "mixin.fieldPropsCommon.nameHelpText"
+      i18n: "form-fragment.field-props-common.nameHelpText"
     occurrences:
       min: 0
       max: 1
@@ -31,10 +31,10 @@ form:
     name: "helpText"
     label:
       text: "Help text"
-      i18n: "mixin.fieldPropsCommon.helpText"
+      i18n: "form-fragment.field-props-common.helpText"
     helpText:
       text: "Text displayed beneath the \"field name\""
-      i18n: "mixin.fieldPropsCommon.helpTextHelpText"
+      i18n: "form-fragment.field-props-common.helpTextHelpText"
     occurrences:
       min: 0
       max: 1
@@ -44,7 +44,7 @@ form:
     name: "value"
     label:
       text: "Initialize field with this value"
-      i18n: "mixin.fieldPropsCommon.value"
+      i18n: "form-fragment.field-props-common.value"
     occurrences:
       min: 0
       max: 1

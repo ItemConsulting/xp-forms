@@ -26,40 +26,14 @@ form:
     name: "pages"
     label:
       text: "Page"
-      i18n: "contentType.form.page"
+      i18n: "form-fragment.form-page-form.displayName"
     occurrences:
       min: 1
       max: 0
     items:
-      - type: "TextLine"
-        name: "title"
-        label:
-          text: "Title"
-          i18n: "contentType.form.title"
-        occurrences:
-          min: 1
-          max: 1
-      - type: "HtmlArea"
-        name: "text"
-        label:
-          text: "Page description"
-          i18n: "contentType.form.pageDescription"
-        occurrences:
-          min: 0
-          max: 1
-        exclude: "*"
-        include: "Bold Italic | RemoveFormat | SpecialChar Macro | Link Unlink"
       - type: "FormFragment"
-        name: "fields"
-      - type: "TextLine"
-        name: "submitButtonText"
-        label:
-          text: "Submit button text"
-          i18n: "contentType.form.submitButtonText"
-        occurrences:
-          min: 1
-          max: 1
-        default: "Neste"
+        name: "form-page-form"
+
   - type: "OptionSet"
     name: "reviewPage"
     expanded: false
@@ -73,46 +47,22 @@ form:
       - name: "showReviewPage"
         label:
           text: "Show review page"
-          i18n: "contentType.form.showReviewPage"
+          i18n: "form-fragment.form-page-review.displayName"
         items:
-          - type: "TextLine"
-            name: "title"
-            label:
-              text: "Review page title"
-              i18n: "contentType.form.showReviewPage.title"
-            occurrences:
-              min: 1
-              max: 1
-            default: "Vurder svarene dine og send inn"
-          - type: "TextLine"
-            name: "submitButtonText"
-            label:
-              text: "Submit button text"
-              i18n: "contentType.form.submitButtonText"
-            occurrences:
-              min: 1
-              max: 1
-            default: "Aksepter og send inn"
+          - type: "FormFragment"
+            name: "form-page-review"
     selection:
       min: 0
       max: 1
+
   - type: "ItemSet"
     name: "successPageSections"
     label:
       text: "Success page"
-      i18n: "contentType.form.successPageSections"
+      i18n: "form-fragment.form-page-success.displayName"
     occurrences:
       min: 1
       max: 1
     items:
-      - type: "HtmlArea"
-        name: "text"
-        label:
-          text: "Text"
-          i18n: "contentType.form.successPageSections.text"
-        occurrences:
-          min: 0
-          max: 1
-        exclude: "*"
-        include: "Bold Italic | RemoveFormat | SpecialChar Macro | Link Unlink"
-        default: "Tusen takk. Ditt svar har blitt registrert."
+      - type: "FormFragment"
+        name: "form-page-success"

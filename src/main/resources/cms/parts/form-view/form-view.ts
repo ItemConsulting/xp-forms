@@ -1,4 +1,6 @@
 import type { PartComponent, Request, Response } from "@enonic-types/core";
+import type { FreemarkerParams, SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
+import { HEADER_KEY_REDIRECT } from "/cms/processors/redirect";
 import { assetUrl } from "/lib/enonic/asset";
 import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
@@ -14,8 +16,6 @@ import { assertIsDefined, partPathToId } from "/lib/forms/utils";
 import { render } from "/lib/freemarker";
 import { localize } from "/lib/xp/i18n";
 import { getComponent, getContent, getSite, getSiteConfig, pageUrl } from "/lib/xp/portal";
-import type { FreemarkerParams, SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
-import { HEADER_KEY_REDIRECT } from "/cms/processors/redirect";
 
 export type { FormEvent } from "/lib/forms/submission";
 
