@@ -2,17 +2,17 @@
 kind: "FormFragment"
 title:
   text: "Properties for checkbox lists"
-  i18n: "mixin.fieldPropsCheckbox.displayName"
+  i18n: "form-fragment.field-props-checkbox.displayName"
 description:
   text: "Validation configuration for checkbox lists"
-  i18n: "mixin.fieldPropsCheckbox.description"
+  i18n: "form-fragment.field-props-checkbox.description"
 form:
   - type: "OptionSet"
     name: "properties"
     expanded: false
     label:
       text: "Properties"
-      i18n: "mixin.fieldPropsCheckbox.properties"
+      i18n: "form-fragment.field-props-checkbox.properties"
     occurrences:
       min: 1
       max: 1
@@ -20,32 +20,32 @@ form:
       - name: "validationRequired"
         label:
           text: "Validation: Required"
-          i18n: "mixin.fieldPropsCheckbox.required"
+          i18n: "form-fragment.field-props-checkbox.required"
         helpText:
           text: "This field must always have a value"
-          i18n: "mixin.fieldPropsCheckbox.requiredHelpText"
+          i18n: "form-fragment.field-props-checkbox.requiredHelpText"
         items:
           - type: "TextLine"
             name: "errorMessage"
             label:
               text: "Error message"
-              i18n: "mixin.fieldPropsCheckbox.errorMessage"
+              i18n: "form-fragment.field-props-checkbox.errorMessage"
             occurrences:
               min: 0
               max: 1
       - name: "validationMinItems"
         label:
           text: "Validation: min items"
-          i18n: "mixin.fieldPropsCheckbox.validationMinItems"
+          i18n: "form-fragment.field-props-checkbox.validationMinItems"
         helpText:
           text: "Specify min required items"
-          i18n: "mixin.fieldPropsCheckbox.validationMinItemsHelpText"
+          i18n: "form-fragment.field-props-checkbox.validationMinItemsHelpText"
         items:
           - type: "Long"
             name: "minItems"
             label:
               text: "Min required"
-              i18n: "mixin.fieldPropsCheckbox.minItems"
+              i18n: "form-fragment.field-props-checkbox.minItems"
             occurrences:
               min: 1
               max: 1
@@ -54,23 +54,23 @@ form:
             name: "errorMessage"
             label:
               text: "Error message"
-              i18n: "mixin.fieldPropsCheckbox.errorMessage"
+              i18n: "form-fragment.field-props-checkbox.errorMessage"
             occurrences:
               min: 0
               max: 1
       - name: "validationMaxItems"
         label:
           text: "Validation: max items"
-          i18n: "mixin.fieldPropsCheckbox.validationMaxItems"
+          i18n: "form-fragment.field-props-checkbox.validationMaxItems"
         helpText:
           text: "Specify max required items"
-          i18n: "mixin.fieldPropsCheckbox.validationMaxItemsHelpText"
+          i18n: "form-fragment.field-props-checkbox.validationMaxItemsHelpText"
         items:
           - type: "Long"
             name: "maxItems"
             label:
               text: "Max required"
-              i18n: "mixin.fieldPropsCheckbox.maxItems"
+              i18n: "form-fragment.field-props-checkbox.maxItems"
             occurrences:
               min: 1
               max: 1
@@ -79,7 +79,7 @@ form:
             name: "errorMessage"
             label:
               text: "Error message"
-              i18n: "mixin.fieldPropsCheckbox.errorMessage"
+              i18n: "form-fragment.field-props-checkbox.errorMessage"
             occurrences:
               min: 0
               max: 1

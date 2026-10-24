@@ -1,15 +1,15 @@
 import type { Request } from "@enonic-types/core";
+import type { FormPageForm } from "/cms/form-fragments";
+import type { Errors } from "/cms/partials/error-summary/error-summary";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 import type { ContentForm } from "/lib/forms/contents";
 import type { Integration } from "/lib/forms/extensions";
-import type { FormPageRaw } from "/lib/forms/form-utils";
 import { type FormFieldNormalized, getPageJsonSchema, normalizeFields, resolveValues } from "/lib/forms/json-schema";
-import type { Errors } from "/lib/forms/types";
 import { assertIsDefined } from "/lib/forms/utils";
 import { validate } from "/lib/forms/validation";
 import { getUser } from "/lib/xp/auth";
 import { send as sendEvent } from "/lib/xp/event";
 import type { Site } from "/lib/xp/portal";
-import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 export type FormEvent<Values extends SubmittedValues> = {
   siteId: string;
@@ -25,7 +25,7 @@ export type FormEvent<Values extends SubmittedValues> = {
  * Validates the values against the JSON Schema of each of the given pages, and returns the errors keyed
  * by field name. Values for fields on other pages are not looked at.
  */
-export function validatePages(pages: FormPageRaw[], values: SubmittedValues, locale: string): Errors {
+export function validatePages(pages: FormPageForm[], values: SubmittedValues, locale: string): Errors {
   return pages.reduce<Errors>((errors, page) => {
     const pageErrors = validate(getPageJsonSchema(page, locale), values);
 

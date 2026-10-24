@@ -1,10 +1,19 @@
 import type { JSONSchema as Standard } from "json-schema-typed/draft-2020-12";
+import type { Form } from "/cms/content-types";
+import type { Fields, FormPageForm } from "/cms/form-fragments";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 import { flatMap, forceArray } from "/lib/forms/arrays";
-import { type FormFieldRaw, type FormPageRaw, getName, hasSelectedValue, type Properties } from "/lib/forms/form-utils";
+import { getName, hasSelectedValue } from "/lib/forms/form-utils";
+import type { PickSelectedValue } from "/lib/forms/types";
 import { localize } from "/lib/xp/i18n";
 import { apiUrl, type Content } from "/lib/xp/portal";
-import type { Form } from "/cms/content-types";
-import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
+
+type RawField = Fields["fields"][number];
+
+export type Properties<Type extends Exclude<RawField["_selected"], "hidden">> = PickSelectedValue<
+  RawField,
+  Type
+>["properties"];
 
 /*
   The rules an editor sets on the fields of a form, as a JSON Schema (draft 2020-12). The same schema
@@ -133,7 +142,7 @@ export function getJsonSchema(content: Content<Form>, locale: string): JSONSchem
 }
 
 /** The schema of the fields on one page of a form */
-export function getPageJsonSchema(page: FormPageRaw, locale: string): JSONSchema {
+export function getPageJsonSchema(page: FormPageForm, locale: string): JSONSchema {
   return {
     ...fieldsToJsonSchema(normalizePageFields(page), locale),
     title: page.title,
@@ -320,11 +329,11 @@ export function normalizeFields(content: Content<Form>): FormFieldNormalized[] {
   return flatMap(forceArray(content.data.pages), normalizePageFields);
 }
 
-export function normalizePageFields(page: FormPageRaw): FormFieldNormalized[] {
+export function normalizePageFields(page: FormPageForm): FormFieldNormalized[] {
   return forceArray(page.fields).map(normalizeField);
 }
 
-function normalizeField(field: FormFieldRaw): FormFieldNormalized {
+function normalizeField(field: RawField): FormFieldNormalized {
   switch (field._selected) {
     case "input":
       return {

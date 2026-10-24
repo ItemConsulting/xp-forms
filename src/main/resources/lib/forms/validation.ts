@@ -1,3 +1,5 @@
+import type { Errors } from "/cms/partials/error-summary/error-summary";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 import { forceArray } from "/lib/forms/arrays";
 import type {
   JSONSchema,
@@ -6,8 +8,6 @@ import type {
   SchemaPropertyString,
   ValidationKeyword,
 } from "/lib/forms/json-schema";
-import type { Errors } from "/lib/forms/types";
-import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 /*
   Validates the values of a form against the JSON Schema made from its fields (see

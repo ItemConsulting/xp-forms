@@ -2,17 +2,17 @@
 kind: "FormFragment"
 title:
   text: "Common selection fields"
-  i18n: "mixin.fieldPropsSelect.displayName"
+  i18n: "form-fragment.field-props-select.displayName"
 description:
   text: "Fields that are common for select and input[type=radio]"
-  i18n: "mixin.fieldPropsSelect.description"
+  i18n: "form-fragment.field-props-select.description"
 form:
   - type: "OptionSet"
     name: "properties"
     expanded: false
     label:
       text: "Properties"
-      i18n: "mixin.fieldPropsSelect.properties"
+      i18n: "form-fragment.field-props-select.properties"
     occurrences:
       min: 1
       max: 1
@@ -20,16 +20,16 @@ form:
       - name: "validationRequired"
         label:
           text: "Validation: Required"
-          i18n: "mixin.fieldPropsSelect.required"
+          i18n: "form-fragment.field-props-select.required"
         helpText:
           text: "This field must always have a value"
-          i18n: "mixin.fieldPropsSelect.requiredHelpText"
+          i18n: "form-fragment.field-props-select.requiredHelpText"
         items:
           - type: "TextLine"
             name: "errorMessage"
             label:
               text: "Error message"
-              i18n: "mixin.fieldPropsSelect.errorMessage"
+              i18n: "form-fragment.field-props-select.errorMessage"
             occurrences:
               min: 0
               max: 1

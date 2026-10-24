@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Checkboxes"
+  i18n: "form-fragment.input-checkboxes.displayName"
+description:
+  text: "Users choose multiple answers from list of options"
+  i18n: "form-fragment.input-checkboxes.description"
+form:
+  - type: "TextLine"
+    name: "label"
+    label:
+      text: "Label"
+      i18n: "form-fragment.input-checkboxes.label"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "name"
+    label:
+      text: "name"
+      i18n: "form-fragment.input-checkboxes.name"
+    helpText:
+      text: "Programmatic name for the field"
+      i18n: "form-fragment.input-checkboxes.nameHelpText"
+    occurrences:
+      min: 0
+      max: 1
+    regexp: "^\\S+$"
+  - type: "HtmlArea"
+    name: "helpText"
+    label:
+      text: "Help text"
+      i18n: "form-fragment.input-checkboxes.helpText"
+    helpText:
+      text: "Text displayed beneath the \"field name\""
+      i18n: "form-fragment.input-checkboxes.helpTextHelpText"
+    occurrences:
+      min: 0
+      max: 1
+    exclude: "*"
+    include: "Bold Italic | RemoveFormat | SpecialChar Macro | Link Unlink"
+  - type: "TextLine"
+    name: "value"
+    label:
+      text: "Initialize field with this value"
+      i18n: "form-fragment.input-checkboxes.value"
+    occurrences:
+      min: 0
+      max: 0
+  # Not the "options" fragment, since a single checkbox (such as accepting terms) is allowed
+  - type: "ItemSet"
+    name: "options"
+    label:
+      text: "Options"
+      i18n: "form-fragment.input-checkboxes.options"
+    occurrences:
+      min: 1
+      max: 0
+    items:
+      - type: "TextLine"
+        name: "text"
+        label:
+          text: "Text"
+          i18n: "form-fragment.input-checkboxes.options.text"
+        occurrences:
+          min: 1
+          max: 1
+      - type: "TextLine"
+        name: "value"
+        label:
+          text: "Value"
+          i18n: "form-fragment.input-checkboxes.options.value"
+        helpText:
+          text: "Value to submit if this alternative is chosen"
+          i18n: "form-fragment.input-checkboxes.options.valueHelpText"
+        occurrences:
+          min: 1
+          max: 1
+  - type: "FormFragment"
+    name: "field-props-checkbox"

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "TextArea field"
+  i18n: "form-fragment.input-text-area.displayName"
+description:
+  text: "Multiple line text field"
+  i18n: "form-fragment.input-text-area.description"
+form:
+  - type: "FormFragment"
+    name: "field-props-common"
+  - type: "Long"
+    name: "rows"
+    label:
+      text: "Rows"
+      i18n: "form-fragment.input-text-area.rows"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "Long"
+    name: "cols"
+    label:
+      text: "Columns"
+      i18n: "form-fragment.input-text-area.cols"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "FormFragment"
+    name: "field-props-input"

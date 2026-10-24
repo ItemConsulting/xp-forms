@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Input field"
+  i18n: "form-fragment.input-text.displayName"
+description:
+  text: "Single line text field"
+  i18n: "form-fragment.input-text.description"
+form:
+  - type: "FormFragment"
+    name: "field-props-common"
+  - type: "FormFragment"
+    name: "field-props-input"

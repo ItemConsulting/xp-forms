@@ -1,6 +1,6 @@
+import type { SpamPreventionConfig } from "/cms/partials/spam-prevention/spam-prevention.freemarker";
 import { getFieldNameFromConfig } from "/lib/forms/honeypot";
 import { assertIsDefined } from "/lib/forms/utils";
-import type { SpamPreventionConfig } from "/cms/partials/page-utils/page-utils.freemarker";
 
 export type SpamPreventionType = SpamPreventionConfig["type"];
 

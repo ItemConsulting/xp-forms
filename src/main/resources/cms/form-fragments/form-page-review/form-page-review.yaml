@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Show review page"
+  i18n: "form-fragment.form-page-review.displayName"
+form:
+  - type: "TextLine"
+    name: "title"
+    label:
+      text: "Review page title"
+      i18n: "form-fragment.form-page-review.title"
+    occurrences:
+      min: 1
+      max: 1
+    default: "Vurder svarene dine og send inn"
+
+  - type: "TextLine"
+    name: "submitButtonText"
+    label:
+      text: "Submit button text"
+      i18n: "form-fragment.form-page-review.submitButtonText"
+    occurrences:
+      min: 1
+      max: 1
+    default: "Aksepter og send inn"

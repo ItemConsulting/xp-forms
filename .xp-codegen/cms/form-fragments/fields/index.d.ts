@@ -12,7 +12,7 @@ export type Fields = {
         /**
          * Input field
          */
-        input: import("..").FieldPropsCommon & import("..").FieldPropsInput;
+        input: import("..").InputText;
       }
     | {
         /**
@@ -23,132 +23,7 @@ export type Fields = {
         /**
          * TextArea field
          */
-        textarea: {
-          /**
-           * Label
-           */
-          label: string;
-
-          /**
-           * name
-           */
-          name?: string;
-
-          /**
-           * Help text
-           */
-          helpText?: string;
-
-          /**
-           * Initialize field with this value
-           */
-          value?: string;
-
-          /**
-           * Rows
-           */
-          rows?: number;
-
-          /**
-           * Columns
-           */
-          cols?: number;
-
-          /**
-           * Properties
-           */
-          properties: {
-            /**
-             * Selected
-             */
-            _selected: Array<"placeholder" | "inputMode" | "autocomplete" | "validationRequired" | "validationMinLength" | "validationMaxLength" | "validationPattern">;
-
-            /**
-             * Placeholder
-             */
-            placeholder: {
-              /**
-               * Placeholder text
-               */
-              placeholder: string;
-            };
-
-            /**
-             * Keyboard on mobile
-             */
-            inputMode: {
-              /**
-               * Keyboard on mobile
-               */
-              inputmode?: "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
-            };
-
-            /**
-             * Autocomplete
-             */
-            autocomplete: {
-              /**
-               * Autocomplete
-               */
-              autocomplete?: "off" | "on" | "name" | "honorific-prefix" | "given-name" | "additional-name" | "family-name" | "honorific-suffix" | "nickname" | "email" | "username" | "organization-title" | "organization" | "street-address" | "address-level4" | "address-level3" | "address-level2" | "address-level1" | "country" | "country-name" | "postal-code" | "bday" | "bday-day" | "bday-month" | "bday-year" | "sex" | "tel" | "url";
-            };
-
-            /**
-             * Validation: Required
-             */
-            validationRequired: {
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-
-            /**
-             * Validation: Minimum length
-             */
-            validationMinLength: {
-              /**
-               * Minimum length
-               */
-              minLength: number;
-
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-
-            /**
-             * Validation: Maximum length
-             */
-            validationMaxLength: {
-              /**
-               * Maximum length
-               */
-              maxLength: number;
-
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-
-            /**
-             * Validation: Pattern
-             */
-            validationPattern: {
-              /**
-               * Regex String
-               */
-              regexString: string;
-
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-          };
-        };
+        textarea: import("..").InputTextArea;
       }
     | {
         /**
@@ -159,7 +34,7 @@ export type Fields = {
         /**
          * Radio buttons field
          */
-        radiobuttons: import("..").FieldPropsCommon & import("..").Options & import("..").FieldPropsSelect;
+        radiobuttons: import("..").InputRadiobuttons;
       }
     | {
         /**
@@ -170,7 +45,7 @@ export type Fields = {
         /**
          * Select field
          */
-        select: import("..").FieldPropsCommon & import("..").Options & import("..").FieldPropsSelect;
+        select: import("..").InputSelect;
       }
     | {
         /**
@@ -181,92 +56,7 @@ export type Fields = {
         /**
          * Checkboxes
          */
-        checkboxes: {
-          /**
-           * Label
-           */
-          label: string;
-
-          /**
-           * name
-           */
-          name?: string;
-
-          /**
-           * Help text
-           */
-          helpText?: string;
-
-          /**
-           * Initialize field with this value
-           */
-          value?: Array<string> | string;
-
-          /**
-           * Options
-           */
-          options: Array<{
-            /**
-             * Text
-             */
-            text: string;
-
-            /**
-             * Value
-             */
-            value: string;
-          }>;
-
-          /**
-           * Properties
-           */
-          properties: {
-            /**
-             * Selected
-             */
-            _selected: Array<"validationRequired" | "validationMinItems" | "validationMaxItems">;
-
-            /**
-             * Validation: Required
-             */
-            validationRequired: {
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-
-            /**
-             * Validation: min items
-             */
-            validationMinItems: {
-              /**
-               * Min required
-               */
-              minItems: number;
-
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-
-            /**
-             * Validation: max items
-             */
-            validationMaxItems: {
-              /**
-               * Max required
-               */
-              maxItems: number;
-
-              /**
-               * Error message
-               */
-              errorMessage?: string;
-            };
-          };
-        };
+        checkboxes: import("..").InputCheckboxes;
       }
     | {
         /**
@@ -277,17 +67,7 @@ export type Fields = {
         /**
          * Hidden field
          */
-        hidden: {
-          /**
-           * name
-           */
-          name: string;
-
-          /**
-           * Initialize field with this value
-           */
-          value?: string;
-        };
+        hidden: import("..").InputHidden;
       }
   >;
 };
