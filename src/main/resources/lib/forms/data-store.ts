@@ -1,6 +1,6 @@
 import { getMap } from "/lib/xp/grid";
 import type { Request } from "@enonic-types/core";
-import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 
 const store = getMap<Record<string, string>>("no.item.forms");
 

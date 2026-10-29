@@ -1,0 +1,37 @@
+[#import "../fields/fields.ftlh" as Field]
+
+[#macro render field errors={}]
+  <fieldset class="ds-fieldset">
+    <legend class="ds-label">${field.label}</legend>
+
+    [#if field.helpText?has_content]
+      <div class="ds-paragraph" data-variant="default">
+        ${field.helpText?no_esc}
+      </div>
+    [/#if]
+
+    [@Field.renderErrorList field errors /]
+
+    [#list field.options![] as option]
+      [#assign id=field.id + "-" + option_index]
+      <div class="ds-field">
+        <input
+          type="checkbox"
+          class="ds-input"
+          id="${id}"
+          name="${field.name}"
+          value="${option.value}"
+          [#if errors[field.name]??]aria-invalid="true"[/#if]
+          [#if option.checked!false]checked[/#if] />
+
+        <label
+          for="${id}"
+          class="ds-label"
+          data-weight="regular">
+
+          ${option.text}
+        </label>
+      </div>
+    [/#list]
+  </fieldset>
+[/#macro]

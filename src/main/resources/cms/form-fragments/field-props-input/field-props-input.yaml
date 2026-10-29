@@ -1,0 +1,310 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Properties"
+  i18n: "form-fragment.field-props-input.displayName"
+description:
+  text: "Different properties an input field can have"
+  i18n: "form-fragment.field-props-input.description"
+form:
+  - type: "OptionSet"
+    name: "properties"
+    expanded: false
+    label:
+      text: "Properties"
+      i18n: "form-fragment.field-props-input.properties"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - name: "placeholder"
+        label:
+          text: "Placeholder"
+          i18n: "form-fragment.field-props-input.placeholder"
+        helpText:
+          text: "Placeholder text in input field"
+          i18n: "form-fragment.field-props-input.placeholderHelpText"
+        items:
+          - type: "TextLine"
+            name: "placeholder"
+            label:
+              text: "Placeholder text"
+              i18n: "form-fragment.field-props-input.placeholderText"
+            helpText:
+              text: "Placeholder text in input field"
+              i18n: "form-fragment.field-props-input.placeholderHelpText"
+            occurrences:
+              min: 1
+              max: 1
+      - name: "inputMode"
+        label:
+          text: "Keyboard on mobile"
+          i18n: "form-fragment.field-props-input.inputMode"
+        helpText:
+          text: "Chose keyboard to use"
+          i18n: "form-fragment.field-props-input.inputModeHelpText"
+        items:
+          - type: "RadioButton"
+            name: "inputmode"
+            label:
+              text: "Keyboard on mobile"
+              i18n: "form-fragment.field-props-input.inputMode"
+            helpText:
+              text: "Select keyboard to show on mobile"
+              i18n: "form-fragment.field-props-input.inputModeHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            options:
+              - value: "text"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeText"
+                  text: "Text"
+              - value: "decimal"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeDecimal"
+                  text: "Decimal"
+              - value: "numeric"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeNumeric"
+                  text: "Numeric"
+              - value: "tel"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeTel"
+                  text: "Tel"
+              - value: "search"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeSearch"
+                  text: "Search"
+              - value: "email"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeEmail"
+                  text: "Email"
+              - value: "url"
+                label:
+                  i18n: "form-fragment.field-props-input.inputModeUrl"
+                  text: "Url"
+            default: "text"
+      - name: "autocomplete"
+        label:
+          text: "Autocomplete"
+          i18n: "form-fragment.field-props-input.autocomplete"
+        helpText:
+          text: "The browser can automatically fill in fields"
+          i18n: "form-fragment.field-props-input.autocompleteHelpText"
+        items:
+          - type: "ComboBox"
+            name: "autocomplete"
+            label:
+              text: "Autocomplete"
+              i18n: "form-fragment.field-props-input.autocomplete"
+            helpText:
+              text: "The browser can automatically fill in fields"
+              i18n: "form-fragment.field-props-input.autocompleteHelpText"
+            occurrences:
+              min: 0
+              max: 1
+            options:
+              - value: "off"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteOff"
+                  text: "Off"
+              - value: "on"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteOn"
+                  text: "On"
+              - value: "name"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteName"
+                  text: "Name"
+              - value: "honorific-prefix"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteHonorificPrefix"
+                  text: "Honorific-prefix"
+              - value: "given-name"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteGivenName"
+                  text: "Given-name"
+              - value: "additional-name"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteAdditionalName"
+                  text: "Additional-name"
+              - value: "family-name"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteFamilyName"
+                  text: "Family-name"
+              - value: "honorific-suffix"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteHonorificSuffix"
+                  text: "Honorific-suffix"
+              - value: "nickname"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteNickname"
+                  text: "Nickname"
+              - value: "email"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteEmail"
+                  text: "Email"
+              - value: "username"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteUsername"
+                  text: "Username"
+              - value: "organization-title"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteOrganizationTitle"
+                  text: "Organization-title"
+              - value: "organization"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteOrganization"
+                  text: "Organization"
+              - value: "street-address"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteStreetAddress"
+                  text: "Street-address"
+              - value: "address-level4"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteAddressLevel4"
+                  text: "Address-level4"
+              - value: "address-level3"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteAddressLevel3"
+                  text: "Address-level3"
+              - value: "address-level2"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteAddressLevel2"
+                  text: "Address-level2"
+              - value: "address-level1"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteAddressLevel1"
+                  text: "Address-level1"
+              - value: "country"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteCountry"
+                  text: "Country"
+              - value: "country-name"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteCountryName"
+                  text: "Country-name"
+              - value: "postal-code"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompletePostalCode"
+                  text: "Postal-code"
+              - value: "bday"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteBirthday"
+                  text: "Birthday"
+              - value: "bday-day"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteBirthdayDay"
+                  text: "Birthday (day)"
+              - value: "bday-month"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteBirthdayMonth"
+                  text: "Birthday (month)"
+              - value: "bday-year"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteBirthdayYear"
+                  text: "Birthday (year)"
+              - value: "sex"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteSex"
+                  text: "Sex"
+              - value: "tel"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteTelephone"
+                  text: "Telephone"
+              - value: "url"
+                label:
+                  i18n: "form-fragment.field-props-input.autocompleteUrl"
+                  text: "Url"
+      - name: "validationRequired"
+        label:
+          text: "Validation: Required"
+          i18n: "form-fragment.field-props-input.validation.required"
+        helpText:
+          text: "This field must always have a value"
+          i18n: "form-fragment.field-props-input.validation.requiredHelpText"
+        items:
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "form-fragment.field-props-input.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+      - name: "validationMinLength"
+        label:
+          text: "Validation: Minimum length"
+          i18n: "form-fragment.field-props-input.validation.minLength"
+        helpText:
+          text: "The input in this field must have a minimum length"
+          i18n: "form-fragment.field-props-input.validation.minLengthHelpText"
+        items:
+          - type: "Long"
+            name: "minLength"
+            label:
+              text: "Minimum length"
+              i18n: "form-fragment.field-props-input.minLength"
+            occurrences:
+              min: 1
+              max: 1
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "form-fragment.field-props-input.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+      - name: "validationMaxLength"
+        label:
+          text: "Validation: Maximum length"
+          i18n: "form-fragment.field-props-input.validation.maxLength"
+        helpText:
+          text: "The input in this field can have a maximum length"
+          i18n: "form-fragment.field-props-input.validation.maxLengthHelpText"
+        items:
+          - type: "Long"
+            name: "maxLength"
+            label:
+              text: "Maximum length"
+              i18n: "form-fragment.field-props-input.maxLength"
+            occurrences:
+              min: 1
+              max: 1
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "form-fragment.field-props-input.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+      - name: "validationPattern"
+        label:
+          text: "Validation: Pattern"
+          i18n: "form-fragment.field-props-input.validation.pattern"
+        helpText:
+          text: "The input in this field must pass the specified regex"
+          i18n: "form-fragment.field-props-input.validation.patternHelpText"
+        items:
+          - type: "TextLine"
+            name: "regexString"
+            label:
+              text: "Regex String"
+              i18n: "form-fragment.field-props-input.regexString"
+            occurrences:
+              min: 1
+              max: 1
+          - type: "TextLine"
+            name: "errorMessage"
+            label:
+              text: "Error message"
+              i18n: "form-fragment.field-props-input.errorMessage"
+            occurrences:
+              min: 0
+              max: 1
+    selection:
+      min: 0
+      max: 0

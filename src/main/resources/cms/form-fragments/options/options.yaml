@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Options"
+  i18n: "form-fragment.options.displayName"
+description:
+  text: "Options for radio buttons or select"
+  i18n: "form-fragment.options.description"
+form:
+  - type: "ItemSet"
+    name: "options"
+    label:
+      text: "Options"
+      i18n: "form-fragment.options.options"
+    occurrences:
+      min: 2
+      max: 0
+    items:
+      - type: "TextLine"
+        name: "text"
+        label:
+          text: "Text"
+          i18n: "form-fragment.options.text"
+        occurrences:
+          min: 1
+          max: 1
+      - type: "TextLine"
+        name: "value"
+        label:
+          text: "Value"
+          i18n: "form-fragment.options.value"
+        helpText:
+          text: "Value to submit if this alternative is chosen"
+          i18n: "form-fragment.options.valueHelpText"
+        occurrences:
+          min: 1
+          max: 1

@@ -1,0 +1,126 @@
+export type InputTextArea = {
+  /**
+   * Label
+   */
+  label: string;
+
+  /**
+   * name
+   */
+  name?: string;
+
+  /**
+   * Help text
+   */
+  helpText?: string;
+
+  /**
+   * Initialize field with this value
+   */
+  value?: string;
+
+  /**
+   * Rows
+   */
+  rows?: number;
+
+  /**
+   * Columns
+   */
+  cols?: number;
+
+  /**
+   * Properties
+   */
+  properties: {
+    /**
+     * Selected
+     */
+    _selected: Array<"placeholder" | "inputMode" | "autocomplete" | "validationRequired" | "validationMinLength" | "validationMaxLength" | "validationPattern">;
+
+    /**
+     * Placeholder
+     */
+    placeholder: {
+      /**
+       * Placeholder text
+       */
+      placeholder: string;
+    };
+
+    /**
+     * Keyboard on mobile
+     */
+    inputMode: {
+      /**
+       * Keyboard on mobile
+       */
+      inputmode?: "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
+    };
+
+    /**
+     * Autocomplete
+     */
+    autocomplete: {
+      /**
+       * Autocomplete
+       */
+      autocomplete?: "off" | "on" | "name" | "honorific-prefix" | "given-name" | "additional-name" | "family-name" | "honorific-suffix" | "nickname" | "email" | "username" | "organization-title" | "organization" | "street-address" | "address-level4" | "address-level3" | "address-level2" | "address-level1" | "country" | "country-name" | "postal-code" | "bday" | "bday-day" | "bday-month" | "bday-year" | "sex" | "tel" | "url";
+    };
+
+    /**
+     * Validation: Required
+     */
+    validationRequired: {
+      /**
+       * Error message
+       */
+      errorMessage?: string;
+    };
+
+    /**
+     * Validation: Minimum length
+     */
+    validationMinLength: {
+      /**
+       * Minimum length
+       */
+      minLength: number;
+
+      /**
+       * Error message
+       */
+      errorMessage?: string;
+    };
+
+    /**
+     * Validation: Maximum length
+     */
+    validationMaxLength: {
+      /**
+       * Maximum length
+       */
+      maxLength: number;
+
+      /**
+       * Error message
+       */
+      errorMessage?: string;
+    };
+
+    /**
+     * Validation: Pattern
+     */
+    validationPattern: {
+      /**
+       * Regex String
+       */
+      regexString: string;
+
+      /**
+       * Error message
+       */
+      errorMessage?: string;
+    };
+  };
+};

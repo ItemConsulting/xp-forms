@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-part-8.0.0.json
+kind: "Part"
+title:
+  text: "Form view"
+  i18n: "part.formView.displayName"
+description:
+  text: "Lets the user submit data"
+  i18n: "part.formView.description"
+form:
+  - type: "RadioButton"
+    name: "firstPageNumber"
+    label:
+      text: "First page"
+      i18n: "part.formView.firstPageNumber"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - value: "1"
+        label:
+          i18n: "part.formView.firstPageNumber.form"
+          text: "Form"
+      - value: "0"
+        label:
+          i18n: "part.formView.firstPageNumber.preview"
+          text: "Preview"
+    default: "1"

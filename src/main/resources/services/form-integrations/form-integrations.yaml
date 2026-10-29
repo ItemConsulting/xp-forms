@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-service-8.0.0.json
+# A service and not an AdminExtension: Content Studio calls a service on the edited content's
+# site, while an extension gets no site context, and the integrations come from the site config.
+kind: "Service"
+title: "Form integrations"

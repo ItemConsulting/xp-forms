@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Common properties"
+  i18n: "form-fragment.field-props-common.displayName"
+description:
+  text: "Common properties for form fields"
+  i18n: "form-fragment.field-props-common.description"
+form:
+  - type: "TextLine"
+    name: "label"
+    label:
+      text: "Label"
+      i18n: "form-fragment.field-props-common.label"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "name"
+    label:
+      text: "name"
+      i18n: "form-fragment.field-props-common.name"
+    helpText:
+      text: "Programmatic name for the field"
+      i18n: "form-fragment.field-props-common.nameHelpText"
+    occurrences:
+      min: 0
+      max: 1
+    regexp: "^\\S+$"
+  - type: "HtmlArea"
+    name: "helpText"
+    label:
+      text: "Help text"
+      i18n: "form-fragment.field-props-common.helpText"
+    helpText:
+      text: "Text displayed beneath the \"field name\""
+      i18n: "form-fragment.field-props-common.helpTextHelpText"
+    occurrences:
+      min: 0
+      max: 1
+    exclude: "*"
+    include: "Bold Italic | RemoveFormat | SpecialChar Macro | Link Unlink"
+  - type: "TextLine"
+    name: "value"
+    label:
+      text: "Initialize field with this value"
+      i18n: "form-fragment.field-props-common.value"
+    occurrences:
+      min: 0
+      max: 1

@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=https://www.schemastore.org/enonic-xp-form-fragment-8.0.0.json
+kind: "FormFragment"
+title:
+  text: "Form fields"
+  i18n: "form-fragment.fields.displayName"
+form:
+  - type: "OptionSet"
+    name: "fields"
+    expanded: false
+    label:
+      text: "Field"
+      i18n: "form-fragment.fields.field"
+    helpText:
+      text: "Input fields in your form"
+      i18n: "form-fragment.fields.fieldHelpText"
+    occurrences:
+      min: 1
+      max: 0
+    options:
+      - name: "input"
+        label:
+          text: "Input field"
+          i18n: "form-fragment.input-text.displayName"
+        helpText:
+          text: "Single line text field"
+          i18n: "form-fragment.input-text.description"
+        items:
+          - type: "FormFragment"
+            name: "input-text"
+
+      - name: "textarea"
+        label:
+          text: "TextArea field"
+          i18n: "form-fragment.input-text-area.displayName"
+        helpText:
+          text: "Multiple line text field"
+          i18n: "form-fragment.input-text-area.description"
+        items:
+          - type: "FormFragment"
+            name: "input-text-area"
+
+      - name: "radiobuttons"
+        label:
+          text: "Radio buttons field"
+          i18n: "form-fragment.input-radiobuttons.displayName"
+        helpText:
+          text: "Users choose single answer from list of options"
+          i18n: "form-fragment.input-radiobuttons.description"
+        items:
+          - type: "FormFragment"
+            name: "input-radiobuttons"
+
+      - name: "select"
+        label:
+          text: "Select field"
+          i18n: "form-fragment.input-select.displayName"
+        helpText:
+          text: "Users select single answer from list of options"
+          i18n: "form-fragment.input-select.description"
+        items:
+          - type: "FormFragment"
+            name: "input-select"
+
+      - name: "checkboxes"
+        label:
+          text: "Checkboxes"
+          i18n: "form-fragment.input-checkboxes.displayName"
+        helpText:
+          text: "Users choose multiple answers from list of options"
+          i18n: "form-fragment.input-checkboxes.description"
+        items:
+          - type: "FormFragment"
+            name: "input-checkboxes"
+
+      - name: "hidden"
+        label:
+          text: "Hidden field"
+          i18n: "form-fragment.input-hidden.displayName"
+        helpText:
+          text: "Field that is hidden from users"
+          i18n: "form-fragment.input-hidden.description"
+        items:
+          - type: "FormFragment"
+            name: "input-hidden"
+
+    selection:
+      min: 1
+      max: 1

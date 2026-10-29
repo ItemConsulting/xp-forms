@@ -1,13 +1,13 @@
 import type { PartComponent } from "@enonic-types/core";
+import { process as processFormPage } from "/cms/form-fragments/form-page-form/form-page-form";
+import { process as processReviewPage } from "/cms/form-fragments/form-page-review/form-page-review";
+import { process as processSuccessPage } from "/cms/form-fragments/form-page-success/form-page-success";
+import type { Errors } from "/cms/partials/error-summary/error-summary";
+import type { SpamPreventionConfig } from "/cms/partials/spam-prevention/spam-prevention.freemarker";
+import type { SubmittedValues } from "/cms/parts/form-view/form-view.freemarker";
 import { forceArray } from "/lib/forms/arrays";
 import type { ContentForm } from "/lib/forms/contents";
-import type { Errors } from "/lib/forms/types";
 import { partPathToId } from "/lib/forms/utils";
-import { process as processFormPage } from "/site/partials/page-form/page-form";
-import { process as processReviewPage } from "/site/partials/page-review/page-review";
-import { process as processSuccessPage } from "/site/partials/page-success/page-success";
-import type { SpamPreventionConfig } from "/site/partials/page-utils/page-utils.freemarker";
-import type { SubmittedValues } from "/site/parts/form-view/form-view.freemarker";
 
 export const RETURN_ALL_PAGES = -2;
 export const RETURN_REVIEW_PAGE = -1;
@@ -40,9 +40,8 @@ export function getPages({
 
   if (pageIndex === RETURN_ALL_PAGES) {
     const formPages = pagesRaw.map((page, index) =>
-      processFormPage({
+      processFormPage(page, {
         partId,
-        page,
         locale,
         values,
         errors,
@@ -54,7 +53,7 @@ export function getPages({
 
     const reviewPage = hasReviewPage
       ? [
-          processReviewPage({
+          processReviewPage(content.data.reviewPage.showReviewPage, {
             locale,
             content,
             partId,
@@ -67,15 +66,18 @@ export function getPages({
         ]
       : [];
 
-    return ([] as string[]).concat(formPages).concat(reviewPage).concat(processSuccessPage(content));
+    return ([] as string[])
+      .concat(formPages)
+      .concat(reviewPage)
+      .concat(processSuccessPage(content.data.successPageSections));
   }
   // Is success page
   else if (pageIndex === totalPages - 1) {
-    return [processSuccessPage(content)];
+    return [processSuccessPage(content.data.successPageSections)];
   }
   // Is review page
   else if ((hasReviewPage && pageIndex === totalPages - 2) || isPreviewReviewPage) {
-    const reviewPage = processReviewPage({
+    const reviewPage = processReviewPage(content.data.reviewPage?.showReviewPage, {
       locale,
       content,
       partId,
@@ -90,8 +92,7 @@ export function getPages({
   } else {
     // Is form page
     return [
-      processFormPage({
-        page: pagesRaw[pageIndex],
+      processFormPage(pagesRaw[pageIndex], {
         partId,
         locale,
         values,

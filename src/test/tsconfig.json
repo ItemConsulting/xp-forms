@@ -22,6 +22,6 @@
     },
 
     "skipLibCheck": true,
-    "types": ["node", "@enonic-types/global", "@itemconsulting/xp-storybook-utils/global"]
+    "types": ["node", "@enonic-types/global"]
   }
 }

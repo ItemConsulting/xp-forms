@@ -1,48 +1,49 @@
 plugins {
   id "java"
   id "maven-publish"
-  id "com.enonic.xp.app" version "3.6.1"
+  id "com.enonic.xp.app"
   id "com.github.node-gradle.node" version "7.1.0"
-  id "no.item.xp.codegen" version "2.7.0"
+  id "no.item.xp.codegen" version "3.0.0-SNAPSHOT"
 }
 
 app {
-	name = "${appName}"
-	displayName = "${appDisplayName}"
-	vendorName = "${vendorName}"
-	vendorUrl = "${vendorUrl}"
-	systemVersion = "${xpVersion}"
+  // The dev task below runs the npm watch, which the plugin's default dev task does not
+  createDefaultDevTask = false
 }
 
 dependencies {
-	compileOnly "com.enonic.xp:core-api:${xpVersion}"
-	compileOnly "com.enonic.xp:portal-api:${xpVersion}"
+  compileOnly xplibs.api.core
+  compileOnly xplibs.api.portal
 
-	include "com.enonic.xp:lib-auth:${xpVersion}"
-	include "com.enonic.xp:lib-common:${xpVersion}"
-	include "com.enonic.xp:lib-content:${xpVersion}"
-	include "com.enonic.xp:lib-context:${xpVersion}"
-	include "com.enonic.xp:lib-event:${xpVersion}"
-	include "com.enonic.xp:lib-grid:${xpVersion}"
-  include "com.enonic.xp:lib-i18n:${xpVersion}"
-  include "com.enonic.xp:lib-mail:${xpVersion}"
-  include "com.enonic.xp:lib-node:${xpVersion}"
-  include "com.enonic.xp:lib-portal:${xpVersion}"
-  include "com.enonic.xp:lib-project:${xpVersion}"
-  include "com.enonic.xp:lib-auth:${xpVersion}"
+  include xplibs.auth
+  include xplibs.common
+  include xplibs.content
+  include xplibs.context
+  include xplibs.event
+  include xplibs.grid
+  include xplibs.i18n
+  include xplibs.mail
+  include xplibs.node
+  include xplibs.portal
+  include xplibs.project
 
-  include "com.enonic.lib:lib-asset:1.0.3"
-  include "com.enonic.lib:lib-http-client:3.2.2"
-  include "no.item:lib-xp-freemarker:3.0.0"
-  include "no.item:lib-xp-time:1.6.1"
-  include "no.item:lib-xp-cloudflare-turnstile:0.6.0"
+  include libs.lib.asset
+  include libs.lib.http.client
+  include libs.lib.freemarker
+  include libs.lib.time
+  include libs.lib.cloudflare.turnstile
+
+  testImplementation xplibs.api.core
+  testImplementation platform("org.junit:junit-bom:6.1.3")
+  testImplementation "org.junit.jupiter:junit-jupiter"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 repositories {
-	mavenCentral()
-	xp.enonicRepo()
-  maven { url "https://repo.itemtest.no/releases" }
-  maven { url "https://repo.itemtest.no/snapshots" }
+  mavenCentral()
+  xp.enonicRepo()
+  maven { url = "https://repo.itemtest.no/releases" }
+  maven { url = "https://repo.itemtest.no/snapshots" }
 }
 
 node {
@@ -50,11 +51,6 @@ node {
   version = file(".nvmrc").text.trim()
   // `npm ci` on CI, so the build uses exactly what package-lock.json pins
   npmInstallCommand = System.getenv("CI") ? "ci" : "install"
-}
-
-// XP 7.14 (systemVersion) runs on Java 17, so compile for it whatever JDK runs the build
-tasks.withType(JavaCompile).configureEach {
-  options.release = 17
 }
 
 tasks.withType(Copy).configureEach {
@@ -73,7 +69,8 @@ tasks.register("dev", NpmTask) {
 }
 
 tasks.register("npmCheck", NpmTask) {
-  dependsOn npmInstall
+  // check:types reads the types generated from the YAML descriptors
+  dependsOn npmInstall, generateTypeScript
   args = [
     "run",
     "check"
@@ -87,6 +84,19 @@ tasks.register("npmCheck", NpmTask) {
 // if (!(project.hasProperty("dev") || project.hasProperty("development"))) {
 check.dependsOn npmCheck
 // }
+
+/*
+  The Java tests have the main resources folder on their classpath, and npmBuild writes into that same
+  folder. They need nothing npmBuild makes, but Gradle refuses to run the two unordered in one build.
+*/
+test {
+  useJUnitPlatform()
+  mustRunAfter "npmBuild"
+}
+
+compileTestJava {
+  mustRunAfter "npmBuild"
+}
 
 tasks.register("npmTest", NpmTask) {
   dependsOn npmInstall
