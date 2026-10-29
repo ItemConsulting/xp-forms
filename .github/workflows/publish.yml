@@ -35,9 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          # A workflow_run checks out the default branch unless told otherwise. The branch (not the
-          # commit) is needed, since the changesets action pushes to it and opens its PR against it.
-          ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+          # A workflow_run checks out the default branch unless told otherwise, so check out the
+          # commit CI built instead (main or next)
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           # changeset publish tags the release, so the existing tags have to be there
           fetch-depth: 0
           # The action pushes the release commit and tags over the GitHub API, so
@@ -73,6 +73,12 @@ jobs:
           version-script: npm run versioning
           publish-script: npm run release
           create-github-releases: true
+        env:
+          # The action names its branch (changeset-release/<branch>), opens its PR against and resets
+          # to GITHUB_REF and GITHUB_SHA, which a workflow_run sets to main. Point them at the commit
+          # CI built, so a push to next versions and releases next.
+          GITHUB_REF: refs/heads/${{ github.event.workflow_run.head_branch }}
+          GITHUB_SHA: ${{ github.event.workflow_run.head_sha }}
 
       # A manual run is a retry for a jar that never went out. If the version on main is already
       # in the releases repository there is nothing to retry, and publishing would overwrite it.
