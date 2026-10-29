@@ -1,19 +1,13 @@
 name: Publish
 on:
-  # GitHub only reads workflow_run triggers from the default branch, so this file on main is the
-  # one that publishes for next (the prerelease branch, in changesets pre mode) as well.
-  workflow_run:
-    workflows: [CI]
-    branches: [main, next]
-    types: [completed]
+  # Called by CI once it has built a push to main or next (the prerelease branch, in changesets
+  # pre mode)
+  workflow_call:
 
   # Manual escape hatch: re-publish the jar for whatever version main (or next) is on. Use it when the
   # Gradle step below failed after the release was tagged, since a plain re-run finds nothing
   # to release.
   workflow_dispatch:
-
-# github.ref is always main in a workflow_run, so the branch that was built is taken from the CI run
-concurrency: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch || github.ref }}
 
 permissions:
   contents: write # push the version bump commit and the v<version> tag, create the release
@@ -21,23 +15,20 @@ permissions:
 
 jobs:
   publish:
-    # The `branches` filter above matches the head branch of the CI run, so a pull request opened
-    # from a fork's own `main` would pass it — and workflow_run always runs here, in this
-    # repository, with the secrets. Requiring the CI run to have come from a push closes that,
-    # since a fork cannot push to this repository.
+    # When called by CI, github.event_name is CI's event, which is always a push there (see the
+    # publish job in main.yml), and a fork cannot push to this repository.
     # A manual run publishes whatever it has checked out, so it is only allowed from main and next.
     if: >-
-      ${{ (github.event_name == 'workflow_dispatch' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next')) ||
-      (github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.conclusion == 'success') }}
+      ${{ github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next')) }}
+    # One publish per branch at a time. CI's own concurrency already queues pushes to a branch,
+    # this also covers a manual run.
+    concurrency: publish-${{ github.ref }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          # A workflow_run checks out the default branch unless told otherwise, so check out the
-          # commit CI built instead (main or next)
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           # changeset publish tags the release, so the existing tags have to be there
           fetch-depth: 0
           # The action pushes the release commit and tags over the GitHub API, so
@@ -73,12 +64,6 @@ jobs:
           version-script: npm run versioning
           publish-script: npm run release
           create-github-releases: true
-        env:
-          # The action names its branch (changeset-release/<branch>), opens its PR against and resets
-          # to GITHUB_REF and GITHUB_SHA, which a workflow_run sets to main. Point them at the commit
-          # CI built, so a push to next versions and releases next.
-          GITHUB_REF: refs/heads/${{ github.event.workflow_run.head_branch }}
-          GITHUB_SHA: ${{ github.event.workflow_run.head_sha }}
 
       # A manual run is a retry for a jar that never went out. If the version on main is already
       # in the releases repository there is nothing to retry, and publishing would overwrite it.
