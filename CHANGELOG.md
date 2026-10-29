@@ -1,5 +1,23 @@
 # xp-forms
 
+## 1.0.0-beta.0
+
+### Major Changes
+
+- afda2d1: Migrate to Enonic XP 8.
+
+### Minor Changes
+
+- 374a7f5: Add support for headless frontends: a `formView` field on forms in Guillotine, with the JSON Schema of each page to validate against, and a `submit` API that validates and sends the form
+- 347646a: Add support for Cloudflare Turnstile
+- 347646a: Add separate section under site config for built-in-forms
+- 4d0eda8: Validate forms against the JSON Schema made from their fields. A value must now be one of the field's options, a rule other than "required" is not checked on an optional field left empty, and a pattern can be written without slashes around it. Editors are warned about a pattern that is not a regular expression, flags after a pattern, and fields that share a name.
+- 14b691d: Use CSS class names from Designsystemet instead of own classes
+
+### Patch Changes
+
+- fbb954e: Hold form submit until Cloudflare Turnstile has verified the user, and only verify the token on POST requests
+
 ## 0.4.1
 
 ### Patch Changes
