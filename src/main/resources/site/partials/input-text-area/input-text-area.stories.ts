@@ -25,8 +25,9 @@ const meta: Meta<InputTextArea> = {
         "autocomplete": autocomplete,
         "helpText": helpText,
         "inputmode": inputmode,
-        "placeholder": placeholder
-        } /]
+        "placeholder": placeholder,
+        "required": required
+        } errors=errorText?has_content?then({ "name": [errorText] }, {}) /]
         `,
       },
     },
@@ -44,5 +45,20 @@ export const textArea: StoryObj<InputTextArea> = {
     helpText: "Leveringsadresse",
     inputmode: "text",
     placeholder: "Stedveien 4\nPoststed 0000\nNorge",
+    required: false,
+  },
+};
+
+export const withError: StoryObj<InputTextArea & { errorText?: string }> = {
+  args: {
+    label: "Adresse",
+    cols: 60,
+    rows: 4,
+    autocomplete: "street-address",
+    helpText: "Leveringsadresse",
+    inputmode: "text",
+    placeholder: "Stedveien 4\nPoststed 0000\nNorge",
+    errorText: "Du må fylle ut adressen",
+    required: true,
   },
 };

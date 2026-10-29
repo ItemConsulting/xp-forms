@@ -16,7 +16,8 @@ const meta: Meta<InputCheckboxes> = {
           "label": label,
           "name": "fruits",
           "helpText": helpText,
-          "options": options
+          "options": options,
+          "required": required
         } errors=errorText?has_content?then({ "fruits": [errorText] }, {}) /]
         `,
       },
@@ -49,6 +50,7 @@ export const checkboxes: StoryObj<InputCheckboxes> = {
         value: "melon",
       },
     ],
+    required: false,
   },
 };
 
@@ -75,5 +77,20 @@ export const withError: StoryObj<InputCheckboxes & { errorText?: string }> = {
       },
     ],
     errorText: "Du må velge minst ett alternativ",
+    required: true,
+  },
+};
+
+export const singleRequired: StoryObj<InputCheckboxes> = {
+  args: {
+    label: "Samtykke",
+    helpText: "Vi trenger ditt samtykke for å behandle henvendelsen",
+    options: [
+      {
+        text: "Jeg samtykker til at opplysningene lagres",
+        value: "consent",
+      },
+    ],
+    required: true,
   },
 };

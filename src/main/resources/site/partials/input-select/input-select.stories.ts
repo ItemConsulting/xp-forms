@@ -16,8 +16,9 @@ const meta: Meta<InputSelect> = {
         "label": label,
         "name": "fruit",
         "helpText": helpText,
-        "options": options
-        } /]
+        "options": options,
+        "required": required
+        } errors=errorText?has_content?then({ "fruit": [errorText] }, {}) /]
         `,
       },
     },
@@ -44,5 +45,25 @@ export const select: StoryObj<InputSelect> = {
         value: "organge",
       },
     ],
+    required: false,
+  },
+};
+
+export const withError: StoryObj<InputSelect & { errorText?: string }> = {
+  args: {
+    label: "Frukt",
+    helpText: "Yndlingsfrukt",
+    options: [
+      {
+        text: "Pære",
+        value: "pear",
+      },
+      {
+        text: "Banan",
+        value: "banana",
+      },
+    ],
+    errorText: "Du må velge en frukt",
+    required: true,
   },
 };

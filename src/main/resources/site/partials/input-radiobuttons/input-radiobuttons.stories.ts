@@ -16,7 +16,8 @@ const meta: Meta<InputRadioButtons> = {
         "label": label,
         "name": "fruit",
         "helpText": helpText,
-        "options": options
+        "options": options,
+        "required": required
         } errors=errorText?has_content?then({ "fruit": [errorText] }, {}) /]
         `,
       },
@@ -45,6 +46,7 @@ export const radiobuttons: StoryObj<InputRadioButtons> = {
         value: "organge",
       },
     ],
+    required: false,
   },
 };
 
@@ -68,5 +70,6 @@ export const withError: StoryObj<InputRadioButtons & { errorText: string }> = {
       },
     ],
     errorText: "Du har valgt feil",
+    required: true,
   },
 };

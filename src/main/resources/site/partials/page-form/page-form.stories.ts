@@ -19,9 +19,12 @@ export const formPage: StoryObj<PageForm> = {
     text: "This is some intro text",
     submitButtonText: "Send inn",
     frameId: "frame",
+    pageId: "page-1",
+    errors: {},
+    spamPreventionConfig: { type: "none" },
     fields: [
       {
-        type: "input-text",
+        type: "text",
         id: "input-text-1",
         label: "Navn",
         name: "name",
@@ -50,6 +53,7 @@ export const formPageWithError: StoryObj<PageForm> = {
     text: "This is some intro text",
     submitButtonText: "Continue",
     frameId: "frame",
+    spamPreventionConfig: { type: "none" },
     pageId: "page-1",
     backUrl: "#",
     errors: {
@@ -57,7 +61,7 @@ export const formPageWithError: StoryObj<PageForm> = {
     },
     fields: [
       {
-        type: "input-text",
+        type: "text",
         id: "page-1-email",
         label: "Email",
         name: "email",

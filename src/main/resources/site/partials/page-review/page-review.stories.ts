@@ -19,6 +19,9 @@ export const reviewPage: StoryObj<PageReview> = {
     editUrl: "#",
     title: "Check your answers before sending your application",
     frameId: "frame",
+    pageId: "page-1",
+    errors: {},
+    spamPreventionConfig: { type: "none" },
     isPreviewReviewPage: false,
     sections: [
       {

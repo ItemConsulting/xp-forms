@@ -1,11 +1,16 @@
 [#import "../input-field/input-field.ftlh" as Field]
 
 [#macro render field errors={}]
-  <fieldset class="ds-fieldset">
+  [#assign ariaDescribedBy=Field.ariaDescribedBy(field, errors)]
+
+  <fieldset
+    class="ds-fieldset"
+    [#if ariaDescribedBy?has_content]aria-describedby="${ariaDescribedBy}"[/#if]>
+
     <legend class="ds-label">${field.label}</legend>
 
     [#if field.helpText?has_content]
-      <p class="ds-paragraph" data-variant="default">
+      <p id="${field.id}-help-text" class="ds-paragraph" data-variant="default">
         ${field.helpText?no_esc}
       </p>
     [/#if]
@@ -21,6 +26,7 @@
           id="${id}"
           name="${field.name}"
           value="${option.value}"
+          [#if (field.required!false) && (field.options![])?size == 1]aria-required="true"[/#if]
           [#if errors[field.name]??]aria-invalid="true"[/#if]
           [#if option.checked!false]checked[/#if] />
 
