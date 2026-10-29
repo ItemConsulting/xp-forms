@@ -1,10 +1,11 @@
 name: CI
 on:
-  # Only main, because every other branch is covered by pull_request below. Keeping "**" here as
-  # well would run each pushed branch twice once it has a PR.
+  # Only main and next (the prerelease branch), because every other branch is covered by
+  # pull_request below. Keeping "**" here as well would run each pushed branch twice once it has a PR.
   push:
     branches:
       - main
+      - next
 
   # A fork's commits live in the fork, so a push event never fires for them and a contributor's
   # pull request would otherwise get no CI at all.
@@ -15,8 +16,8 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Never cancel a run on main: Publish is triggered by its completion.
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  # Never cancel a run on main or next: Publish is triggered by its completion.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/next' }}
 
 jobs:
   build:
@@ -28,11 +29,11 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
-      # XP 7.14 (systemVersion in build.gradle) runs on Java 17, the JDK the jar is compiled for
+      # The JDK the jar is compiled for, which differs between main and next (see .java-version)
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version-file: .java-version
 
       - uses: gradle/actions/setup-gradle@v6
 

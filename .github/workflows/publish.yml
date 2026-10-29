@@ -1,16 +1,19 @@
 name: Publish
 on:
+  # GitHub only reads workflow_run triggers from the default branch, so this file on main is the
+  # one that publishes for next (the prerelease branch, in changesets pre mode) as well.
   workflow_run:
     workflows: [CI]
-    branches: [main]
+    branches: [main, next]
     types: [completed]
 
-  # Manual escape hatch: re-publish the jar for whatever version main is on. Use it when the
+  # Manual escape hatch: re-publish the jar for whatever version main (or next) is on. Use it when the
   # Gradle step below failed after the release was tagged, since a plain re-run finds nothing
   # to release.
   workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+# github.ref is always main in a workflow_run, so the branch that was built is taken from the CI run
+concurrency: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch || github.ref }}
 
 permissions:
   contents: write # push the version bump commit and the v<version> tag, create the release
@@ -22,15 +25,19 @@ jobs:
     # from a fork's own `main` would pass it — and workflow_run always runs here, in this
     # repository, with the secrets. Requiring the CI run to have come from a push closes that,
     # since a fork cannot push to this repository.
-    # A manual run publishes whatever it has checked out, so it is only allowed from main.
+    # A manual run publishes whatever it has checked out, so it is only allowed from main and next.
     if: >-
-      ${{ (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      ${{ (github.event_name == 'workflow_dispatch' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next')) ||
       (github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.conclusion == 'success') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
+          # A workflow_run checks out the default branch unless told otherwise. The branch (not the
+          # commit) is needed, since the changesets action pushes to it and opens its PR against it.
+          ref: ${{ github.event.workflow_run.head_branch || github.ref }}
           # changeset publish tags the release, so the existing tags have to be there
           fetch-depth: 0
           # The action pushes the release commit and tags over the GitHub API, so
@@ -46,7 +53,7 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version-file: .java-version
 
       - uses: gradle/actions/setup-gradle@v6
 
