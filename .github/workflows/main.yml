@@ -17,7 +17,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Never cancel a run on main or next: Publish is triggered by its completion.
+  # Never cancel a run on main or next: it ends by publishing (see the publish job).
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/next' }}
 
 jobs:
@@ -42,3 +42,17 @@ jobs:
       # (biome + tsc, via npmCheck) and the tests (via npmTest), compiles the Java sources, runs
       # tsdown and postcss (via npmBuild) and builds the jar.
       - run: ./gradlew build
+
+  # Publish is called from here, rather than started by a workflow_run, so that it runs for the
+  # branch and commit that was pushed: changesets/action takes both from GITHUB_REF and GITHUB_SHA,
+  # which a workflow_run always sets to main, so a push to next would version and release main.
+  publish:
+    needs: build
+    # Only a push publishes, and on.push only lists main and next (the prerelease branch, in
+    # changesets pre mode). A pull request, a fork's included, never reaches this job.
+    if: github.event_name == 'push'
+    permissions:
+      contents: write # push the version bump commit and the v<version> tag, create the release
+      pull-requests: write # open and update the "Version Packages" PR
+    uses: ./.github/workflows/publish.yml
+    secrets: inherit
