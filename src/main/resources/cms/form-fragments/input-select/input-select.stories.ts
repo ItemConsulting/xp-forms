@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@itemconsulting/storybook-framework-enonic-xp";
+import type { Meta, StoryObj } from "@storybook/server";
 import type { InputSelect } from "./input-select.freemarker";
 import id from "./input-select.ftlh";
 

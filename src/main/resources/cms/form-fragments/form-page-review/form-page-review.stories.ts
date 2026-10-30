@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@itemconsulting/storybook-framework-enonic-xp";
+import type { Meta, StoryObj } from "@storybook/server";
 import type { PageReview } from "./form-page-review.freemarker";
 import id from "./form-page-review.ftlh";
 
