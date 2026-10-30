@@ -13,3 +13,63 @@ form:
     name: "options"
   - type: "FormFragment"
     name: "field-props-select"
+  - type: "ComboBox"
+    name: "autocomplete"
+    label:
+      text: "Autocomplete"
+      i18n: "form-fragment.field-props-input.autocomplete"
+    helpText:
+      text: "The browser can automatically fill in fields"
+      i18n: "form-fragment.field-props-input.autocompleteHelpText"
+    occurrences:
+      min: 0
+      max: 1
+    options:
+      - value: "off"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteOff"
+          text: "Off"
+      - value: "on"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteOn"
+          text: "On"
+      - value: "honorific-prefix"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteHonorificPrefix"
+          text: "Honorific-prefix"
+      - value: "honorific-suffix"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteHonorificSuffix"
+          text: "Honorific-suffix"
+      - value: "sex"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteSex"
+          text: "Sex"
+      - value: "country"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteCountry"
+          text: "Country"
+      - value: "country-name"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteCountryName"
+          text: "Country-name"
+      - value: "address-level1"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteAddressLevel1"
+          text: "Address-level1"
+      - value: "address-level2"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteAddressLevel2"
+          text: "Address-level2"
+      - value: "bday-day"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteBirthdayDay"
+          text: "Birthday (day)"
+      - value: "bday-month"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteBirthdayMonth"
+          text: "Birthday (month)"
+      - value: "bday-year"
+        label:
+          i18n: "form-fragment.field-props-input.autocompleteBirthdayYear"
+          text: "Birthday (year)"

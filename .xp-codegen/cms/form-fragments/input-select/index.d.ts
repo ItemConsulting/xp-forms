@@ -53,4 +53,9 @@ export type InputSelect = {
       errorMessage?: string;
     };
   };
+
+  /**
+   * Autocomplete
+   */
+  autocomplete?: "off" | "on" | "honorific-prefix" | "honorific-suffix" | "sex" | "country" | "country-name" | "address-level1" | "address-level2" | "bday-day" | "bday-month" | "bday-year";
 };

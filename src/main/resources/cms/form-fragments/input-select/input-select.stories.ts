@@ -1,9 +1,29 @@
 import type { Meta, StoryObj } from "@storybook/server";
+import { controlAutocomplete } from "../../../storybook-utils";
 import type { InputSelect } from "./input-select.freemarker";
 import id from "./input-select.ftlh";
 
 const meta: Meta<InputSelect> = {
   title: "Field/Select",
+  argTypes: {
+    autocomplete: {
+      ...controlAutocomplete,
+      options: [
+        "off",
+        "on",
+        "honorific-prefix",
+        "honorific-suffix",
+        "sex",
+        "country",
+        "country-name",
+        "address-level1",
+        "address-level2",
+        "bday-day",
+        "bday-month",
+        "bday-year",
+      ],
+    },
+  },
   parameters: {
     server: {
       id,
@@ -17,6 +37,7 @@ const meta: Meta<InputSelect> = {
         "name": "fruit",
         "helpText": helpText,
         "options": options,
+        "autocomplete": autocomplete!,
         "required": required
         } errors=errorText?has_content?then({ "fruit": [errorText] }, {}) /]
         `,
@@ -45,6 +66,29 @@ export const select: StoryObj<InputSelect> = {
         value: "organge",
       },
     ],
+    required: false,
+  },
+};
+
+export const withAutocomplete: StoryObj<InputSelect> = {
+  args: {
+    label: "Land",
+    helpText: "Landet du bor i",
+    options: [
+      {
+        text: "Norge",
+        value: "NO",
+      },
+      {
+        text: "Sverige",
+        value: "SE",
+      },
+      {
+        text: "Danmark",
+        value: "DK",
+      },
+    ],
+    autocomplete: "country",
     required: false,
   },
 };

@@ -5,6 +5,7 @@ export type InputSelect = {
   name: string;
   helpText?: string;
   value?: string;
+  autocomplete?: string;
   required: boolean;
   options: SelectFieldOption[];
 };

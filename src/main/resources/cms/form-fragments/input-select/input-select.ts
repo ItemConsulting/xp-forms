@@ -16,6 +16,7 @@ export function process(raw: InputSelectRaw, pageId: string, submittedValue: str
     options: forceArray(raw.options)
       .filter((option) => option.value && option.text)
       .map(setChecked(value)),
+    autocomplete: raw.autocomplete,
     required: hasSelectedValue(raw.properties, "validationRequired"),
   };
 }
