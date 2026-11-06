@@ -1,5 +1,15 @@
 # xp-forms
 
+## 1.0.0-beta.1
+
+### Minor Changes
+
+- f553b0f: Let editors set `autocomplete` on select fields, so the browser can fill in values such as the country
+
+### Patch Changes
+
+- fa0a359: Expose required fields to assistive technology with `aria-required`, and link help text and errors to selects and fieldsets with `aria-describedby`
+
 ## 1.0.0-beta.0
 
 ### Major Changes
