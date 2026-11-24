@@ -1,5 +1,19 @@
 # xp-forms
 
+## 0.5.0
+
+### Minor Changes
+
+- 347646a: Add support for Cloudflare Turnstile
+- 347646a: Add separate section under site config for built-in-forms
+- 4d0eda8: Use Standard Schema to declare validators
+- 14b691d: Use CSS class names from Designsystemet instead of own classes
+
+### Patch Changes
+
+- fbb954e: Hold form submit until Cloudflare Turnstile has verified the user, and only verify the token on POST requests
+- fa0a359: Expose required fields to assistive technology with `aria-required`, and link help text and errors to selects and fieldsets with `aria-describedby`
+
 ## 0.4.1
 
 ### Patch Changes
