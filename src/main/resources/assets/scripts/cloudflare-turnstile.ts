@@ -20,7 +20,16 @@ const PENDING_TIMEOUT_MS = 10000;
 const pendingSubmits = new WeakMap<HTMLFormElement, PendingSubmit>();
 const releasedForms = new WeakSet<HTMLFormElement>();
 
+const renderedWidgets = new Map<string, HTMLElement>();
+
 function renderAll(): void {
+  // Turbo shows a cached copy of the page as a preview before the real page arrives. Wait for the real page.
+  if (!window.turnstile || document.documentElement.hasAttribute("data-turbo-preview")) {
+    return;
+  }
+
+  removeDisconnected();
+
   document.querySelectorAll<HTMLElement>(SELECTOR_WIDGET).forEach((el) => {
     if (!el.dataset.sitekey || el.dataset.widgetId !== undefined) {
       return;
@@ -37,6 +46,49 @@ function renderAll(): void {
     });
 
     el.dataset.widgetId = widgetId ?? "";
+
+    if (widgetId) {
+      renderedWidgets.set(widgetId, el);
+    }
+  });
+}
+
+function removeWidget(widgetId: string): void {
+  renderedWidgets.delete(widgetId);
+
+  try {
+    window.turnstile.remove(widgetId);
+  } catch {
+    // The widget is already gone
+  }
+}
+
+/*
+ * Turbo has replaced the page, so these widgets are no longer in the document
+ */
+function removeDisconnected(): void {
+  renderedWidgets.forEach((el, widgetId) => {
+    if (!el.isConnected) {
+      removeWidget(widgetId);
+    }
+  });
+}
+
+/*
+ * Removes the widgets before Turbo caches the page. A page restored from the cache (e.g. with the back button) would
+ * otherwise show a dead iframe, and renderAll() would skip it because of data-widget-id.
+ */
+function removeAll(): void {
+  if (!window.turnstile) {
+    return;
+  }
+
+  document.querySelectorAll<HTMLElement>(SELECTOR_WIDGET).forEach((el) => {
+    if (el.dataset.widgetId) {
+      removeWidget(el.dataset.widgetId);
+    }
+
+    delete el.dataset.widgetId;
   });
 }
 
@@ -135,13 +187,17 @@ document.addEventListener(
 );
 
 /*
- * This listener re-initializes turnstile after a turbo navigation has been done
+ * Scripts in <head> only run on the first page load when Turbo Drive is used, so the widgets must be rendered again
+ * after every Turbo navigation:
+ * - turbo:load: visits, including restoring a page from the cache (e.g. the back button)
+ * - turbo:render: form submissions that render the whole page with an error status. These do not send turbo:load.
+ * - turbo:frame-render: navigation and form submissions inside the form's turbo-frame
+ * renderAll() skips widgets that are already rendered, so it is safe to call it more than once.
  */
-document.addEventListener("turbo:frame-render", () => {
-  if (window.turnstile) {
-    renderAll();
-  }
-});
+document.addEventListener("turbo:load", renderAll);
+document.addEventListener("turbo:render", renderAll);
+document.addEventListener("turbo:frame-render", renderAll);
+document.addEventListener("turbo:before-cache", removeAll);
 
 // The turnstile script is loaded async, so it might be ready before or after this script
 if (window.turnstile) {
